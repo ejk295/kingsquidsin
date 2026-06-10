@@ -18,7 +18,6 @@ st_autorefresh(interval=30 * 1000, key="datarefresh")
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
     <style>
-        /* Import Figtree from Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
 
         /* Force global app body background, standard text, and Figtree font */
@@ -28,24 +27,17 @@ st.markdown("""
             font-family: 'Figtree', sans-serif !important;
         }
         
-        /* Force all standard text elements to stay dark charcoal and use Figtree */
         p, span, div, label, small, td, th, b {
             color: #333333 !important;
             font-family: 'Figtree', sans-serif !important;
         }
         
-        /* Keep headers fixed to brand Mexico Green and use Figtree with heavy weight */
         h1, h2, h3 {
             color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
         
-        .header-container {
-            border-bottom: 2px solid #006847;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
         .title-area h1 {
             margin: 0px !important;
             font-size: 28px;
@@ -58,122 +50,96 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- BULLETPROOF NEXT MATCH BAR LAYOUT --- */
-        .match-banner-container {
-            display: flex;
-            align-items: stretch;
-            justify-content: space-between;
+        /* --- THE FIXED CLEAN CENTRED BANNER --- */
+        .match-banner-wrapper {
             background-color: #111111;
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
             margin: 15px 0px;
-            overflow: hidden;
+            padding: 20px;
             font-family: 'Figtree', sans-serif !important;
-            min-height: 80px;
+            text-align: center;
         }
 
-        .banner-label-pane {
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            background-color: #111111;
-        }
-
-        .next-match-title {
+        .banner-top-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800 !important;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
-            border-radius: 6px;
-            color: #FFFFFF !important;
-            white-space: nowrap;
+            color: #999999 !important;
+            margin-bottom: 15px;
         }
 
-        /* Middle Split-Screen Wrapper */
-        .matchup-split-screen {
-            display: flex;
-            flex: 1;
-            position: relative;
+        /* Perfectly Balanced 3-Column Center Grid */
+        .matchup-grid-center {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .team-panel {
-            width: 50%;
+        .team-side {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            color: #FFFFFF !important;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 900 !important;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-            box-sizing: border-box;
-            height: 100%;
+            color: #FFFFFF !important;
         }
-
-        .team-panel span {
-            font-size: 13px;
+        .team-side span {
+            font-size: 14px;
             font-weight: 400 !important;
-            opacity: 0.85;
+            opacity: 0.8;
             color: #FFFFFF !important;
-            margin: 0 4px;
+            margin: 0 6px;
         }
 
-        .home-panel {
+        .team-home-side {
             justify-content: flex-end;
-            padding-right: 45px;
-            border-right: 2px solid #FFFFFF;
+            text-align: right;
         }
 
-        .away-panel {
+        .team-away-side {
             justify-content: flex-start;
-            padding-left: 45px;
+            text-align: left;
         }
 
-        /* Centered VS Bubble Locked to Center Line */
-        .vs-marker-bubble {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            background-color: #111111;
+        /* Perfectly Aligned VS Center Circle */
+        .vs-circle-center {
+            background-color: #222222;
             color: #FFFFFF !important;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 900 !important;
-            padding: 6px 10px;
+            width: 36px;
+            height: 36px;
+            line-height: 32px;
             border-radius: 50%;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            border: 2px solid #006847;
+            margin: 0 25px;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
         }
 
-        .banner-time-pane {
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            background-color: #111111;
-        }
-
-        .next-match-time {
+        .banner-bottom-time {
             font-size: 13px;
             font-weight: 700 !important;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
-            border-radius: 6px;
             color: #FFFFFF !important;
-            white-space: nowrap;
+            margin-top: 15px;
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
         }
         
         .banner-flag {
-            width: 30px !important;
-            height: 20px !important;
+            width: 32px !important;
+            height: 22px !important;
             object-fit: cover !important;
             border-radius: 3px;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
             display: inline-block;
-            margin: 0 8px;
+            margin: 0 10px;
             vertical-align: middle;
         }
 
@@ -189,7 +155,6 @@ st.markdown("""
             margin-bottom: 10px;
             height: auto;
             min-height: 50px;
-            font-family: 'Figtree', sans-serif !important;
         }
         .stat-banner-box medium {
             font-size: 11px;
@@ -197,21 +162,18 @@ st.markdown("""
             letter-spacing: 0.5px;
             font-weight: 800 !important;
             color: #006847 !important;
-            font-family: 'Figtree', sans-serif !important;
         }
         .stat-banner-box span {
             font-size: 14px;
             font-weight: 800 !important;
             text-align: right;
             color: #333333 !important;
-            font-family: 'Figtree', sans-serif !important;
         }
 
         /* Responsive Table Canvas Controls */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
             margin-bottom: 20px;
         }
         
@@ -221,7 +183,6 @@ st.markdown("""
             font-size: 13px;
             text-align: left;
             white-space: nowrap;
-            font-family: 'Figtree', sans-serif !important;
         }
         .custom-dashboard-table th {
             background-color: #FAFAFA !important;
@@ -248,11 +209,6 @@ st.markdown("""
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-family: 'Figtree', sans-serif !important;
-        }
-        .fixture-row div, .fixture-row span, .fixture-row b {
-            color: #333333 !important;
-            font-family: 'Figtree', sans-serif !important;
         }
         .flag-img {
             vertical-align: middle;
@@ -264,7 +220,6 @@ st.markdown("""
         }
         .group-header-text {
             color: #006847 !important;
-            font-family: 'Figtree', sans-serif !important;
             font-size: 18px;
             font-weight: 800 !important;
             margin-bottom: 12px;
@@ -272,38 +227,17 @@ st.markdown("""
             display: inline-block;
         }
 
-        /* Mobile Adaptive Layout Rule */
-        @media (max-width: 800px) {
-            .match-banner-container {
-                flex-direction: column;
+        @media (max-width: 600px) {
+            .matchup-grid-center {
+                grid-template-columns: 1fr;
             }
-            .banner-label-pane, .banner-time-pane {
-                padding: 10px;
+            .team-home-side, .team-away-side {
                 justify-content: center;
+                text-align: center;
+                padding: 5px 0;
             }
-            .matchup-split-screen {
-                flex-direction: column;
-                width: 100%;
-            }
-            .team-panel {
-                width: 100% !important;
-                justify-content: center !important;
-                padding: 15px !important;
-                font-size: 16px;
-            }
-            .home-panel {
-                border-right: none !important;
-                border-bottom: 2px solid #FFFFFF;
-                padding-right: 20px !important;
-            }
-            .away-panel {
-                padding-left: 20px !important;
-            }
-            .vs-marker-bubble {
-                top: auto;
-                bottom: -14px;
-                left: 50%;
-                transform: translateX(-50%);
+            .vs-circle-center {
+                margin: 10px auto;
             }
         }
     </style>
@@ -315,7 +249,6 @@ COMPETITION_CODE = "WC"
 BASE_URL = "https://api.football-data.org/v4"
 HEADERS = {"X-Auth-Token": API_TOKEN}
 
-# Sweepstake Mappings
 SWEEPSTAKE_MAPPING = {
     "Mexico": "TBC", "South Africa": "TBC", "Canada": "TBC", "Switzerland": "TBC",
     "Argentina": "TBC", "France": "TBC", "Brazil": "TBC", "Spain": "TBC",
@@ -331,7 +264,6 @@ SWEEPSTAKE_MAPPING = {
     "Panama": "TBC", "Ghana": "TBC", "Croatia": "TBC", "South Korea": "TBC",
 }
 
-# Baseline Expected Rankings Map
 EXPECTED_RANKINGS = {
     "France": 1, "Spain": 2, "Argentina": 3, "England": 4, "Portugal": 5, "Brazil": 6,
     "Netherlands": 7, "Morocco": 8, "Belgium": 9, "Germany": 10, "Croatia": 11, "Colombia": 12,
@@ -343,26 +275,6 @@ EXPECTED_RANKINGS = {
     "Jordan": 42, "Bosnia-Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
-
-# --- DYNAMIC BANNER TEAM COLOR MAPPING ---
-TEAM_COLORS = {
-    "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
-    "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
-    "Bosnia-Herzegovina": "#002F6C", "Czechia": "#11457E", "Qatar": "#8A1538", "Morocco": "#C1272D",
-    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#222222",
-    "Curaçao": "#002B7F", "Ecuador": "#FFDD00", "Japan": "#00005C", "Belgium": "#E30A17",
-    "Egypt": "#C1272D", "Tunisia": "#E70013", "Netherlands": "#E05206", "Ivory Coast": "#E87722",
-    "Australia": "#00008B", "Cape Verde Islands": "#003893", "Cape Verde": "#003893", "Uruguay": "#0081C8", 
-    "Sweden": "#006AA7", "Saudi Arabia": "#006C35", "Scotland": "#005EB8", "United States": "#002868", 
-    "Senegal": "#00853F", "New Zealand": "#111111", "Iran": "#239E46", "Iraq": "#007A3D", 
-    "Norway": "#EF2B2D", "Algeria": "#006233", "Austria": "#ED2939", "Jordan": "#1A1A1A", 
-    "Congo DR": "#007FFF", "DR Congo": "#007FFF", "Portugal": "#FF0000", "Uzbekistan": "#0099B5", 
-    "Colombia": "#FCD116", "England": "#CE1124", "Panama": "#DA121A", "Ghana": "#DA121A", 
-    "Croatia": "#FF0000", "South Korea": "#111111"
-}
-
-DEFAULT_LEFT_COLOR = "#006847"   # Mexico Green
-DEFAULT_RIGHT_COLOR = "#007A4D"  # South Africa Green
 
 def format_to_uk_time(utc_str):
     try:
@@ -387,23 +299,18 @@ standings_list = []
 master_flat_leaderboard = []
 top_performer_text = "N/A"
 
-banner_left_color = DEFAULT_LEFT_COLOR
-banner_right_color = DEFAULT_RIGHT_COLOR
-
 if API_TOKEN != "placeholder":
     try:
-        # Fetch Standings Data
+        # Fetch Standings
         standings_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/standings"
         standings_res = requests.get(standings_url, headers=HEADERS)
         standings_list = standings_res.json().get("standings", [])
         
-        # Build Master Flat Leaderboard across all groups combined
         for group in standings_list:
             for row in group.get("table", []):
                 t_info = row.get("team", {})
-                t_name = t_info.get("name", "Unknown")
                 master_flat_leaderboard.append({
-                    "name": t_name,
+                    "name": t_info.get("name", "Unknown"),
                     "crest": t_info.get("crest", ""),
                     "played": row.get("playedGames", 0),
                     "won": row.get("won", 0),
@@ -417,7 +324,6 @@ if API_TOKEN != "placeholder":
         
         if master_flat_leaderboard:
             master_flat_leaderboard.sort(key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"], x["name"]))
-            
             for idx, team_item in enumerate(master_flat_leaderboard, start=1):
                 name = team_item["name"]
                 expected_rank = EXPECTED_RANKINGS.get(name, 25)
@@ -429,7 +335,7 @@ if API_TOKEN != "placeholder":
             op_owner = SWEEPSTAKE_MAPPING.get(best_overperformer["name"], "Unassigned")
             top_performer_text = f"{best_overperformer['name']} ({op_owner}) [+{best_overperformer['overperformance']}]"
         
-        # Fetch Match Data
+        # Fetch Matches
         matches_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches"
         matches_res = requests.get(matches_url, headers=HEADERS)
         all_matches = matches_res.json().get("matches", [])
@@ -454,12 +360,6 @@ if API_TOKEN != "placeholder":
                 next_home_owner = f" ({SWEEPSTAKE_MAPPING.get(next_home, 'Unassigned')})"
                 next_away_owner = f" ({SWEEPSTAKE_MAPPING.get(next_away, 'Unassigned')})"
                 
-                banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
-                banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
-                
-                if banner_left_color == banner_right_color:
-                    banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
-                
                 dt_uk = format_to_uk_time(next_m.get("utcDate"))
                 if dt_uk:
                     day = dt_uk.day
@@ -468,7 +368,7 @@ if API_TOKEN != "placeholder":
     except Exception:
         pass
 
-# --- BRANDING HEADER TITLE ---
+# --- HEADER ---
 st.markdown("""
     <div class="title-area">
         <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
@@ -476,32 +376,28 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- REPAIRED DUAL-COLORED FLEX BANNER SYSTEM ---
+# --- THE CLEAN CENTRED MATCHUP BANNER ---
 st.markdown(f"""
-    <div class="match-banner-container">
-        <div class="banner-label-pane">
-            <div class="next-match-title">⏳ Next Match</div>
-        </div>
+    <div class="match-banner-wrapper">
+        <div class="banner-top-label">⏳ Next Match</div>
         
-        <div class="matchup-split-screen">
-            <div class="team-panel home-panel" style="background-color: {banner_left_color};">
+        <div class="matchup-grid-center">
+            <div class="team-side team-home-side">
                 {next_home_flag} {next_home} <span>{next_home_owner}</span>
             </div>
             
-            <div class="vs-marker-bubble">VS</div>
+            <div class="vs-circle-center">VS</div>
             
-            <div class="team-panel away-panel" style="background-color: {banner_right_color};">
+            <div class="team-side team-away-side">
                 <span>{next_away_owner}</span> {next_away} {next_away_flag}
             </div>
         </div>
         
-        <div class="banner-time-pane">
-            <div class="next-match-time">🗓️ {next_date}</div>
-        </div>
+        <div class="banner-bottom-time">🗓️ {next_date}</div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- TRIPLE STATS ROW ---
+# --- STATS ROW ---
 stat_cols = st.columns(3)
 with stat_cols[0]:
     st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£96</span></div>', unsafe_allow_html=True)
@@ -513,7 +409,7 @@ with stat_cols[2]:
 
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
-# 3. Render Dashboard Core Content Loop
+# --- GROUPS CANVAS ---
 if API_TOKEN == "placeholder":
     st.warning("⚠️ Using placeholder API key. Please insert your true Football-Data.org token to pull live group lists and matches.")
 else:
@@ -554,26 +450,26 @@ else:
                             owner = SWEEPSTAKE_MAPPING.get(t_name, "Unassigned")
                             flag_html = f'<img src="{t_crest}" class="flag-img">' if t_crest else ''
                             
-                            table_html += "<tr>"
-                            table_html += f'<td>{flag_html} <b>{t_name}</b> <span style="font-size:11px; color:#666;">({owner})</span></td>'
-                            table_html += f'<td style="text-align:center;">{row.get("playedGames")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("won")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("draw")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("lost")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("goalsFor")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("goalsAgainst")}</td>'
-                            table_html += f'<td style="text-align:center;">{row.get("goalDifference")}</td>'
-                            table_html += f'<td style="text-align:center;"><b>{row.get("points")}</b></td>'
-                            table_html += "</tr>"
+                            table_html += f"""<tr>
+                                <td>{flag_html} <b>{t_name}</b> <span style="font-size:11px; color:#666;">({owner})</span></td>
+                                <td style="text-align:center;">{row.get("playedGames")}</td>
+                                <td style="text-align:center;">{row.get("won")}</td>
+                                <td style="text-align:center;">{row.get("draw")}</td>
+                                <td style="text-align:center;">{row.get("lost")}</td>
+                                <td style="text-align:center;">{row.get("goalsFor")}</td>
+                                <td style="text-align:center;">{row.get("goalsAgainst")}</td>
+                                <td style="text-align:center;">{row.get("goalDifference")}</td>
+                                <td style="text-align:center;"><b>{row.get("points")}</b></td>
+                            </tr>"""
                             
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
                         
-                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
+                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures</span>", unsafe_allow_html=True)
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
                         if not group_fixtures:
-                            st.caption("No fixtures currently listed for this group.")
+                            st.caption("No fixtures listed.")
                         else:
                             group_fixtures.sort(key=lambda x: x.get("utcDate", ""))
                             for match in group_fixtures[:6]:
@@ -609,7 +505,7 @@ else:
                                 """, unsafe_allow_html=True)
                         st.markdown("<br>", unsafe_allow_html=True)
 
-        # --- OVERPERFORMANCE LEADERBOARD ---
+        # --- LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
@@ -642,16 +538,16 @@ else:
             op_formatted = f"+{op_val}" if op_val > 0 else str(op_val)
             score_color = "#107C41" if op_val > 0 else ("#A80000" if op_val < 0 else "#333333")
             
-            master_table_html += "<tr>"
-            master_table_html += f"<td><b>{pos_str}</b></td>"
-            master_table_html += f"<td>{flag_html} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>"
-            master_table_html += f"<td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>"
-            master_table_html += f"<td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>"
-            master_table_html += f"<td style='text-align:center;'>{team_row['played']}</td>"
-            master_table_html += f"<td style='text-align:center;'>{team_row['gd']}</td>"
-            master_table_html += f"<td style='text-align:center;'>{team_row['pts']}</td>"
-            master_table_html += f"<td style='text-align:right; padding-right:15px; color:{score_color}; font-weight:bold;'>{op_formatted}</td>"
-            master_table_html += "</tr>"
+            master_table_html += f"""<tr>
+                <td><b>{pos_str}</b></td>
+                <td>{flag_html} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
+                <td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>
+                <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
+                <td style='text-align:center;'>{team_row['played']}</td>
+                <td style='text-align:center;'>{team_row['gd']}</td>
+                <td style='text-align:center;'>{team_row['pts']}</td>
+                <td style='text-align:right; padding-right:15px; color:{score_color}; font-weight:bold;'>{op_formatted}</td>
+            </tr>"""
             
         master_table_html += "</tbody></table></div>"
         
