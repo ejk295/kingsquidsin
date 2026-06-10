@@ -235,7 +235,6 @@ EXPECTED_RANKINGS = {
 }
 
 # --- DYNAMIC BANNER TEAM COLOR MAPPING ---
-# Key primary/flag color for each country. If a country isn't matched, it defaults to the dark gray/slate theme.
 TEAM_COLORS = {
     "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
     "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
@@ -369,6 +368,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- INJECT DYNAMIC STYLE FOR THE BANNER GRADIENT ---
+# Note the intentional doubling of all static curly braces to bypass the f-string filter cleanly!
 st.markdown(f"""
     <style>
         .next-match-banner {{
@@ -389,7 +389,7 @@ st.markdown(f"""
                 justify-content: space-between;
                 align-items: center;
                 text-align: left;
-            }
+            }}
         }}
     </style>
 """, unsafe_allow_html=True)
