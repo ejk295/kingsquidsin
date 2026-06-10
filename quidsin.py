@@ -188,7 +188,7 @@ st.markdown("""
         .group-players-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 5px;
             margin-top: 8px !important; 
             margin-bottom: 0px !important;
             justify-content: center; /* Centered */
