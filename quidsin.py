@@ -58,7 +58,7 @@ st.markdown("""
             overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
             text-align: center;
-            border: 2px solid #DDDDDD; /* Visible boundary for light colours */
+            border: 2px solid #DDDDDD;
         }
 
         .banner-top-pane {
@@ -78,7 +78,6 @@ st.markdown("""
             display: inline-block;
         }
 
-        /* Middle Split-Screen Wrapper */
         .matchup-split-screen {
             display: flex;
             position: relative;
@@ -159,7 +158,6 @@ st.markdown("""
             box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Smaller Side-by-Side Stat Blocks */
         .stat-banner-box {
             background: #FFFFFF !important;
             padding: 12px 20px;
@@ -186,60 +184,53 @@ st.markdown("""
             color: #333333 !important;
         }
 
-        /* --- STAR PLAYERS GRID --- */
-        .players-showcase-title {
-            color: #006847 !important;
-            font-size: 14px;
-            font-weight: 800 !important;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 15px 0px 8px 0px;
-        }
-        .players-scroller {
+        /* --- IN-GROUP TEAM PLAYERS ROW --- */
+        .group-players-container {
             display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
             margin-bottom: 15px;
+            justify-content: flex-start;
         }
-        .player-card {
+        .group-player-card {
             background: #FFFFFF;
             border: 1px solid #EAEAEA;
             border-radius: 8px;
-            min-width: 110px;
-            max-width: 110px;
+            width: 95px;
             text-align: center;
-            padding: 6px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            padding: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
-        .player-card img {
+        .group-player-card img {
             width: 100%;
             height: auto;
             border-radius: 4px;
             object-fit: cover;
-            background: #F0F0F0;
+            background: #F5F5F5;
         }
-        .player-card-name {
-            font-size: 11px;
+        .group-player-card-name {
+            font-size: 10px;
             font-weight: 800 !important;
             color: #333333 !important;
-            margin-top: 4px;
+            margin-top: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .player-card-nation {
-            font-size: 9px;
+        .group-player-card-team {
+            font-size: 8px;
             font-weight: 600 !important;
-            color: #666666 !important;
+            color: #006847 !important;
             text-transform: uppercase;
+            margin-top: 1px;
         }
 
         /* Responsive Table Canvas Controls */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .custom-dashboard-table {
@@ -310,7 +301,7 @@ st.markdown("""
                 border-right: none !important;
                 border-bottom: 2px solid #FFFFFF;
                 padding-right: 20px !important;
-                }
+            }
             .away-panel {
                 padding-left: 20px !important;
             }
@@ -373,17 +364,18 @@ TEAM_COLORS = {
     "Croatia": "#FF0000", "South Korea": "#111111"
 }
 
-# Star Players Mapping
-STAR_PLAYERS = [
-    {"name": "Lamine Yamal", "nation": "Spain", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lamine-yamal-spain-forward-profile-full.png"},
-    {"name": "Lionel Messi", "nation": "Argentina", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"},
-    {"name": "Bukayo Saka", "nation": "England", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bukayo-saka-england-forward-profile-full.png"},
-    {"name": "Vinícius Jr.", "nation": "Brazil", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/vinicius-junior-brazil-forward-profile-full.png"},
-    {"name": "O. Dembélé", "nation": "France", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ousmane-dembele-france-forward-profile-full.png"},
-    {"name": "Kai Havertz", "nation": "Germany", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kai-havertz-germany-forward-profile-full.png"},
-    {"name": "B. Fernandes", "nation": "Portugal", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bruno-fernandes-portugal-midfielder-profile-full.png"},
-    {"name": "F. de Jong", "nation": "Netherlands", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"}
-]
+# --- GROUP PLAYERS MAP ---
+# Map player card resources directly into team slots. Add new teams to this library at any time.
+GROUP_PLAYERS = {
+    "Spain": {"player_name": "Lamine Yamal", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lamine-yamal-spain-forward-profile-full.png"},
+    "France": {"player_name": "O. Dembélé", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ousmane-dembele-france-forward-profile-full.png"},
+    "England": {"player_name": "Bukayo Saka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bukayo-saka-england-forward-profile-full.png"},
+    "Brazil": {"player_name": "Vinícius Jr.", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/vinicius-junior-brazil-forward-profile-full.png"},
+    "Germany": {"player_name": "Kai Havertz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kai-havertz-germany-forward-profile-full.png"},
+    "Portugal": {"player_name": "B. Fernandes", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bruno-fernandes-portugal-midfielder-profile-full.png"},
+    "Netherlands": {"player_name": "F. de Jong", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"},
+    "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"}
+}
 
 DEFAULT_LEFT_COLOR = "#006847"
 DEFAULT_RIGHT_COLOR = "#007A4D"
@@ -535,20 +527,6 @@ with stat_cols[1]:
 with stat_cols[2]:
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
-# --- NEW: STAR PLAYERS SHOWCASE ---
-st.markdown('<div class="players-showcase-title">⭐ Stars to Watch</div>', unsafe_allow_html=True)
-players_html = '<div class="players-scroller">'
-for player in STAR_PLAYERS:
-    players_html += f"""
-        <div class="player-card">
-            <img src="{player['img']}" alt="{player['name']}">
-            <div class="player-card-name">{player['name']}</div>
-            <div class="player-card-nation">{player['nation']}</div>
-        </div>
-    """
-players_html += '</div>'
-st.markdown(players_html, unsafe_allow_html=True)
-
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
 # --- GROUPS CANVAS ---
@@ -567,6 +545,7 @@ else:
                     with row_cols[j]:
                         st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
                         
+                        # Render Standings Table
                         table_html = """
                         <div class="table-responsive-wrapper">
                             <table class="custom-dashboard-table">
@@ -607,6 +586,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
                         
+                        # Render Group Fixtures
                         st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
@@ -645,6 +625,26 @@ else:
                                         </div>
                                     </div>
                                 """, unsafe_allow_html=True)
+                        
+                        # --- DYNAMIC IN-GROUP PLAYERS SUB-SECTION ---
+                        # Generates clean player blocks underneath each group column if mapped
+                        active_cards = []
+                        for team_name in teams_in_group:
+                            if team_name in GROUP_PLAYERS:
+                                p_data = GROUP_PLAYERS[team_name]
+                                active_cards.append(f"""
+                                    <div class="group-player-card">
+                                        <img src="{p_data['img_url']}">
+                                        <div class="group-player-card-name">{p_data['player_name']}</div>
+                                        <div class="group-player-card-team">{team_name}</div>
+                                    </div>
+                                """)
+                        
+                        if active_cards:
+                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-top:8px; margin-bottom:4px;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
+                            players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
+                            st.markdown(players_row_html, unsafe_allow_html=True)
+
                         st.markdown("<br>", unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
