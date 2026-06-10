@@ -50,86 +50,104 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- THE FIXED CLEAN CENTRED BANNER --- */
-        .match-banner-wrapper {
-            background-color: #111111;
+        /* --- NEXT MATCH BANNER LAYOUT (DYNAMIC COLOURS) --- */
+        .match-banner-container {
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
             margin: 15px 0px;
-            padding: 20px;
+            overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
             text-align: center;
+            border: 2px solid #DDDDDD; /* Visible boundary for light colours */
         }
 
-        .banner-top-label {
+        .banner-top-pane {
+            background-color: #111111;
+            padding: 10px 20px;
+        }
+
+        .next-match-title {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800 !important;
-            color: #999999 !important;
-            margin-bottom: 15px;
+            color: #FFFFFF !important;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
         }
 
-        /* Perfectly Balanced 3-Column Center Grid */
-        .matchup-grid-center {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+        /* Middle Split-Screen Wrapper */
+        .matchup-split-screen {
+            display: flex;
+            position: relative;
             align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
         }
 
-        .team-side {
+        .team-panel {
+            width: 50%;
             display: flex;
             align-items: center;
-            font-size: 22px;
-            font-weight: 900 !important;
-            color: #FFFFFF !important;
-        }
-        .team-side span {
-            font-size: 14px;
-            font-weight: 400 !important;
-            opacity: 0.8;
-            color: #FFFFFF !important;
-            margin: 0 6px;
-        }
-
-        .team-home-side {
-            justify-content: flex-end;
-            text-align: right;
-        }
-
-        .team-away-side {
-            justify-content: flex-start;
-            text-align: left;
-        }
-
-        /* Perfectly Aligned VS Center Circle */
-        .vs-circle-center {
-            background-color: #222222;
-            color: #FFFFFF !important;
-            font-size: 14px;
-            font-weight: 900 !important;
-            width: 36px;
-            height: 36px;
-            line-height: 32px;
-            border-radius: 50%;
-            border: 2px solid #006847;
-            margin: 0 25px;
-            display: inline-block;
-            text-align: center;
+            padding: 20px;
             box-sizing: border-box;
+            height: 100%;
+            min-height: 80px;
+        }
+
+        /* Home panel pushes text right, AWAY pushes left to keep names near VS */
+        .home-panel {
+            justify-content: flex-end;
+            padding-right: 45px;
+            border-right: 2px solid #FFFFFF;
+        }
+
+        .away-panel {
+            justify-content: flex-start;
+            padding-left: 45px;
+        }
+
+        /* Team Text Styling with forced visibility shadow */
+        .team-panel-text {
+            color: #FFFFFF !important;
+            font-size: 20px;
+            font-weight: 900 !important;
+            text-shadow: 0px 1px 4px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+        }
+
+        .team-panel-text span {
+            font-size: 13px;
+            font-weight: 400 !important;
+            opacity: 0.9;
+            color: #FFFFFF !important;
+            margin: 0 4px;
+        }
+
+        /* Perfectly Centered VS Symbol locked over the middle divider */
+        .vs-marker-bubble {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background-color: #111111;
+            color: #FFFFFF !important;
+            font-size: 13px;
+            font-weight: 900 !important;
+            padding: 6px 10px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
         .banner-bottom-time {
+            background-color: #111111;
+            padding: 10px 20px;
             font-size: 13px;
             font-weight: 700 !important;
             color: #FFFFFF !important;
-            margin-top: 15px;
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
         }
         
         .banner-flag {
@@ -137,10 +155,11 @@ st.markdown("""
             height: 22px !important;
             object-fit: cover !important;
             border-radius: 3px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
             display: inline-block;
             margin: 0 10px;
             vertical-align: middle;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
         }
 
         /* Smaller Side-by-Side Stat Blocks */
@@ -227,17 +246,33 @@ st.markdown("""
             display: inline-block;
         }
 
-        @media (max-width: 600px) {
-            .matchup-grid-center {
-                grid-template-columns: 1fr;
+        @media (max-width: 800px) {
+            .match-banner-container {
+                flex-direction: column;
             }
-            .team-home-side, .team-away-side {
-                justify-content: center;
-                text-align: center;
-                padding: 5px 0;
+            .matchup-split-screen {
+                flex-direction: column;
+                width: 100%;
             }
-            .vs-circle-center {
-                margin: 10px auto;
+            .team-panel {
+                width: 100% !important;
+                justify-content: center !important;
+                padding: 15px !important;
+                font-size: 16px;
+            }
+            .home-panel {
+                border-right: none !important;
+                border-bottom: 2px solid #FFFFFF;
+                padding-right: 20px !important;
+            }
+            .away-panel {
+                padding-left: 20px !important;
+            }
+            .vs-marker-bubble {
+                top: auto;
+                bottom: -14px;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
     </style>
@@ -276,6 +311,27 @@ EXPECTED_RANKINGS = {
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
+# --- DYNAMIC BANNER TEAM COLOR MAPPING ---
+# Key primary color for each country. If a country isn't in here, it defaults to black.
+TEAM_COLORS = {
+    "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
+    "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
+    "Bosnia-Herzegovina": "#002F6C", "Czechia": "#11457E", "Qatar": "#8A1538", "Morocco": "#C1272D",
+    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#222222",
+    "Curaçao": "#002B7F", "Ecuador": "#FFDD00", "Japan": "#00005C", "Belgium": "#E30A17",
+    "Egypt": "#C1272D", "Tunisia": "#E70013", "Netherlands": "#E05206", "Ivory Coast": "#E87722",
+    "Australia": "#00008B", "Cape Verde Islands": "#003893", "Cape Verde": "#003893", "Uruguay": "#0081C8", 
+    "Sweden": "#006AA7", "Saudi Arabia": "#006C35", "Scotland": "#005EB8", "United States": "#002868", 
+    "Senegal": "#00853F", "New Zealand": "#111111", "Iran": "#239E46", "Iraq": "#007A3D", 
+    "Norway": "#EF2B2D", "Algeria": "#006233", "Austria": "#ED2939", "Jordan": "#1A1A1A", 
+    "Congo DR": "#007FFF", "DR Congo": "#007FFF", "Portugal": "#FF0000", "Uzbekistan": "#0099B5", 
+    "Colombia": "#FCD116", "England": "#CE1124", "Panama": "#DA121A", "Ghana": "#DA121A", 
+    "Croatia": "#FF0000", "South Korea": "#111111"
+}
+
+DEFAULT_LEFT_COLOR = "#006847"   # Mexico Green
+DEFAULT_RIGHT_COLOR = "#007A4D"  # South Africa Green
+
 def format_to_uk_time(utc_str):
     try:
         dt = datetime.strptime(utc_str, "%Y-%m-%dT%H:%M:%SZ")
@@ -298,6 +354,10 @@ all_matches = []
 standings_list = []
 master_flat_leaderboard = []
 top_performer_text = "N/A"
+
+# Set initial banner colours to fallbacks
+banner_left_color = DEFAULT_LEFT_COLOR
+banner_right_color = DEFAULT_RIGHT_COLOR
 
 if API_TOKEN != "placeholder":
     try:
@@ -352,6 +412,15 @@ if API_TOKEN != "placeholder":
                 next_home = home_team_obj.get("name", "TBD")
                 next_away = away_team_obj.get("name", "TBD")
                 
+                # Fetch dynamically matching colours
+                banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
+                banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
+                
+                # Special Case: If both countries have the same colour (e.g. Egypt vs Morocco, Germany vs NZ)
+                # We need a slight shade difference so the VS bubble is visible.
+                if banner_left_color == banner_right_color:
+                    banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
+
                 if home_team_obj.get("crest"):
                     next_home_flag = f'<img src="{home_team_obj.get("crest")}" class="banner-flag">'
                 if away_team_obj.get("crest"):
@@ -376,30 +445,32 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- THE CLEAN CENTRED MATCHUP BANNER ---
-# Construct HTML using explicit concatenation to prevent Python f-string rendering bugs
-banner_html = (
-    '<div class="match-banner-wrapper">'
-    '    <div class="banner-top-label">⏳ Next Match</div>'
-    '    <div class="matchup-grid-center">'
-    '        <!-- Home Team on the Left Side pushing Right -->'
-    '        <div class="team-side team-home-side">'
-    + next_home_flag + ' ' + next_home + ' <span>' + next_home_owner + '</span>'
-    '        </div>'
-    '        '
-    '        <!-- VS Symbol strictly fixed in the dead center -->'
-    '        <div class="vs-circle-center">VS</div>'
-    '        '
-    '        <!-- Away Team on the Right Side pushing Left -->'
-    '        <div class="team-side team-away-side">'
-    '            <span>' + next_away_owner + '</span> ' + next_away + ' ' + next_away_flag + ''
-    '        </div>'
-    '    </div>'
-    '    <div class="banner-bottom-time">🗓️ ' + next_date + '</div>'
-    '</div>'
-)
-
-st.markdown(banner_html, unsafe_allow_html=True)
+# --- DYNAMIC COLOURED, CENTRED MATCHUP BANNER ---
+st.markdown(f"""
+    <div class="match-banner-container">
+        <div class="banner-top-pane">
+            <div class="next-match-title">⏳ Next Match</div>
+        </div>
+        
+        <div class="matchup-split-screen">
+            <div class="team-panel home-panel" style="background-color: {banner_left_color};">
+                <div class="team-panel-text">
+                    {next_home_flag} {next_home} <span>{next_home_owner}</span>
+                </div>
+            </div>
+            
+            <div class="vs-marker-bubble">VS</div>
+            
+            <div class="team-panel away-panel" style="background-color: {banner_right_color};">
+                <div class="team-panel-text">
+                    <span>{next_away_owner}</span> {next_away} {next_away_flag}
+                </div>
+            </div>
+        </div>
+        
+        <div class="banner-bottom-time">🗓️ {next_date}</div>
+    </div>
+""", unsafe_allow_html=True)
 
 # --- STATS ROW ---
 stat_cols = st.columns(3)
@@ -469,11 +540,11 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
                         
-                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures</span>", unsafe_allow_html=True)
+                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
                         if not group_fixtures:
-                            st.caption("No fixtures listed.")
+                            st.caption("No fixtures currently listed for this group.")
                         else:
                             group_fixtures.sort(key=lambda x: x.get("utcDate", ""))
                             for match in group_fixtures[:6]:
@@ -509,7 +580,7 @@ else:
                                 """, unsafe_allow_html=True)
                         st.markdown("<br>", unsafe_allow_html=True)
 
-        # --- LEADERBOARD ---
+        # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
