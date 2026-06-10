@@ -1,7 +1,8 @@
-import streamlit as st
+import os
 import requests
 from datetime import datetime
 import pytz
+import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 # 1. Page Configurations & Branding Styles
@@ -68,6 +69,7 @@ st.markdown("""
             margin: 15px 0px;
             overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
+            min-height: 80px;
         }
 
         .banner-label-pane {
@@ -107,6 +109,7 @@ st.markdown("""
             font-weight: 900 !important;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
             box-sizing: border-box;
+            height: 100%;
         }
 
         .team-panel span {
@@ -119,13 +122,13 @@ st.markdown("""
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 40px;
+            padding-right: 45px;
             border-right: 2px solid #FFFFFF;
         }
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 40px;
+            padding-left: 45px;
         }
 
         /* Centered VS Bubble Locked to Center Line */
@@ -139,7 +142,7 @@ st.markdown("""
             color: #FFFFFF !important;
             font-size: 13px;
             font-weight: 900 !important;
-            padding: 5px 9px;
+            padding: 6px 10px;
             border-radius: 50%;
             border: 2px solid #FFFFFF;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
@@ -264,7 +267,8 @@ st.markdown("""
             font-family: 'Figtree', sans-serif !important;
             font-size: 18px;
             font-weight: 800 !important;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            margin-top: 10px;
             display: inline-block;
         }
 
@@ -284,12 +288,16 @@ st.markdown("""
             .team-panel {
                 width: 100% !important;
                 justify-content: center !important;
-                padding: 10px !important;
+                padding: 15px !important;
                 font-size: 16px;
             }
             .home-panel {
                 border-right: none !important;
                 border-bottom: 2px solid #FFFFFF;
+                padding-right: 20px !important;
+            }
+            .away-panel {
+                padding-left: 20px !important;
             }
             .vs-marker-bubble {
                 top: auto;
@@ -302,7 +310,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 2. Configuration & API Settings
-import os
 API_TOKEN = os.environ.get("FOOTBALL_API_TOKEN", "placeholder")
 COMPETITION_CODE = "WC"
 BASE_URL = "https://api.football-data.org/v4"
@@ -312,7 +319,7 @@ HEADERS = {"X-Auth-Token": API_TOKEN}
 SWEEPSTAKE_MAPPING = {
     "Mexico": "TBC", "South Africa": "TBC", "Canada": "TBC", "Switzerland": "TBC",
     "Argentina": "TBC", "France": "TBC", "Brazil": "TBC", "Spain": "TBC",
-    "Bosnia-Herzegovina": "TBC", "Czechia": "TBC", "Qatar": "TBC", "Morocco": "TBC",
+    "Bosnia-Herzegovina": "Izzy", "Czechia": "TBC", "Qatar": "TBC", "Morocco": "TBC",
     "Haiti": "TBC", "Turkey": "TBC", "Paraguay": "TBC", "Germany": "TBC",
     "Curaçao": "TBC", "Ecuador": "TBC", "Japan": "TBC", "Belgium": "TBC",
     "Egypt": "TBC", "Tunisia": "TBC", "Netherlands": "TBC", "Ivory Coast": "TBC",
@@ -420,7 +427,7 @@ if API_TOKEN != "placeholder":
             
             best_overperformer = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
             op_owner = SWEEPSTAKE_MAPPING.get(best_overperformer["name"], "Unassigned")
-            top_performer_text = f"{best_overperformer['name']} ({op_owner})"
+            top_performer_text = f"{best_overperformer['name']} ({op_owner}) [+{best_overperformer['overperformance']}]"
         
         # Fetch Match Data
         matches_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches"
@@ -477,15 +484,12 @@ st.markdown(f"""
         </div>
         
         <div class="matchup-split-screen">
-            <!-- Home Team Box Segment -->
             <div class="team-panel home-panel" style="background-color: {banner_left_color};">
                 {next_home_flag} {next_home} <span>{next_home_owner}</span>
             </div>
             
-            <!-- Exact Center Anchor Divider -->
             <div class="vs-marker-bubble">VS</div>
             
-            <!-- Away Team Box Segment -->
             <div class="team-panel away-panel" style="background-color: {banner_right_color};">
                 <span>{next_away_owner}</span> {next_away} {next_away_flag}
             </div>
@@ -565,7 +569,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
                         
-                        st.write("<span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
+                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
                         if not group_fixtures:
@@ -603,7 +607,7 @@ else:
                                         </div>
                                     </div>
                                 """, unsafe_allow_html=True)
-                        st.write("<br>", unsafe_allow_html=True)
+                        st.markdown("<br>", unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
