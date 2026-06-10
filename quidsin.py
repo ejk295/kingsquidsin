@@ -378,7 +378,47 @@ GROUP_PLAYERS = {
     "Germany": {"player_name": "Kai Havertz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kai-havertz-germany-forward-profile-full.png"},
     "Portugal": {"player_name": "B. Fernandes", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bruno-fernandes-portugal-midfielder-profile-full.png"},
     "Netherlands": {"player_name": "F. de Jong", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"},
-    "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"}
+    "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"},
+    "Ivory Coast": {"player_name": "", "img_url": ""},
+    "Bosnia-Herzegovina": {"player_name": "", "img_url": ""},
+    "Cape Verde Islands": {"player_name": "", "img_url": ""},
+    "Curaçao": {"player_name": "", "img_url": ""},
+    "Haiti": {"player_name": "", "img_url": ""},
+    "Congo DR": {"player_name": "", "img_url": ""},
+    "Ghana": {"player_name": "", "img_url": ""},
+    "Algeria": {"player_name": "", "img_url": ""},
+    "Australia": {"player_name": "", "img_url": ""},
+    "Canada": {"player_name": "", "img_url": ""},
+    "Czechia": {"player_name": "", "img_url": ""},
+    "Austria": {"player_name": "", "img_url": ""},
+    "New Zealand": {"player_name": "", "img_url": ""},
+    "Iraq": {"player_name": "", "img_url": ""},
+    "Jordan": {"player_name": "", "img_url": ""},
+    "Egypt": {"player_name": "", "img_url": ""},
+    "Ecuador": {"player_name": "", "img_url": ""},
+    "Saudi Arabia": {"player_name": "", "img_url": ""},
+    "Belgium": {"player_name": "", "img_url": ""},
+    "Qatar": {"player_name": "", "img_url": ""},
+    "Colombia": {"player_name": "", "img_url": ""},
+    "Iran": {"player_name": "", "img_url": ""},
+    "South Africa": {"player_name": "", "img_url": ""},
+    "Norway": {"player_name": "", "img_url": ""},
+    "Croatia": {"player_name": "", "img_url": ""},
+    "Paraguay": {"player_name": "", "img_url": ""},
+    "Panama": {"player_name": "", "img_url": ""},
+    "Japan": {"player_name": "", "img_url": ""},
+    "Scotland": {"player_name": "", "img_url": ""},
+    "Tunisia": {"player_name": "", "img_url": ""},
+    "Sweden": {"player_name": "", "img_url": ""},
+    "Uzbekistan": {"player_name": "", "img_url": ""},
+    "Mexico": {"player_name": "", "img_url": ""},
+    "South Korea": {"player_name": "", "img_url": ""},
+    "Morocco": {"player_name": "", "img_url": ""},
+    "Senegal": {"player_name": "", "img_url": ""},
+    "Switzerland": {"player_name": "", "img_url": ""},
+    "United States": {"player_name": "", "img_url": ""},
+    "Uruguay": {"player_name": "", "img_url": ""},
+    "Turkey": {"player_name": "", "img_url": ""}
 }
 
 DEFAULT_LEFT_COLOR = "#006847"
@@ -444,7 +484,7 @@ if API_TOKEN != "placeholder":
             
             best_overperformer = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
             op_owner = SWEEPSTAKE_MAPPING.get(best_overperformer["name"], "Unassigned")
-            top_performer_text = f"{best_overperformer['name']} ({op_owner}) [+{best_overperformer['overperformance']}]"
+            top_performer_text = f"{best_overperformer['name']} ({op_owner})"
         
         # Fetch Matches
         matches_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches"
