@@ -646,11 +646,12 @@ else:
                                 """)
                         
                         if active_cards:
-                            # Zeroed margins on this text block to minimize whitespace gaps
-                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin: 10px 0px 0px 0px;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
-                            players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
+                            # Using 'margin: 0 !important' to crush the space
+                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin: 0px 0px 4px 0px !important;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
+                            players_row_html = '<div class="group-players-container" style="margin: 0px 0px 10px 0px !important;">' + "".join(active_cards) + '</div>'
                             st.markdown(players_row_html, unsafe_allow_html=True)
 
+                        # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
