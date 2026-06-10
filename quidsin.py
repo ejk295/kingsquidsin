@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # Run page auto-refresh every 30 seconds to keep live scores syncing
-st_autorefresh(interval=90 * 1000, key="datarefresh")
+st_autorefresh(interval=30 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
@@ -463,7 +463,7 @@ else:
                                 
                                 if m_status == "FINISHED":
                                     display_score = f"<b>{match.get('score', {}).get('fullTime', {}).get('home')} - {match.get('score', {}).get('fullTime', {}).get('away')}</b>"
-                                  elif m_status in ["IN_PLAY", "PAUSED"]:
+                                elif m_status in ["IN_PLAY", "PAUSED"]:
                                     display_score = f"<span style='color:red; font-weight:700;'>🔴 {match.get('score', {}).get('fullTime', {}).get('home', 0)}-{match.get('score', {}).get('fullTime', {}).get('away', 0)}</span>"
                                 else:
                                     display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
