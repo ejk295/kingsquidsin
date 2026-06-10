@@ -673,30 +673,25 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-                        active_cards_html = "" # Initialize as a string
-
+                        # 1. Build the list of cards first
+                        cards = []
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
-                                p_data = GROUP_PLAYERS[team_name]
-                                # Add each card to the HTML string
-                                active_cards_html += f"""
-                                <div class="group-player-card">
-                                    <img src="{p_data['img_url']}" loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous">
-                                    <div class="group-player-card-name">{p_data['player_name']}</div>
-                                    <div class="group-player-card-team">{team_name}</div>
-                                </div>
-                                """
+                                p = GROUP_PLAYERS[team_name]
+                                cards.append(f"""
+                                    <div class="group-player-card">
+                                        <img src="{p['img_url']}" loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous">
+                                        <div class="group-player-card-name">{p['player_name']}</div>
+                                        <div class="group-player-card-team">{team_name}</div>
+                                    </div>
+                                """)
 
-                        # Only render if we actually found players
-                        if active_cards_html:
-                            st.markdown(
-                                "<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
-                                unsafe_allow_html=True
-                            )
-                            # Render the full container with all cards at once
-                            st.markdown(f'<div class="group-players-container">{active_cards_html}</div>', unsafe_allow_html=True)
+                        # 2. If we found players, render the container once
+                        if cards:
+                            st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
+                            st.markdown(f'<div class="group-players-container">{"".join(cards)}</div>', unsafe_allow_html=True)
                         
-                        # Close the group-row-spacer div
+                        # 3. Close the spacer div started at the beginning of this column
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
