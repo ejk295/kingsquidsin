@@ -57,148 +57,121 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- STRUCTURAL THREE-PART NEXT MATCH BANNER --- */
-        .banner-wrapper {
+        /* --- BULLETPROOF NEXT MATCH BAR LAYOUT --- */
+        .match-banner-container {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: space-between;
-            background: #111;
+            background-color: #111111;
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
             margin: 15px 0px;
-            padding: 10px 20px;
             overflow: hidden;
-            min-height: 70px;
+            font-family: 'Figtree', sans-serif !important;
         }
-        
-        .banner-side-label {
-            flex: 0 0 auto;
-            width: 140px;
+
+        .banner-label-pane {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            background-color: #111111;
         }
-        
+
         .next-match-title {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800 !important;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.15);
             padding: 6px 12px;
             border-radius: 6px;
             color: #FFFFFF !important;
-            display: inline-block;
-            text-align: center;
+            white-space: nowrap;
         }
-        
-        /* Middle Match-up Zone Container */
-        .matchup-container {
+
+        /* Middle Split-Screen Wrapper */
+        .matchup-split-screen {
             display: flex;
-            flex: 1 1 auto;
-            align-items: center;
-            justify-content: center;
-            height: 70px;
+            flex: 1;
             position: relative;
-            margin: 0 15px;
+            align-items: center;
         }
-        
-        /* Split background halves */
-        .half-block {
-            position: absolute;
-            top: -15px;
-            bottom: -15px;
+
+        .team-panel {
             width: 50%;
-            z-index: 1;
-        }
-        .left-half {
-            left: -20px;
-            right: 50%;
-            transform: skewX(-15deg);
-            transform-origin: bottom right;
-            border-right: 2px solid #FFFFFF;
-        }
-        .right-half {
-            right: -20px;
-            left: 50%;
-            transform: skewX(-15deg);
-            transform-origin: top left;
-        }
-        
-        /* Text Contents Placed over the graphic shapes safely */
-        .team-box-wrapper {
-            position: relative;
-            z-index: 2;
             display: flex;
             align-items: center;
-            width: 100%;
-            height: 100%;
+            padding: 15px 20px;
             color: #FFFFFF !important;
-        }
-        
-        .home-side-flex, .away-side-flex {
-            width: 50%;
-            display: flex;
-            align-items: center;
             font-size: 20px;
             font-weight: 900 !important;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-            color: #FFFFFF !important;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            box-sizing: border-box;
         }
-        .home-side-flex {
-            justify-content: flex-end;
-            padding-right: 35px;
-        }
-        .away-side-flex {
-            justify-content: flex-start;
-            padding-left: 35px;
-        }
-        
-        .team-box-wrapper span {
+
+        .team-panel span {
             font-size: 13px;
             font-weight: 400 !important;
             opacity: 0.85;
             color: #FFFFFF !important;
             margin: 0 4px;
         }
-        
-        /* Centralized VS Badge explicitly resting over the white boundary line */
-        .vs-badge-centered {
+
+        .home-panel {
+            justify-content: flex-end;
+            padding-right: 40px;
+            border-right: 2px solid #FFFFFF;
+        }
+
+        .away-panel {
+            justify-content: flex-start;
+            padding-left: 40px;
+        }
+
+        /* Centered VS Bubble Locked to Center Line */
+        .vs-marker-bubble {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            z-index: 3;
-            background: #111111;
+            z-index: 10;
+            background-color: #111111;
             color: #FFFFFF !important;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900 !important;
-            padding: 4px 10px;
+            padding: 5px 9px;
             border-radius: 50%;
             border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
-        
+
+        .banner-time-pane {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            background-color: #111111;
+        }
+
         .next-match-time {
-            flex: 0 0 auto;
-            width: 170px;
-            text-align: right;
             font-size: 13px;
             font-weight: 700 !important;
-            background: rgba(0, 0, 0, 0.4) !important;
+            background: rgba(255, 255, 255, 0.15);
             padding: 6px 12px;
             border-radius: 6px;
             color: #FFFFFF !important;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
         
-        /* Large banner flag formatting */
         .banner-flag {
-            width: 28px !important;
-            height: 19px !important;
+            width: 30px !important;
+            height: 20px !important;
             object-fit: cover !important;
             border-radius: 3px;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
             display: inline-block;
             margin: 0 8px;
+            vertical-align: middle;
         }
 
         /* Smaller Side-by-Side Stat Blocks */
@@ -295,23 +268,35 @@ st.markdown("""
             display: inline-block;
         }
 
-        /* Mobile Adjustments for Next Match Bar */
-        @media (max-width: 768px) {
-            .banner-wrapper {
+        /* Mobile Adaptive Layout Rule */
+        @media (max-width: 800px) {
+            .match-banner-container {
                 flex-direction: column;
-                gap: 12px;
-                padding: 15px 10px;
             }
-            .banner-side-label, .next-match-time, .matchup-container {
+            .banner-label-pane, .banner-time-pane {
+                padding: 10px;
+                justify-content: center;
+            }
+            .matchup-split-screen {
+                flex-direction: column;
+                width: 100%;
+            }
+            .team-panel {
                 width: 100% !important;
-                text-align: center !important;
                 justify-content: center !important;
+                padding: 10px !important;
+                font-size: 16px;
             }
-            .home-side-flex, .away-side-flex {
-                font-size: 15px;
+            .home-panel {
+                border-right: none !important;
+                border-bottom: 2px solid #FFFFFF;
             }
-            .home-side-flex { padding-right: 20px; }
-            .away-side-flex { padding-left: 20px; }
+            .vs-marker-bubble {
+                top: auto;
+                bottom: -14px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
         }
     </style>
 """, unsafe_allow_html=True)
@@ -484,31 +469,31 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- NEW PIXEL-PERFECT PILL-BANNER STRUCTURAL LAYOUT ---
+# --- REPAIRED DUAL-COLORED FLEX BANNER SYSTEM ---
 st.markdown(f"""
-    <div class="banner-wrapper">
-        <div class="banner-side-label">
+    <div class="match-banner-container">
+        <div class="banner-label-pane">
             <div class="next-match-title">⏳ Next Match</div>
         </div>
-        <div class="matchup-container">
-            <!-- Dynamic Skew Blocks Behind Content Boundary -->
-            <div class="half-block left-half" style="background-color: {banner_left_color};"></div>
-            <div class="half-block right-half" style="background-color: {banner_right_color};"></div>
+        
+        <div class="matchup-split-screen">
+            <!-- Home Team Box Segment -->
+            <div class="team-panel home-panel" style="background-color: {banner_left_color};">
+                {next_home_flag} {next_home} <span>{next_home_owner}</span>
+            </div>
             
-            <!-- VS Bubble precisely centered on top of the border divider -->
-            <div class="vs-badge-centered">VS</div>
+            <!-- Exact Center Anchor Divider -->
+            <div class="vs-marker-bubble">VS</div>
             
-            <!-- Safe Text Overlays -->
-            <div class="team-box-wrapper">
-                <div class="home-side-flex">
-                    {next_home_flag} {next_home}<span>{next_home_owner}</span>
-                </div>
-                <div class="away-side-flex">
-                    <span>{next_away_owner}</span>{next_away} {next_away_flag}
-                </div>
+            <!-- Away Team Box Segment -->
+            <div class="team-panel away-panel" style="background-color: {banner_right_color};">
+                <span>{next_away_owner}</span> {next_away} {next_away_flag}
             </div>
         </div>
-        <div class="next-match-time">🗓️ {next_date}</div>
+        
+        <div class="banner-time-pane">
+            <div class="next-match-time">🗓️ {next_date}</div>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
