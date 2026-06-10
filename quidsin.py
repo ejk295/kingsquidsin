@@ -641,7 +641,7 @@ else:
                                 """)
                         
                         if active_cards:
-                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-top:8px; margin-bottom:4px;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
+                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-top:4px; margin-bottom:4px;'>🌟 Key players</span>", unsafe_allow_html=True)
                             players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
                             st.markdown(players_row_html, unsafe_allow_html=True)
 
