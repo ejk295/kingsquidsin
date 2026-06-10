@@ -18,7 +18,7 @@ st_autorefresh(interval=30 * 1000, key="datarefresh")
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
 
         /* Force global app body background, standard text, and Figtree font */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
@@ -189,8 +189,8 @@ st.markdown("""
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 4px; /* Tighter gap below the title text */
-            margin-bottom: 5px;
+            margin-top: 2px !important; 
+            margin-bottom: 0px !important;
             justify-content: flex-start;
         }
         .group-player-card {
@@ -228,14 +228,14 @@ st.markdown("""
 
         /* Clean Separator Block for Group Rows Grid layout */
         .group-row-spacer {
-            margin-bottom: 35px; /* Clean structured gap between top row and bottom row blocks */
+            margin-bottom: 15px !important; /* Tightened gap between rows */
         }
 
         /* Responsive Table Canvas Controls */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
-            margin-bottom: 15px;
+            margin-bottom: 8px !important;
         }
         
         .custom-dashboard-table {
@@ -249,11 +249,11 @@ st.markdown("""
             background-color: #FAFAFA !important;
             color: #333333 !important;
             font-weight: 700 !important;
-            padding: 8px 6px;
+            padding: 6px 6px !important;
             border-bottom: 2px solid #006847;
         }
         .custom-dashboard-table td {
-            padding: 8px 6px;
+            padding: 6px 6px !important;
             border-bottom: 1px solid #EAEAEA;
             vertical-align: middle;
             background-color: #FFFFFF !important;
@@ -262,9 +262,9 @@ st.markdown("""
         
         .fixture-row {
             background-color: #FFFFFF !important;
-            padding: 8px 10px;
+            padding: 6px 8px !important;
             border-radius: 4px;
-            margin-bottom: 4px;
+            margin-bottom: 3px !important;
             border: 1px solid #EAEAEA;
             font-size: 12px;
             display: flex;
@@ -283,8 +283,8 @@ st.markdown("""
             color: #006847 !important;
             font-size: 18px;
             font-weight: 800 !important;
-            margin-bottom: 12px;
-            margin-top: 10px;
+            margin-bottom: 4px !important;
+            margin-top: 0px !important;
             display: inline-block;
         }
 
@@ -547,7 +547,7 @@ else:
                     teams_in_group = [row.get("team", {}).get("name") for row in group_data.get("table", [])]
                     
                     with row_cols[j]:
-                        # Wrap everything inside a structural custom spacing class
+                        # Wrap inside structural spacing class
                         st.markdown('<div class="group-row-spacer">', unsafe_allow_html=True)
                         st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
                         
@@ -592,8 +592,8 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
                         
-                        # Render Group Fixtures
-                        st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-bottom:6px;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
+                        # Render Group Fixtures - wrapped in a tight flex/spacing div
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group Fixtures & Results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
                         if not group_fixtures:
@@ -646,11 +646,10 @@ else:
                                 """)
                         
                         if active_cards:
-                            # Using 'margin: 0 !important' to crush the space
-                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin: 0px 0px 4px 0px !important;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
-                            players_row_html = '<div class="group-players-container" style="margin: 0px 0px 10px 0px !important;">' + "".join(active_cards) + '</div>'
+                            st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
+                            players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
                             st.markdown(players_row_html, unsafe_allow_html=True)
-
+                        
                         # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -694,12 +693,9 @@ else:
                 <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
                 <td style='text-align:center;'>{team_row['played']}</td>
                 <td style='text-align:center;'>{team_row['gd']}</td>
-                <td style='text-align:center;'>{team_row['pts']}</td>
-                <td style='text-align:right; padding-right:15px; color:{score_color}; font-weight:bold;'>{op_formatted}</td>
+                <td style='text-align:center;'><b>{team_row['pts']}</b></td>
+                <td style='text-align:right; padding-right:15px; font-weight:800; color:{score_color};'>{op_formatted}</td>
             </tr>"""
             
         master_table_html += "</tbody></table></div>"
-        
-        m_center_cols = st.columns([1, 10, 1])
-        with m_center_cols[1]:
-            st.markdown(master_table_html, unsafe_allow_html=True)
+        st.markdown(master_table_html, unsafe_allow_html=True)
