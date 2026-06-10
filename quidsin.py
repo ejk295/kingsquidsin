@@ -673,11 +673,11 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-                        # 1. Build the list of cards first
                         cards = []
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
                                 p = GROUP_PLAYERS[team_name]
+                                # Ensure this string is absolutely clean
                                 cards.append(f"""
                                     <div class="group-player-card">
                                         <img src="{p['img_url']}" loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous">
@@ -686,12 +686,17 @@ else:
                                     </div>
                                 """)
 
-                        # 2. If we found players, render the container once
                         if cards:
                             st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
-                            st.markdown(f'<div class="group-players-container">{"".join(cards)}</div>', unsafe_allow_html=True)
-                        
-                        # 3. Close the spacer div started at the beginning of this column
+                            
+                            # Construct the container
+                            full_html = f'<div class="group-players-container">{"".join(cards)}</div>'
+                            
+                            # USE THIS: Streamlit's native HTML component is much 
+                            # more strict about rendering than markdown
+                            import streamlit.components.v1 as components
+                            components.html(full_html, height=150, scrolling=False)
+
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
