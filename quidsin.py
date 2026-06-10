@@ -392,7 +392,7 @@ if API_TOKEN != "placeholder":
             
             best_overperformer = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
             op_owner = SWEEPSTAKE_MAPPING.get(best_overperformer["name"], "Unassigned")
-            top_performer_text = f"{best_overperformer['name']} ({op_owner}) [+{best_overperformer['overperformance']}]"
+            top_performer_text = f"{best_overperformer['name']} ({op_owner})"
         
         # Fetch Matches
         matches_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches"
