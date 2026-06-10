@@ -329,7 +329,7 @@ HEADERS = {"X-Auth-Token": API_TOKEN}
 SWEEPSTAKE_MAPPING = {
     "Mexico": "TBC", "South Africa": "TBC", "Canada": "TBC", "Switzerland": "TBC",
     "Argentina": "TBC", "France": "TBC", "Brazil": "TBC", "Spain": "TBC",
-    "Bosnia-Herzegovina": "Izzy", "Czechia": "TBC", "Qatar": "TBC", "Morocco": "TBC",
+    "Bosnia-Herzegovina": "TBC", "Czechia": "TBC", "Qatar": "TBC", "Morocco": "TBC",
     "Haiti": "TBC", "Turkey": "TBC", "Paraguay": "TBC", "Germany": "TBC",
     "Curaçao": "TBC", "Ecuador": "TBC", "Japan": "TBC", "Belgium": "TBC",
     "Egypt": "TBC", "Tunisia": "TBC", "Netherlands": "TBC", "Ivory Coast": "TBC",
