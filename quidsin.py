@@ -673,30 +673,44 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-                        cards = []
+                        import streamlit.components.v1 as components
+                        
+                        # 1. Build the HTML string for ALL cards in this group
+                        cards_html = ""
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
                                 p = GROUP_PLAYERS[team_name]
-                                # Ensure this string is absolutely clean
-                                cards.append(f"""
+                                cards_html += f"""
                                     <div class="group-player-card">
                                         <img src="{p['img_url']}" loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous">
                                         <div class="group-player-card-name">{p['player_name']}</div>
                                         <div class="group-player-card-team">{team_name}</div>
                                     </div>
-                                """)
+                                """
 
-                        if cards:
+                        # 2. Render everything as a single component
+                        if cards_html:
                             st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
                             
-                            # Construct the container
-                            full_html = f'<div class="group-players-container">{"".join(cards)}</div>'
+                            # Combine everything into one single container string
+                            # We wrap the cards in the class-defined container
+                            final_container = f'<div class="group-players-container">{cards_html}</div>'
                             
-                            # USE THIS: Streamlit's native HTML component is much 
-                            # more strict about rendering than markdown
-                            import streamlit.components.v1 as components
-                            components.html(full_html, height=150, scrolling=False)
+                            # Inject the CSS along with the HTML to ensure styles are applied inside the iframe
+                            # We reference the styles from the top of your script
+                            full_html = f"""
+                            <style>
+                                .group-players-container {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; justify-content: flex-start; }}
+                                .group-player-card {{ background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 95px; text-align: center; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }}
+                                .group-player-card img {{ width: 100%; height: auto; border-radius: 4px; object-fit: cover; background: #F5F5F5; }}
+                                .group-player-card-name {{ font-size: 10px; font-weight: 800; color: #333333; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+                                .group-player-card-team {{ font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 1px; }}
+                            </style>
+                            {final_container}
+                            """
+                            components.html(full_html, height=140, scrolling=False)
 
+                        # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
