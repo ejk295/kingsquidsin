@@ -673,22 +673,37 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-                        active_cards = []
-                        for team_name in teams_in_group:
-                            if team_name in GROUP_PLAYERS:
-                                p_data = GROUP_PLAYERS[team_name]
-                                active_cards.append(f"""
-                                    <div class="group-player-card">
-                                        <img src="{p_data['img_url']}">
-                                        <div class="group-player-card-name">{p_data['player_name']}</div>
-                                        <div class="group-player-card-team">{team_name}</div>
-                                    </div>
-                                """)
-                        
-                        if active_cards:
-                            st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
-                            players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
-                            st.markdown(players_row_html, unsafe_allow_html=True)
+                        player_cards = []
+
+for team_name in teams_in_group:
+    if team_name in GROUP_PLAYERS:
+        player_cards.append(
+            {
+                "team": team_name,
+                **GROUP_PLAYERS[team_name]
+            }
+        )
+
+if player_cards:
+    st.markdown(
+        "<div style='margin: 6px 0px 0px 0px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
+        unsafe_allow_html=True
+    )
+
+    cols = st.columns(min(len(player_cards), 4))
+
+    for idx, player in enumerate(player_cards):
+        with cols[idx % 4]:
+            st.image(player["img_url"], use_container_width=True)
+            st.markdown(
+                f"""
+                <div style='text-align:center'>
+                    <div style='font-size:11px;font-weight:800;'>{player['player_name']}</div>
+                    <div style='font-size:9px;color:#006847;'>{player['team']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
                         
                         # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
