@@ -377,25 +377,38 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- THE CLEAN CENTRED MATCHUP BANNER ---
-st.markdown(f"""
-    <div class="match-banner-wrapper">
-        <div class="banner-top-label">⏳ Next Match</div>
-        
-        <div class="matchup-grid-center">
-            <div class="team-side team-home-side">
-                {next_home_flag} {next_home} <span>{next_home_owner}</span>
-            </div>
-            
-            <div class="vs-circle-center">VS</div>
-            
-            <div class="team-side team-away-side">
-                <span>{next_away_owner}</span> {next_away} {next_away_flag}
-            </div>
-        </div>
-        
-        <div class="banner-bottom-time">🗓️ {next_date}</div>
+# --- HEADER ---
+st.markdown("""
+    <div class="title-area">
+        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+        <p>Live standings</p>
     </div>
 """, unsafe_allow_html=True)
+
+# --- THE CLEAN CENTRED MATCHUP BANNER ---
+# Construct HTML using explicit concatenation to prevent Python f-string rendering bugs
+banner_html = (
+    '<div class="match-banner-wrapper">'
+    '    <div class="banner-top-label">⏳ Next Match</div>'
+    '    <div class="matchup-grid-center">'
+    '        <!-- Home Team on the Left Side pushing Right -->'
+    '        <div class="team-side team-home-side">'
+    + next_home_flag + ' ' + next_home + ' <span>' + next_home_owner + '</span>'
+    '        </div>'
+    '        '
+    '        <!-- VS Symbol strictly fixed in the dead center -->'
+    '        <div class="vs-circle-center">VS</div>'
+    '        '
+    '        <!-- Away Team on the Right Side pushing Left -->'
+    '        <div class="team-side team-away-side">'
+    '            <span>' + next_away_owner + '</span> ' + next_away + ' ' + next_away_flag + ''
+    '        </div>'
+    '    </div>'
+    '    <div class="banner-bottom-time">🗓️ ' + next_date + '</div>'
+    '</div>'
+)
+
+st.markdown(banner_html, unsafe_allow_html=True)
 
 # --- STATS ROW ---
 stat_cols = st.columns(3)
