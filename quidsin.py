@@ -189,8 +189,8 @@ st.markdown("""
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 10px;
-            margin-bottom: 15px;
+            margin-top: 4px; /* Tighter gap below the title text */
+            margin-bottom: 5px;
             justify-content: flex-start;
         }
         .group-player-card {
@@ -224,6 +224,11 @@ st.markdown("""
             color: #006847 !important;
             text-transform: uppercase;
             margin-top: 1px;
+        }
+
+        /* Clean Separator Block for Group Rows Grid layout */
+        .group-row-spacer {
+            margin-bottom: 35px; /* Clean structured gap between top row and bottom row blocks */
         }
 
         /* Responsive Table Canvas Controls */
@@ -365,7 +370,6 @@ TEAM_COLORS = {
 }
 
 # --- GROUP PLAYERS MAP ---
-# Map player card resources directly into team slots. Add new teams to this library at any time.
 GROUP_PLAYERS = {
     "Spain": {"player_name": "Lamine Yamal", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lamine-yamal-spain-forward-profile-full.png"},
     "France": {"player_name": "O. Dembélé", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ousmane-dembele-france-forward-profile-full.png"},
@@ -543,6 +547,8 @@ else:
                     teams_in_group = [row.get("team", {}).get("name") for row in group_data.get("table", [])]
                     
                     with row_cols[j]:
+                        # Wrap everything inside a structural custom spacing class
+                        st.markdown('<div class="group-row-spacer">', unsafe_allow_html=True)
                         st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
                         
                         # Render Standings Table
@@ -626,8 +632,7 @@ else:
                                     </div>
                                 """, unsafe_allow_html=True)
                         
-                        # --- DYNAMIC IN-GROUP PLAYERS SUB-SECTION ---
-                        # Generates clean player blocks underneath each group column if mapped
+                        # --- IN-GROUP PLAYERS SUB-SECTION ---
                         active_cards = []
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
@@ -641,11 +646,12 @@ else:
                                 """)
                         
                         if active_cards:
-                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin-top:4px; margin-bottom:4px;'>🌟 Key players</span>", unsafe_allow_html=True)
+                            # Zeroed margins on this text block to minimize whitespace gaps
+                            st.markdown("<span style='font-size:12px; font-weight:700; color:#006847; display:block; margin: 10px 0px 0px 0px;'>🌟 Key Group Players</span>", unsafe_allow_html=True)
                             players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
                             st.markdown(players_row_html, unsafe_allow_html=True)
 
-                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
