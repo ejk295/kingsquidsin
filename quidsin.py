@@ -674,35 +674,34 @@ else:
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-                        active_cards = []
+                    active_cards = []
 
-                        for team_name in teams_in_group:
-                            if team_name in GROUP_PLAYERS:
-                                p_data = GROUP_PLAYERS[team_name]
-                                # Restored image tags with all attributes
-                                active_cards.append(f"""
-                                    <div class="group-player-card">
-                                        <img 
-                                            src="{p_data['img_url']}" 
-                                            loading="eager" 
-                                            referrerpolicy="no-referrer" 
-                                            crossorigin="anonymous"
-                                        >
-                                        <div class="group-player-card-name">{p_data['player_name']}</div>
-                                        <div class="group-player-card-team">{team_name}</div>
-                                    </div>
-                                """)
+                    for team_name in teams_in_group:
+                        if team_name in GROUP_PLAYERS:
+                            p_data = GROUP_PLAYERS[team_name]
+                            active_cards.append(f"""
+                                <div class="group-player-card">
+                                    <img 
+                                        src="{p_data['img_url']}" 
+                                        loading="eager" 
+                                        referrerpolicy="no-referrer" 
+                                        crossorigin="anonymous"
+                                    >
+                                    <div class="group-player-card-name">{p_data['player_name']}</div>
+                                    <div class="group-player-card-team">{team_name}</div>
+                                </div>
+                            """)
 
-                        if active_cards:
-                            st.markdown(
-                                "<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
-                                unsafe_allow_html=True
-                            )
-                            players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
-                            st.markdown(players_row_html, unsafe_allow_html=True)                        
+                    if active_cards:
+                        st.markdown(
+                            "<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
+                            unsafe_allow_html=True
+                        )
+                        players_row_html = '<div class="group-players-container">' + "".join(active_cards) + '</div>'
+                        st.markdown(players_row_html, unsafe_allow_html=True)                        
 
-                        # Close the group-row-spacer div
-                        st.markdown('</div>', unsafe_allow_html=True)
+                    # Close the group-row-spacer div
+                    st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
