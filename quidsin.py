@@ -184,20 +184,20 @@ st.markdown("""
             color: #333333 !important;
         }
 
-        /* --- IN-GROUP TEAM PLAYERS ROW --- */
+        /* --- IN-GROUP TEAM PLAYERS ROW (UPDATED) --- */
         .group-players-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 2px !important; 
+            margin-top: 8px !important; 
             margin-bottom: 0px !important;
-            justify-content: flex-start;
+            justify-content: center; /* Centered */
         }
         .group-player-card {
             background: #FFFFFF;
             border: 1px solid #EAEAEA;
             border-radius: 8px;
-            width: 95px;
+            width: 120px; /* Wider */
             text-align: center;
             padding: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.03);
@@ -210,7 +210,7 @@ st.markdown("""
             background: #F5F5F5;
         }
         .group-player-card-name {
-            font-size: 10px;
+            font-size: 11px; /* Slightly larger */
             font-weight: 800 !important;
             color: #333333 !important;
             margin-top: 3px;
@@ -219,7 +219,7 @@ st.markdown("""
             text-overflow: ellipsis;
         }
         .group-player-card-team {
-            font-size: 8px;
+            font-size: 9px; /* Slightly larger */
             font-weight: 600 !important;
             color: #006847 !important;
             text-transform: uppercase;
@@ -228,7 +228,7 @@ st.markdown("""
 
         /* Clean Separator Block for Group Rows Grid layout */
         .group-row-spacer {
-            margin-bottom: 15px !important; /* Tightened gap between rows */
+            margin-bottom: 15px !important;
         }
 
         /* Responsive Table Canvas Controls */
@@ -674,17 +674,42 @@ else:
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
                         active_cards = []
+
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
-                                p = GROUP_PLAYERS[team_name]
-                                # Ensure the HTML string is compact and free of accidental newlines
-                                card_html = f'''<div class="group-player-card"><img src="{p['img_url']}" loading="eager" referrerpolicy="no-referrer" crossorigin="anonymous"><div class="group-player-card-name">{p['player_name']}</div><div class="group-player-card-team">{team_name}</div></div>'''
-                                active_cards.append(card_html)
+                                p_data = GROUP_PLAYERS[team_name]
+
+                                active_cards.append(f"""
+                                    <div class="group-player-card">
+                                        <img
+                                            src="{p_data['img_url']}"
+                                            loading="eager"
+                                            referrerpolicy="no-referrer"
+                                            crossorigin="anonymous"
+                                        >
+                                        <div class="group-player-card-name">
+                                            {p_data['player_name']}
+                                        </div>
+                                        <div class="group-player-card-team">
+                                            {team_name}
+                                        </div>
+                                    </div>
+                                """)
 
                         if active_cards:
-                            st.markdown("<div style='margin: 6px 0px 0px 0px !important;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
-                            # Render the container with the joined cards string
-                            st.markdown(f'<div class="group-players-container">{"".join(active_cards)}</div>', unsafe_allow_html=True)
+                            # Centered header
+                            st.markdown(
+                                "<div style='margin: 12px 0px 0px 0px !important; text-align: center;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
+                                unsafe_allow_html=True
+                            )
+
+                            players_row_html = (
+                                '<div class="group-players-container">'
+                                + "".join(active_cards)
+                                + '</div>'
+                            )
+
+                            st.markdown(players_row_html, unsafe_allow_html=True)
                         
                         # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
