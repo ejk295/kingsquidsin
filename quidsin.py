@@ -264,7 +264,7 @@ st.markdown("""
                 border-right: none !important;
                 border-bottom: 2px solid #FFFFFF;
                 padding-right: 20px !important;
-            }
+                }
             .away-panel {
                 padding-left: 20px !important;
             }
@@ -312,7 +312,6 @@ EXPECTED_RANKINGS = {
 }
 
 # --- DYNAMIC BANNER TEAM COLOR MAPPING ---
-# Key primary color for each country. If a country isn't in here, it defaults to black.
 TEAM_COLORS = {
     "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
     "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
@@ -416,8 +415,7 @@ if API_TOKEN != "placeholder":
                 banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
                 banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
                 
-                # Special Case: If both countries have the same colour (e.g. Egypt vs Morocco, Germany vs NZ)
-                # We need a slight shade difference so the VS bubble is visible.
+                # Special Case: If both countries have the same colour
                 if banner_left_color == banner_right_color:
                     banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
 
@@ -446,31 +444,33 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- DYNAMIC COLOURED, CENTRED MATCHUP BANNER ---
-st.markdown(f"""
-    <div class="match-banner-container">
-        <div class="banner-top-pane">
-            <div class="next-match-title">⏳ Next Match</div>
-        </div>
-        
-        <div class="matchup-split-screen">
-            <div class="team-panel home-panel" style="background-color: {banner_left_color};">
-                <div class="team-panel-text">
-                    {next_home_flag} {next_home} <span>{next_home_owner}</span>
-                </div>
-            </div>
-            
-            <div class="vs-marker-bubble">VS</div>
-            
-            <div class="team-panel away-panel" style="background-color: {banner_right_color};">
-                <div class="team-panel-text">
-                    <span>{next_away_owner}</span> {next_away} {next_away_flag}
-                </div>
-            </div>
-        </div>
-        
-        <div class="banner-bottom-time">🗓️ {next_date}</div>
-    </div>
-""", unsafe_allow_html=True)
+# Explicitly using string chunks to prevent f-string parser collisions with CSS braces
+banner_html = (
+    '<div class="match-banner-container">'
+    '    <div class="banner-top-pane">'
+    '        <div class="next-match-title">⏳ Next Match</div>'
+    '    </div>'
+    '    '
+    '    <div class="matchup-split-screen">'
+    '        <div class="team-panel home-panel" style="background-color: ' + banner_left_color + ';">'
+    '            <div class="team-panel-text">'
+    '                ' + next_home_flag + ' ' + next_home + ' <span>' + next_home_owner + '</span>'
+    '            </div>'
+    '        </div>'
+    '        '
+    '        <div class="vs-marker-bubble">VS</div>'
+    '        '
+    '        <div class="team-panel away-panel" style="background-color: ' + banner_right_color + ';">'
+    '            <div class="team-panel-text">'
+    '                <span>' + next_away_owner + '</span> ' + next_away + ' ' + next_away_flag + ''
+    '            </div>'
+    '        </div>'
+    '    </div>'
+    '    '
+    '    <div class="banner-bottom-time">🗓️ ' + next_date + '</div>'
+    '</div>'
+)
+st.markdown(banner_html, unsafe_allow_html=True)
 
 # --- STATS ROW ---
 stat_cols = st.columns(3)
