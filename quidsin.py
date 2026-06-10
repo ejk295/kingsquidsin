@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # Run page auto-refresh every 30 seconds to keep live scores syncing
-st_autorefresh(interval=30 * 1000, key="datarefresh")
+st_autorefresh(interval=90 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
@@ -33,15 +33,15 @@ st.markdown("""
             font-family: 'Figtree', sans-serif !important;
         }
         
-        /* Keep headers fixed to brand orange and use Figtree with heavy weight */
+        /* Keep headers fixed to brand Mexico Green and use Figtree with heavy weight */
         h1, h2, h3 {
-            color: #FF6B00 !important;
+            color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
         
         .header-container {
-            border-bottom: 2px solid #FF6B00;
+            border-bottom: 2px solid #006847;
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
@@ -57,9 +57,9 @@ st.markdown("""
             font-size: 16px;
         }
         
-        /* Mobile-responsive Flex Container for Next Match Banner */
+        /* Mobile-responsive Flex Container for Next Match Banner - Mexico Green to Red Gradient */
         .next-match-banner {
-            background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%) !important;
+            background: linear-gradient(135deg, #006847 0%, #ce1126 100%) !important;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
@@ -137,7 +137,7 @@ st.markdown("""
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 800 !important;
-            color: #FF6B00 !important;
+            color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
         }
         .stat-banner-box span {
@@ -169,7 +169,7 @@ st.markdown("""
             color: #333333 !important;
             font-weight: 700 !important;
             padding: 8px 6px;
-            border-bottom: 2px solid #FF6B00;
+            border-bottom: 2px solid #006847;
         }
         .custom-dashboard-table td {
             padding: 8px 6px;
@@ -209,7 +209,7 @@ st.markdown("""
             display: inline-block;
         }
         .group-header-text {
-            color: #FF6B00 !important;
+            color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
             font-size: 18px;
             font-weight: 800 !important;
@@ -378,7 +378,7 @@ with stat_cols[1]:
 with stat_cols[2]:
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #FF6B00;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
 # 3. Render Dashboard Core Content Loop
 if API_TOKEN == "placeholder":
@@ -442,7 +442,7 @@ else:
                         st.markdown(table_html, unsafe_allow_html=True)
                         
                         # --- CHRONOLOGICAL FIXTURES SUBSECTION ---
-                        st.write("<span style='font-size:12px; font-weight:700; color:#FF6B00;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
+                        st.write("<span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
                         
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
@@ -463,7 +463,7 @@ else:
                                 
                                 if m_status == "FINISHED":
                                     display_score = f"<b>{match.get('score', {}).get('fullTime', {}).get('home')} - {match.get('score', {}).get('fullTime', {}).get('away')}</b>"
-                                elif m_status in ["IN_PLAY", "PAUSED"]:
+                                  elif m_status in ["IN_PLAY", "PAUSED"]:
                                     display_score = f"<span style='color:red; font-weight:700;'>🔴 {match.get('score', {}).get('fullTime', {}).get('home', 0)}-{match.get('score', {}).get('fullTime', {}).get('away', 0)}</span>"
                                 else:
                                     display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
@@ -484,7 +484,7 @@ else:
                         st.write("<br>", unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #FF6B00;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
         
