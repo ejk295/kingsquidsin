@@ -56,69 +56,149 @@ st.markdown("""
             font-weight: 700 !important;
             font-size: 16px;
         }
-        
-        /* Ensure text inside next match banner stays white */
-        .next-match-banner, 
-        .next-match-title, 
-        .next-match-teams, 
-        .next-match-teams span, 
-        .next-match-vs, 
-        .next-match-time {
-            color: #FFFFFF !important;
-            font-family: 'Figtree', sans-serif !important;
+
+        /* --- STRUCTURAL THREE-PART NEXT MATCH BANNER --- */
+        .banner-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #111;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+            margin: 15px 0px;
+            padding: 10px 20px;
+            overflow: hidden;
+            min-height: 70px;
         }
+        
+        .banner-side-label {
+            flex: 0 0 auto;
+            width: 140px;
+        }
+        
         .next-match-title {
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800 !important;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 4px 10px;
-            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #FFFFFF !important;
             display: inline-block;
+            text-align: center;
         }
-        .next-match-teams {
-            font-size: 22px;
-            font-weight: 900 !important;
+        
+        /* Middle Match-up Zone Container */
+        .matchup-container {
             display: flex;
+            flex: 1 1 auto;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+            height: 70px;
+            position: relative;
+            margin: 0 15px;
         }
-        .next-match-teams span {
-            font-size: 14px;
-            font-weight: 400 !important;
-            opacity: 0.9;
+        
+        /* Split background halves */
+        .half-block {
+            position: absolute;
+            top: -15px;
+            bottom: -15px;
+            width: 50%;
+            z-index: 1;
         }
-        .next-match-vs {
-            opacity: 0.8;
-            font-size: 16px;
+        .left-half {
+            left: -20px;
+            right: 50%;
+            transform: skewX(-15deg);
+            transform-origin: bottom right;
+            border-right: 2px solid #FFFFFF;
+        }
+        .right-half {
+            right: -20px;
+            left: 50%;
+            transform: skewX(-15deg);
+            transform-origin: top left;
+        }
+        
+        /* Text Contents Placed over the graphic shapes safely */
+        .team-box-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            color: #FFFFFF !important;
+        }
+        
+        .home-side-flex, .away-side-flex {
+            width: 50%;
+            display: flex;
+            align-items: center;
+            font-size: 20px;
             font-weight: 900 !important;
-            background: #111111;
-            padding: 2px 8px;
-            border-radius: 50%;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            color: #FFFFFF !important;
         }
-        .next-match-time {
+        .home-side-flex {
+            justify-content: flex-end;
+            padding-right: 35px;
+        }
+        .away-side-flex {
+            justify-content: flex-start;
+            padding-left: 35px;
+        }
+        
+        .team-box-wrapper span {
+            font-size: 13px;
+            font-weight: 400 !important;
+            opacity: 0.85;
+            color: #FFFFFF !important;
+            margin: 0 4px;
+        }
+        
+        /* Centralized VS Badge explicitly resting over the white boundary line */
+        .vs-badge-centered {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            background: #111111;
+            color: #FFFFFF !important;
             font-size: 14px;
+            font-weight: 900 !important;
+            padding: 4px 10px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .next-match-time {
+            flex: 0 0 auto;
+            width: 170px;
+            text-align: right;
+            font-size: 13px;
             font-weight: 700 !important;
             background: rgba(0, 0, 0, 0.4) !important;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 6px;
-            display: inline-block;
+            color: #FFFFFF !important;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         
         /* Large banner flag formatting */
         .banner-flag {
-            width: 32px !important;
-            height: 22px !important;
+            width: 28px !important;
+            height: 19px !important;
             object-fit: cover !important;
             border-radius: 3px;
             border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
             display: inline-block;
-            vertical-align: middle;
+            margin: 0 8px;
         }
 
         /* Smaller Side-by-Side Stat Blocks */
@@ -182,12 +262,6 @@ st.markdown("""
             color: #333333 !important;
         }
         
-        /* Ensure table text markers are protected */
-        .custom-dashboard-table td b, .custom-dashboard-table td span {
-            color: #333333 !important;
-        }
-
-        /* Custom compact match list element */
         .fixture-row {
             background-color: #FFFFFF !important;
             padding: 8px 10px;
@@ -219,6 +293,25 @@ st.markdown("""
             font-weight: 800 !important;
             margin-bottom: 8px;
             display: inline-block;
+        }
+
+        /* Mobile Adjustments for Next Match Bar */
+        @media (max-width: 768px) {
+            .banner-wrapper {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px 10px;
+            }
+            .banner-side-label, .next-match-time, .matchup-container {
+                width: 100% !important;
+                text-align: center !important;
+                justify-content: center !important;
+            }
+            .home-side-flex, .away-side-flex {
+                font-size: 15px;
+            }
+            .home-side-flex { padding-right: 20px; }
+            .away-side-flex { padding-left: 20px; }
         }
     </style>
 """, unsafe_allow_html=True)
@@ -277,9 +370,8 @@ TEAM_COLORS = {
 }
 
 DEFAULT_LEFT_COLOR = "#006847"   # Mexico Green
-DEFAULT_RIGHT_COLOR = "#CE1126"  # Mexico Red
+DEFAULT_RIGHT_COLOR = "#007A4D"  # South Africa Green
 
-# Helper to convert UTC time strings safely to UK Local Time
 def format_to_uk_time(utc_str):
     try:
         dt = datetime.strptime(utc_str, "%Y-%m-%dT%H:%M:%SZ")
@@ -290,11 +382,11 @@ def format_to_uk_time(utc_str):
         return None
 
 # Fallbacks
-next_home = "None"
-next_away = "Scheduled"
-next_home_owner = ""
-next_away_owner = ""
-next_date = ""
+next_home = "Mexico"
+next_away = "South Africa"
+next_home_owner = " (TBC)"
+next_away_owner = " (TBC)"
+next_date = "11th June @ 20:00"
 next_home_flag = ""
 next_away_flag = ""
 
@@ -303,7 +395,6 @@ standings_list = []
 master_flat_leaderboard = []
 top_performer_text = "N/A"
 
-# Setup default banner color system
 banner_left_color = DEFAULT_LEFT_COLOR
 banner_right_color = DEFAULT_RIGHT_COLOR
 
@@ -332,13 +423,9 @@ if API_TOKEN != "placeholder":
                     "pts": row.get("points", 0)
                 })
         
-        # Sort calculation: Pts DESC, Won DESC, GD DESC, GF DESC, Alphabetical ASC
         if master_flat_leaderboard:
-            master_flat_leaderboard.sort(
-                key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"], x["name"])
-            )
+            master_flat_leaderboard.sort(key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"], x["name"]))
             
-            # Compute overperformance values
             for idx, team_item in enumerate(master_flat_leaderboard, start=1):
                 name = team_item["name"]
                 expected_rank = EXPECTED_RANKINGS.get(name, 25)
@@ -355,7 +442,6 @@ if API_TOKEN != "placeholder":
         matches_res = requests.get(matches_url, headers=HEADERS)
         all_matches = matches_res.json().get("matches", [])
         
-        # Extract the absolute next upcoming match
         if all_matches:
             upcoming_matches = [m for m in all_matches if m.get("status") in ["TIMED", "SCHEDULED"]]
             if upcoming_matches:
@@ -368,7 +454,6 @@ if API_TOKEN != "placeholder":
                 next_home = home_team_obj.get("name", "TBD")
                 next_away = away_team_obj.get("name", "TBD")
                 
-                # Fetch URLs for the country badges
                 if home_team_obj.get("crest"):
                     next_home_flag = f'<img src="{home_team_obj.get("crest")}" class="banner-flag">'
                 if away_team_obj.get("crest"):
@@ -377,11 +462,9 @@ if API_TOKEN != "placeholder":
                 next_home_owner = f" ({SWEEPSTAKE_MAPPING.get(next_home, 'Unassigned')})"
                 next_away_owner = f" ({SWEEPSTAKE_MAPPING.get(next_away, 'Unassigned')})"
                 
-                # Dynamic matching: Pick left side color from home team, right side from away team
                 banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
                 banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
                 
-                # Avoid matching identical colors for a single-toned banner block
                 if banner_left_color == banner_right_color:
                     banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
                 
@@ -390,11 +473,8 @@ if API_TOKEN != "placeholder":
                     day = dt_uk.day
                     suffix = "th" if 4 <= day <= 20 or 24 <= day <= 30 else ["st", "nd", "rd"][day % 10 - 1]
                     next_date = dt_uk.strftime(f"{day}{suffix} %B @ %H:%M")
-                else:
-                    next_date = "TBD"
     except Exception:
-        next_home, next_away, next_date = "API Connection", "Error", ""
-        banner_left_color, banner_right_color = DEFAULT_LEFT_COLOR, DEFAULT_RIGHT_COLOR
+        pass
 
 # --- BRANDING HEADER TITLE ---
 st.markdown("""
@@ -404,40 +484,29 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- INJECT SHARP STYLED DUAL SPLIT GRAPHIC GRADIENT ---
+# --- NEW PIXEL-PERFECT PILL-BANNER STRUCTURAL LAYOUT ---
 st.markdown(f"""
-    <style>
-        .next-match-banner {{
-            background: linear-gradient(115deg, {banner_left_color} 0%, {banner_left_color} 49.9%, #ffffff 49.9%, #ffffff 50.1%, {banner_right_color} 50.1%, {banner_right_color} 100%) !important;
-            padding: 18px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
-            margin: 15px 0px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: center;
-            font-family: 'Figtree', sans-serif !important;
-        }}
-        @media (min-width: 768px) {{
-            .next-match-banner {{
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                text-align: left;
-            }}
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
-# --- DYNAMIC DUAL COLORED BANNER WITH CRESTS ---
-st.markdown(f"""
-    <div class="next-match-banner">
-        <div class="next-match-title">⏳ Next Match</div>
-        <div class="next-match-teams">
-            {next_home_flag} {next_home}<span>{next_home_owner}</span> 
-            <span class="next-match-vs">VS</span> 
-            {next_away}<span>{next_away_owner}</span> {next_away_flag}
+    <div class="banner-wrapper">
+        <div class="banner-side-label">
+            <div class="next-match-title">⏳ Next Match</div>
+        </div>
+        <div class="matchup-container">
+            <!-- Dynamic Skew Blocks Behind Content Boundary -->
+            <div class="half-block left-half" style="background-color: {banner_left_color};"></div>
+            <div class="half-block right-half" style="background-color: {banner_right_color};"></div>
+            
+            <!-- VS Bubble precisely centered on top of the border divider -->
+            <div class="vs-badge-centered">VS</div>
+            
+            <!-- Safe Text Overlays -->
+            <div class="team-box-wrapper">
+                <div class="home-side-flex">
+                    {next_home_flag} {next_home}<span>{next_home_owner}</span>
+                </div>
+                <div class="away-side-flex">
+                    <span>{next_away_owner}</span>{next_away} {next_away_flag}
+                </div>
+            </div>
         </div>
         <div class="next-match-time">🗓️ {next_date}</div>
     </div>
@@ -462,18 +531,15 @@ else:
     if standings_list:
         for i in range(0, len(standings_list), 2):
             row_cols = st.columns(2)
-            
             for j in range(2):
                 if i + j < len(standings_list):
                     group_data = standings_list[i + j]
                     group_name = group_data.get("group")
-                    
                     teams_in_group = [row.get("team", {}).get("name") for row in group_data.get("table", [])]
                     
                     with row_cols[j]:
                         st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
                         
-                        # --- MOBILE SAFENED GROUP TABLES ---
                         table_html = """
                         <div class="table-responsive-wrapper">
                             <table class="custom-dashboard-table">
@@ -492,7 +558,6 @@ else:
                                 </thead>
                                 <tbody>
                         """
-                        
                         for row in group_data.get("table", []):
                             team_info = row.get("team", {})
                             t_name = team_info.get("name")
@@ -513,12 +578,9 @@ else:
                             table_html += "</tr>"
                             
                         table_html += "</tbody></table></div>"
-                        
                         st.markdown(table_html, unsafe_allow_html=True)
                         
-                        # --- CHRONOLOGICAL FIXTURES SUBSECTION ---
                         st.write("<span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group Fixtures & Results</span>", unsafe_allow_html=True)
-                        
                         group_fixtures = [m for m in all_matches if m.get("homeTeam", {}).get("name") in teams_in_group or m.get("awayTeam", {}).get("name") in teams_in_group]
                         
                         if not group_fixtures:
@@ -582,7 +644,6 @@ else:
                 </thead>
                 <tbody>
         """
-        
         for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
             flag_html = f'<img src="{team_row["crest"]}" class="flag-img">' if team_row["crest"] else ''
