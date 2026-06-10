@@ -678,41 +678,33 @@ else:
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
                                 p_data = GROUP_PLAYERS[team_name]
-
+                                # We add 'display: inline-block' to force the browser to treat each card as a block
                                 active_cards.append(f"""
-                                    <div class="group-player-card">
-                                        <img
-                                            src="{p_data['img_url']}"
-                                            loading="eager"
-                                            referrerpolicy="no-referrer"
+                                    <div class="group-player-card" style="display: inline-block; vertical-align: top; margin: 5px;">
+                                        <img 
+                                            src="{p_data['img_url']}" 
+                                            loading="eager" 
+                                            referrerpolicy="no-referrer" 
                                             crossorigin="anonymous"
+                                            style="width: 100%; height: auto; border-radius: 4px;"
                                         >
-                                        <div class="group-player-card-name">
-                                            {p_data['player_name']}
-                                        </div>
-                                        <div class="group-player-card-team">
-                                            {team_name}
-                                        </div>
+                                        <div class="group-player-card-name" style="font-size: 11px; font-weight: 800; color: #333333; margin-top: 3px;">{p_data['player_name']}</div>
+                                        <div class="group-player-card-team" style="font-size: 9px; font-weight: 600; color: #006847; text-transform: uppercase;">{team_name}</div>
                                     </div>
                                 """)
 
                         if active_cards:
-                            # Centered header
                             st.markdown(
-                                "<div style='margin: 12px 0px 0px 0px !important; text-align: center;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
+                                "<div style='margin: 12px 0px 5px 0px; text-align: center;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>",
                                 unsafe_allow_html=True
                             )
-
-                            players_row_html = (
-                                '<div class="group-players-container">'
-                                + "".join(active_cards)
-                                + '</div>'
+                            # The container here is now just a wrapper for the centered items
+                            st.markdown(
+                                f'<div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">'
+                                f'{"".join(active_cards)}'
+                                f'</div>',
+                                unsafe_allow_html=True
                             )
-
-                            st.markdown(players_row_html, unsafe_allow_html=True)
-                        
-                        # Close the group-row-spacer div
-                        st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
