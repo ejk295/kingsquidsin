@@ -697,7 +697,7 @@ else:
                                 {"".join(active_cards)}
                             </div>
                             """
-                            components.html(full_html, height=170, scrolling=False)
+                            components.html(full_html, height=150, scrolling=False)
                         
                         st.markdown('</div>', unsafe_allow_html=True)
 
