@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # Run page auto-refresh every 30 seconds to keep live scores syncing
-st_autorefresh(interval=30 * 1000, key="datarefresh")
+st_autorefresh(interval=90 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
@@ -697,7 +697,7 @@ else:
                                 {"".join(active_cards)}
                             </div>
                             """
-                            components.html(full_html, height=190, scrolling=False)
+                            components.html(full_html, height=170, scrolling=False)
                         
                         st.markdown('</div>', unsafe_allow_html=True)
 
