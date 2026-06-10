@@ -95,7 +95,6 @@ st.markdown("""
             min-height: 80px;
         }
 
-        /* Home panel pushes text right, AWAY pushes left to keep names near VS */
         .home-panel {
             justify-content: flex-end;
             padding-right: 45px;
@@ -107,7 +106,6 @@ st.markdown("""
             padding-left: 45px;
         }
 
-        /* Team Text Styling with forced visibility shadow */
         .team-panel-text {
             color: #FFFFFF !important;
             font-size: 20px;
@@ -125,7 +123,6 @@ st.markdown("""
             margin: 0 4px;
         }
 
-        /* Perfectly Centered VS Symbol locked over the middle divider */
         .vs-marker-bubble {
             position: absolute;
             left: 50%;
@@ -187,6 +184,55 @@ st.markdown("""
             font-weight: 800 !important;
             text-align: right;
             color: #333333 !important;
+        }
+
+        /* --- STAR PLAYERS GRID --- */
+        .players-showcase-title {
+            color: #006847 !important;
+            font-size: 14px;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 15px 0px 8px 0px;
+        }
+        .players-scroller {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .player-card {
+            background: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            border-radius: 8px;
+            min-width: 110px;
+            max-width: 110px;
+            text-align: center;
+            padding: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .player-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #F0F0F0;
+        }
+        .player-card-name {
+            font-size: 11px;
+            font-weight: 800 !important;
+            color: #333333 !important;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .player-card-nation {
+            font-size: 9px;
+            font-weight: 600 !important;
+            color: #666666 !important;
+            text-transform: uppercase;
         }
 
         /* Responsive Table Canvas Controls */
@@ -311,7 +357,6 @@ EXPECTED_RANKINGS = {
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
-# --- DYNAMIC BANNER TEAM COLOR MAPPING ---
 TEAM_COLORS = {
     "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
     "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
@@ -328,8 +373,20 @@ TEAM_COLORS = {
     "Croatia": "#FF0000", "South Korea": "#111111"
 }
 
-DEFAULT_LEFT_COLOR = "#006847"   # Mexico Green
-DEFAULT_RIGHT_COLOR = "#007A4D"  # South Africa Green
+# Star Players Mapping
+STAR_PLAYERS = [
+    {"name": "Lamine Yamal", "nation": "Spain", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lamine-yamal-spain-forward-profile-full.png"},
+    {"name": "Lionel Messi", "nation": "Argentina", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"},
+    {"name": "Bukayo Saka", "nation": "England", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bukayo-saka-england-forward-profile-full.png"},
+    {"name": "Vinícius Jr.", "nation": "Brazil", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/vinicius-junior-brazil-forward-profile-full.png"},
+    {"name": "O. Dembélé", "nation": "France", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ousmane-dembele-france-forward-profile-full.png"},
+    {"name": "Kai Havertz", "nation": "Germany", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kai-havertz-germany-forward-profile-full.png"},
+    {"name": "B. Fernandes", "nation": "Portugal", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bruno-fernandes-portugal-midfielder-profile-full.png"},
+    {"name": "F. de Jong", "nation": "Netherlands", "img": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"}
+]
+
+DEFAULT_LEFT_COLOR = "#006847"
+DEFAULT_RIGHT_COLOR = "#007A4D"
 
 def format_to_uk_time(utc_str):
     try:
@@ -354,7 +411,6 @@ standings_list = []
 master_flat_leaderboard = []
 top_performer_text = "N/A"
 
-# Set initial banner colours to fallbacks
 banner_left_color = DEFAULT_LEFT_COLOR
 banner_right_color = DEFAULT_RIGHT_COLOR
 
@@ -392,7 +448,7 @@ if API_TOKEN != "placeholder":
             
             best_overperformer = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
             op_owner = SWEEPSTAKE_MAPPING.get(best_overperformer["name"], "Unassigned")
-            top_performer_text = f"{best_overperformer['name']} ({op_owner})"
+            top_performer_text = f"{best_overperformer['name']} ({op_owner}) [+{best_overperformer['overperformance']}]"
         
         # Fetch Matches
         matches_url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches"
@@ -411,11 +467,9 @@ if API_TOKEN != "placeholder":
                 next_home = home_team_obj.get("name", "TBD")
                 next_away = away_team_obj.get("name", "TBD")
                 
-                # Fetch dynamically matching colours
                 banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
                 banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
                 
-                # Special Case: If both countries have the same colour
                 if banner_left_color == banner_right_color:
                     banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
 
@@ -443,8 +497,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- DYNAMIC COLOURED, CENTRED MATCHUP BANNER ---
-# Explicitly using string chunks to prevent f-string parser collisions with CSS braces
+# --- DYNAMIC MATCHUP BANNER ---
 banner_html = (
     '<div class="match-banner-container">'
     '    <div class="banner-top-pane">'
@@ -481,6 +534,20 @@ with stat_cols[1]:
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
+
+# --- NEW: STAR PLAYERS SHOWCASE ---
+st.markdown('<div class="players-showcase-title">⭐ Stars to Watch</div>', unsafe_allow_html=True)
+players_html = '<div class="players-scroller">'
+for player in STAR_PLAYERS:
+    players_html += f"""
+        <div class="player-card">
+            <img src="{player['img']}" alt="{player['name']}">
+            <div class="player-card-name">{player['name']}</div>
+            <div class="player-card-nation">{player['nation']}</div>
+        </div>
+    """
+players_html += '</div>'
+st.markdown(players_html, unsafe_allow_html=True)
 
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
