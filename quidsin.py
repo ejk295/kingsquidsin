@@ -377,15 +377,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- THE CLEAN CENTRED MATCHUP BANNER ---
-# --- HEADER ---
-st.markdown("""
-    <div class="title-area">
-        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
-        <p>Live standings</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# --- THE CLEAN CENTRED MATCHUP BANNER ---
 # Construct HTML using explicit concatenation to prevent Python f-string rendering bugs
 banner_html = (
     '<div class="match-banner-wrapper">'
