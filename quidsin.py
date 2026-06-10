@@ -18,7 +18,7 @@ st_autorefresh(interval=30 * 1000, key="datarefresh")
 st.markdown("""
     <style>
         /* Import Figtree from Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
 
         /* Force global app body background, standard text, and Figtree font */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
@@ -57,27 +57,6 @@ st.markdown("""
             font-size: 16px;
         }
         
-        /* Mobile-responsive Flex Container for Next Match Banner - Mexico Green to Red Gradient */
-        .next-match-banner {
-            background: linear-gradient(135deg, #006847 0%, #ce1126 100%) !important;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
-            margin: 15px 0px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: center;
-            font-family: 'Figtree', sans-serif !important;
-        }
-        @media (min-width: 768px) {
-            .next-match-banner {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                text-align: left;
-            }
-        }
         /* Ensure text inside next match banner stays white */
         .next-match-banner, 
         .next-match-title, 
@@ -112,7 +91,7 @@ st.markdown("""
         .next-match-time {
             font-size: 14px;
             font-weight: 700 !important;
-            background: rgba(25, 25, 25, 0.15) !important;
+            background: rgba(25, 25, 25, 0.25) !important;
             padding: 6px 14px;
             border-radius: 6px;
             display: inline-block;
@@ -255,6 +234,27 @@ EXPECTED_RANKINGS = {
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
+# --- DYNAMIC BANNER TEAM COLOR MAPPING ---
+# Key primary/flag color for each country. If a country isn't matched, it defaults to the dark gray/slate theme.
+TEAM_COLORS = {
+    "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
+    "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
+    "Bosnia-Herzegovina": "#002F6C", "Czechia": "#11457E", "Qatar": "#8A1538", "Morocco": "#C1272D",
+    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#000000",
+    "Curaçao": "#002B7F", "Ecuador": "#FFDD00", "Japan": "#00005C", "Belgium": "#E30A17",
+    "Egypt": "#C1272D", "Tunisia": "#E70013", "Netherlands": "#E05206", "Ivory Coast": "#E87722",
+    "Australia": "#00008B", "Cape Verde Islands": "#003893", "Cape Verde": "#003893", "Uruguay": "#0081C8", 
+    "Sweden": "#006AA7", "Saudi Arabia": "#006C35", "Scotland": "#005EB8", "United States": "#002868", 
+    "Senegal": "#00853F", "New Zealand": "#000000", "Iran": "#239E46", "Iraq": "#007A3D", 
+    "Norway": "#EF2B2D", "Algeria": "#006233", "Austria": "#ED2939", "Jordan": "#1A1A1A", 
+    "Congo DR": "#007FFF", "DR Congo": "#007FFF", "Portugal": "#FF0000", "Uzbekistan": "#0099B5", 
+    "Colombia": "#FCD116", "England": "#CE1124", "Panama": "#DA121A", "Ghana": "#DA121A", 
+    "Croatia": "#FF0000", "South Korea": "#000000"
+}
+
+DEFAULT_LEFT_COLOR = "#1f2937"   # Dark Gray
+DEFAULT_RIGHT_COLOR = "#111827"  # Darker Gray
+
 # Helper to convert UTC time strings safely to UK Local Time
 def format_to_uk_time(utc_str):
     try:
@@ -276,6 +276,10 @@ all_matches = []
 standings_list = []
 master_flat_leaderboard = []
 top_performer_text = "N/A"
+
+# Setup default banner color system
+banner_left_color = DEFAULT_LEFT_COLOR
+banner_right_color = DEFAULT_RIGHT_COLOR
 
 if API_TOKEN != "placeholder":
     try:
@@ -337,6 +341,14 @@ if API_TOKEN != "placeholder":
                 next_home_owner = f" ({SWEEPSTAKE_MAPPING.get(next_home, 'Unassigned')})"
                 next_away_owner = f" ({SWEEPSTAKE_MAPPING.get(next_away, 'Unassigned')})"
                 
+                # Dynamic matching: Pick left side color from home team, right side from away team
+                banner_left_color = TEAM_COLORS.get(next_home, DEFAULT_LEFT_COLOR)
+                banner_right_color = TEAM_COLORS.get(next_away, DEFAULT_RIGHT_COLOR)
+                
+                # Avoid matching identical colors for a single-toned banner block
+                if banner_left_color == banner_right_color:
+                    banner_right_color = "#111827" if banner_left_color != "#111827" else "#4b5563"
+                
                 dt_uk = format_to_uk_time(next_m.get("utcDate"))
                 if dt_uk:
                     day = dt_uk.day
@@ -346,6 +358,7 @@ if API_TOKEN != "placeholder":
                     next_date = "TBD"
     except Exception:
         next_home, next_away, next_date = "API Connection", "Error", ""
+        banner_left_color, banner_right_color = DEFAULT_LEFT_COLOR, DEFAULT_RIGHT_COLOR
 
 # --- BRANDING HEADER TITLE ---
 st.markdown("""
@@ -355,7 +368,33 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- NEW FULL-WIDTH NEXT MATCH BANNER ---
+# --- INJECT DYNAMIC STYLE FOR THE BANNER GRADIENT ---
+st.markdown(f"""
+    <style>
+        .next-match-banner {{
+            background: linear-gradient(135deg, {banner_left_color} 0%, {banner_right_color} 100%) !important;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
+            margin: 15px 0px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+            font-family: 'Figtree', sans-serif !important;
+        }}
+        @media (min-width: 768px) {{
+            .next-match-banner {{
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                text-align: left;
+            }
+        }}
+    </style>
+""", unsafe_allow_html=True)
+
+# --- DYNAMIC NEXT MATCH BANNER LAYOUT ---
 st.markdown(f"""
     <div class="next-match-banner">
         <div class="next-match-title">⏳ Next Match</div>
