@@ -72,29 +72,53 @@ st.markdown("""
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800 !important;
-            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
         }
         .next-match-teams {
-            font-size: 18px;
-            font-weight: 800 !important;
+            font-size: 22px;
+            font-weight: 900 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
         .next-match-teams span {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 400 !important;
-            opacity: 0.85;
+            opacity: 0.9;
         }
         .next-match-vs {
-            opacity: 0.7;
-            margin: 0 10px;
+            opacity: 0.8;
             font-size: 16px;
+            font-weight: 900 !important;
+            background: #111111;
+            padding: 2px 8px;
+            border-radius: 50%;
         }
         .next-match-time {
             font-size: 14px;
             font-weight: 700 !important;
-            background: rgba(25, 25, 25, 0.25) !important;
+            background: rgba(0, 0, 0, 0.4) !important;
             padding: 6px 14px;
             border-radius: 6px;
             display: inline-block;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Large banner flag formatting */
+        .banner-flag {
+            width: 32px !important;
+            height: 22px !important;
+            object-fit: cover !important;
+            border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+            display: inline-block;
+            vertical-align: middle;
         }
 
         /* Smaller Side-by-Side Stat Blocks */
@@ -157,6 +181,7 @@ st.markdown("""
             background-color: #FFFFFF !important;
             color: #333333 !important;
         }
+        
         /* Ensure table text markers are protected */
         .custom-dashboard-table td b, .custom-dashboard-table td span {
             color: #333333 !important;
@@ -239,20 +264,20 @@ TEAM_COLORS = {
     "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
     "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
     "Bosnia-Herzegovina": "#002F6C", "Czechia": "#11457E", "Qatar": "#8A1538", "Morocco": "#C1272D",
-    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#000000",
+    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#222222",
     "Curaçao": "#002B7F", "Ecuador": "#FFDD00", "Japan": "#00005C", "Belgium": "#E30A17",
     "Egypt": "#C1272D", "Tunisia": "#E70013", "Netherlands": "#E05206", "Ivory Coast": "#E87722",
     "Australia": "#00008B", "Cape Verde Islands": "#003893", "Cape Verde": "#003893", "Uruguay": "#0081C8", 
     "Sweden": "#006AA7", "Saudi Arabia": "#006C35", "Scotland": "#005EB8", "United States": "#002868", 
-    "Senegal": "#00853F", "New Zealand": "#000000", "Iran": "#239E46", "Iraq": "#007A3D", 
+    "Senegal": "#00853F", "New Zealand": "#111111", "Iran": "#239E46", "Iraq": "#007A3D", 
     "Norway": "#EF2B2D", "Algeria": "#006233", "Austria": "#ED2939", "Jordan": "#1A1A1A", 
     "Congo DR": "#007FFF", "DR Congo": "#007FFF", "Portugal": "#FF0000", "Uzbekistan": "#0099B5", 
     "Colombia": "#FCD116", "England": "#CE1124", "Panama": "#DA121A", "Ghana": "#DA121A", 
-    "Croatia": "#FF0000", "South Korea": "#000000"
+    "Croatia": "#FF0000", "South Korea": "#111111"
 }
 
-DEFAULT_LEFT_COLOR = "#1f2937"   # Dark Gray
-DEFAULT_RIGHT_COLOR = "#111827"  # Darker Gray
+DEFAULT_LEFT_COLOR = "#006847"   # Mexico Green
+DEFAULT_RIGHT_COLOR = "#CE1126"  # Mexico Red
 
 # Helper to convert UTC time strings safely to UK Local Time
 def format_to_uk_time(utc_str):
@@ -270,6 +295,8 @@ next_away = "Scheduled"
 next_home_owner = ""
 next_away_owner = ""
 next_date = ""
+next_home_flag = ""
+next_away_flag = ""
 
 all_matches = []
 standings_list = []
@@ -335,8 +362,18 @@ if API_TOKEN != "placeholder":
                 upcoming_matches.sort(key=lambda x: x.get("utcDate", ""))
                 next_m = upcoming_matches[0]
                 
-                next_home = next_m.get("homeTeam", {}).get("name", "TBD")
-                next_away = next_m.get("awayTeam", {}).get("name", "TBD")
+                home_team_obj = next_m.get("homeTeam", {})
+                away_team_obj = next_m.get("awayTeam", {})
+                
+                next_home = home_team_obj.get("name", "TBD")
+                next_away = away_team_obj.get("name", "TBD")
+                
+                # Fetch URLs for the country badges
+                if home_team_obj.get("crest"):
+                    next_home_flag = f'<img src="{home_team_obj.get("crest")}" class="banner-flag">'
+                if away_team_obj.get("crest"):
+                    next_away_flag = f'<img src="{away_team_obj.get("crest")}" class="banner-flag">'
+                
                 next_home_owner = f" ({SWEEPSTAKE_MAPPING.get(next_home, 'Unassigned')})"
                 next_away_owner = f" ({SWEEPSTAKE_MAPPING.get(next_away, 'Unassigned')})"
                 
@@ -346,7 +383,7 @@ if API_TOKEN != "placeholder":
                 
                 # Avoid matching identical colors for a single-toned banner block
                 if banner_left_color == banner_right_color:
-                    banner_right_color = "#111827" if banner_left_color != "#111827" else "#4b5563"
+                    banner_right_color = "#222222" if banner_left_color != "#222222" else "#555555"
                 
                 dt_uk = format_to_uk_time(next_m.get("utcDate"))
                 if dt_uk:
@@ -367,19 +404,18 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- INJECT DYNAMIC STYLE FOR THE BANNER GRADIENT ---
-# Note the intentional doubling of all static curly braces to bypass the f-string filter cleanly!
+# --- INJECT SHARP STYLED DUAL SPLIT GRAPHIC GRADIENT ---
 st.markdown(f"""
     <style>
         .next-match-banner {{
-            background: linear-gradient(135deg, {banner_left_color} 0%, {banner_right_color} 100%) !important;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
+            background: linear-gradient(115deg, {banner_left_color} 0%, {banner_left_color} 49.9%, #ffffff 49.9%, #ffffff 50.1%, {banner_right_color} 50.1%, {banner_right_color} 100%) !important;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
             margin: 15px 0px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             text-align: center;
             font-family: 'Figtree', sans-serif !important;
         }}
@@ -394,14 +430,14 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- DYNAMIC NEXT MATCH BANNER LAYOUT ---
+# --- DYNAMIC DUAL COLORED BANNER WITH CRESTS ---
 st.markdown(f"""
     <div class="next-match-banner">
         <div class="next-match-title">⏳ Next Match</div>
         <div class="next-match-teams">
-            {next_home}<span>{next_home_owner}</span> 
-            <span class="next-match-vs">v</span> 
-            {next_away}<span>{next_away_owner}</span>
+            {next_home_flag} {next_home}<span>{next_home_owner}</span> 
+            <span class="next-match-vs">VS</span> 
+            {next_away}<span>{next_away_owner}</span> {next_away_flag}
         </div>
         <div class="next-match-time">🗓️ {next_date}</div>
     </div>
