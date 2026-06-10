@@ -681,7 +681,7 @@ else:
                                 p = GROUP_PLAYERS[team_name]
                                 # Changed to object-fit: contain to ensure full head/body is visible
                                 card = f"""
-                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 160px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 4px; overflow: hidden;">
+                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 140px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 4px; overflow: hidden;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
                                     <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
