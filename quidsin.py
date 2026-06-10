@@ -690,7 +690,7 @@ else:
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 15px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
                             
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; font-family: sans-serif;">
