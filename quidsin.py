@@ -679,29 +679,27 @@ else:
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
                                 p = GROUP_PLAYERS[team_name]
-                                # Create compact HTML for each card
+                                # Fixed card dimensions and image constraints
                                 card = f"""
-                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 120px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 5px;">
-                                    <img src="{p['img_url']}" style="width: 100%; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
-                                    <div style="font-size: 11px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{p['player_name']}</div>
-                                    <div style="font-size: 9px; font-weight: 600; color: #006847; text-transform: uppercase;">{team_name}</div>
+                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 110px; height: 160px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 4px; overflow: hidden;">
+                                    <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: cover; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
+                                    <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            # Use st.markdown for the header only
                             st.markdown("<div style='text-align: center; margin-top: 15px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key Group Players</span></div>", unsafe_allow_html=True)
                             
-                            # Render the player cards inside an isolated iframe to prevent Streamlit from touching the HTML
+                            # Container with flex-center
                             full_html = f"""
-                            <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+                            <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; font-family: sans-serif;">
                                 {"".join(active_cards)}
                             </div>
                             """
-                            components.html(full_html, height=180, scrolling=False)
+                            components.html(full_html, height=190, scrolling=False)
                         
-                        # Close the group-row-spacer div
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
