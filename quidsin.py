@@ -564,7 +564,7 @@ st.markdown(banner_html, unsafe_allow_html=True)
 # --- STATS ROW ---
 stat_cols = st.columns(3)
 with stat_cols[0]:
-    st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£96</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£30</span></div>', unsafe_allow_html=True)
 with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
@@ -729,7 +729,12 @@ else:
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
             flag_html = f'<img src="{team_row["crest"]}" class="flag-img">' if team_row["crest"] else ''
             
-            pos_str = f"🚀 {display_idx}" if display_idx == 1 else str(display_idx)
+            if display_idx == 1:
+                pos_str = f"🚀 {display_idx}"
+            elif display_idx == 48:
+                pos_str = f"💩 {display_idx}"
+            else:
+                pos_str = str(display_idx)
             op_val = team_row["overperformance"]
             op_formatted = f"+{op_val}" if op_val > 0 else str(op_val)
             score_color = "#107C41" if op_val > 0 else ("#A80000" if op_val < 0 else "#333333")
