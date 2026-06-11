@@ -581,7 +581,8 @@ for group in standings_list:
             "won": row.get("won", 0),
             "gd": row.get("goalDifference", 0),
             "gf": row.get("goalsFor", 0),
-            "pts": row.get("points", 0)
+            "pts": row.get("points", 0),
+            "crest": t_info.get("crest", "")  # Add this line
         })
 
 if master_flat_leaderboard:
