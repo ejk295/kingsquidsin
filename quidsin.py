@@ -63,7 +63,7 @@ st.markdown("""
         }
 
         .banner-top-pane {
-            background-color: #AA151B;
+            background-color: #006847;
             padding: 10px 20px;
         }
 
