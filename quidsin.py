@@ -164,7 +164,7 @@ st.markdown("""
         }
 
         .banner-bottom-time {
-            background-color: #222222;
+            background-color: #006847;
             padding: 10px 20px;
             font-size: 13px;
             font-weight: 700 !important;
