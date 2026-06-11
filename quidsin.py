@@ -302,7 +302,7 @@ st.markdown("""
 
 # 2. Configuration & Spreadsheet Settings
 # TODO: Replace this with your dynamic Published CSV URL from Step 1!
-SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/YOUR_PUBLISHED_ID/pub?gid=0&output=csv"
+SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW6FLNDfaB9Hg4w/pub?output=csv"
 
 # Comprehensive Emoji Matrix to substitute missing API image link assets
 TEAM_FLAGS = {
