@@ -710,7 +710,7 @@ else:
                         st.markdown(table_html, unsafe_allow_html=True)
 
                         # Fixtures & Results
-                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group Fixtures & Results</span></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
                             if m.get("homeTeam", {}).get("name") in teams_in_group
