@@ -673,25 +673,33 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
-# 1. Initialize the list to avoid NameError
-active_cards = [team for team in teams_in_group if team in GROUP_PLAYERS]
+                        import streamlit.components.v1 as components
 
-if active_cards:
-    st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
-    
-    # 2. Use 4 columns for a clean grid on desktop, it will stack on mobile
-    cols = st.columns(4)
-    
-    for idx, team_name in enumerate(active_cards):
-        p = GROUP_PLAYERS[team_name]
-        with cols[idx % 4]:
-            st.markdown(f"""
-            <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin-bottom: 10px;">
-                <img src="{p['img_url']}" style="width: 100%; border-radius: 4px;">
-                <div style="font-size: 10px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{p['player_name']}</div>
-                <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase;">{team_name}</div>
-            </div>
-            """, unsafe_allow_html=True)
+                        active_cards = []
+                        for team_name in teams_in_group:
+                            if team_name in GROUP_PLAYERS:
+                                p = GROUP_PLAYERS[team_name]
+                                # Changed to object-fit: contain to ensure full head/body is visible
+                                card = f"""
+                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 4px; overflow: hidden;">
+                                    <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
+                                    <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
+                                </div>
+                                """
+                                active_cards.append(card)
+
+                        if active_cards:
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
+                            
+                            full_html = f"""
+                            <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; font-family: sans-serif;">
+                                {"".join(active_cards)}
+                            </div>
+                            """
+                            components.html(full_html, height=155, scrolling=False)
+                        
+                        st.markdown('</div>', unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
