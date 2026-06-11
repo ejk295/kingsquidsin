@@ -179,18 +179,6 @@ st.markdown("""
             font-weight: 700 !important;
             color: #FFFFFF !important;
         }
-        
-        .banner-flag {
-            width: 32px !important;
-            height: 22px !important;
-            object-fit: cover !important;
-            border-radius: 3px;
-            border: 1px solid rgba(255,255,255,0.4);
-            display: inline-block;
-            margin: 0 10px;
-            vertical-align: middle;
-            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
-        }
 
         .stat-banner-box {
             background: #FFFFFF !important;
@@ -216,48 +204,6 @@ st.markdown("""
             font-weight: 800 !important;
             text-align: right;
             color: #333333 !important;
-        }
-
-        /* --- IN-GROUP TEAM PLAYERS ROW --- */
-        .group-players-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 8px !important; 
-            margin-bottom: 0px !important;
-            justify-content: center;
-        }
-        .group-player-card {
-            background: #FFFFFF;
-            border: 1px solid #EAEAEA;
-            border-radius: 8px;
-            width: 120px;
-            text-align: center;
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        .group-player-card img {
-            width: 100%;
-            height: auto;
-            border-radius: 4px;
-            object-fit: cover;
-            background: #F5F5F5;
-        }
-        .group-player-card-name {
-            font-size: 11px;
-            font-weight: 800 !important;
-            color: #333333 !important;
-            margin-top: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .group-player-card-team {
-            font-size: 9px;
-            font-weight: 600 !important;
-            color: #006847 !important;
-            text-transform: uppercase;
-            margin-top: 1px;
         }
 
         .group-row-spacer {
@@ -306,14 +252,6 @@ st.markdown("""
         .fixture-row-live {
             background-color: #FFF5F5 !important;
             border: 1px solid #FFCCCC !important;
-        }
-        .flag-img {
-            vertical-align: middle;
-            margin: 0px 4px;
-            width: 20px !important;
-            height: 14px !important;
-            object-fit: cover !important;
-            display: inline-block;
         }
         .group-header-text {
             color: #006847 !important;
@@ -364,7 +302,23 @@ st.markdown("""
 
 # 2. Configuration & Spreadsheet Settings
 # TODO: Replace this with your dynamic Published CSV URL from Step 1!
-SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW6FLNDfaB9Hg4w/pub?output=csv"
+SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/YOUR_PUBLISHED_ID/pub?gid=0&output=csv"
+
+# Comprehensive Emoji Matrix to substitute missing API image link assets
+TEAM_FLAGS = {
+    "Mexico": "🇲🇽", "South Africa": "🇿🇦", "Canada": "🇨🇦", "Switzerland": "🇨🇭",
+    "Argentina": "🇦🇷", "France": "🇫🇷", "Brazil": "🇧🇷", "Spain": "🇪🇸",
+    "Bosnia-Herzegovina": "🇧🇦", "Czechia": "🇨🇿", "Qatar": "🇶🇦", "Morocco": "🇲🇦",
+    "Haiti": "🇭🇹", "Turkey": "🇹🇷", "Paraguay": "🇵🇾", "Germany": "🇩🇪",
+    "Curaçao": "🇨🇼", "Ecuador": "🇪🇨", "Japan": "🇯🇵", "Belgium": "🇧🇪",
+    "Egypt": "🇪🇬", "Tunisia": "🇹🇳", "Netherlands": "🇳🇱", "Ivory Coast": "🇨🇮",
+    "Australia": "🇦🇺", "Cape Verde Islands": "🇨🇻", "Cape Verde": "🇨🇻", "Uruguay": "🇺🇾", "Sweden": "🇸🇪",
+    "Saudi Arabia": "🇸🇦", "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "United States": "🇺🇸", "Senegal": "🇸🇳",
+    "New Zealand": "🇳🇿", "Iran": "🇮🇷", "Iraq": "🇮🇶", "Norway": "🇳🇴",
+    "Algeria": "🇩🇿", "Austria": "🇦🇹", "Jordan": "🇯🇴", "Congo DR": "🇨🇩", "DR Congo": "🇨🇩",
+    "Portugal": "🇵🇹", "Uzbekistan": "🇺🇿", "Colombia": "🇨🇴", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "Panama": "🇵🇦", "Ghana": "🇬🇭", "Croatia": "🇭🇷", "South Korea": "🇰🇷"
+}
 
 SWEEPSTAKE_MAPPING = {
     "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
@@ -376,7 +330,7 @@ SWEEPSTAKE_MAPPING = {
     "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
     "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
     "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
-    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
+    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff", "DR Congo": "Jeff",
     "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
     "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
 }
@@ -463,7 +417,6 @@ GROUP_PLAYERS = {
 DEFAULT_LEFT_COLOR = "#006847"
 DEFAULT_RIGHT_COLOR = "#006847"
 
-# Team groups definition matrix to build group standings directly from fixture rows
 GROUPS_DEFINITION = {
     "Group A": ["Mexico", "South Africa", "Canada", "Switzerland"],
     "Group B": ["Argentina", "France", "Brazil", "Spain"],
@@ -480,7 +433,6 @@ GROUPS_DEFINITION = {
 }
 
 def format_sheet_time(date_str):
-    """Safely converts spreadsheet date strings or returns fallback string."""
     if not date_str:
         return "TBD"
     return str(date_str).strip()
@@ -494,8 +446,8 @@ def build_match_banner(match, is_live=False):
     if left_color == right_color:
         right_color = "#222222" if left_color != "#222222" else "#555555"
 
-    h_flag = "" # Crest assets can be omitted or fallback styled if not loaded dynamically
-    a_flag = ""
+    h_flag = TEAM_FLAGS.get(h_name, "🏳️")
+    a_flag = TEAM_FLAGS.get(a_name, "🏳️")
 
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
@@ -516,13 +468,13 @@ def build_match_banner(match, is_live=False):
         <div class="matchup-split-screen">
             <div class="team-panel home-panel" style="background-color: {left_color};">
                 <div class="team-panel-text">
-                    {h_flag} {h_name} <span>{h_owner}</span>
+                    {h_flag} &nbsp; {h_name} <span>{h_owner}</span>
                 </div>
             </div>
             {centre_bubble}
             <div class="team-panel away-panel" style="background-color: {right_color};">
                 <div class="team-panel-text">
-                    <span>{a_owner}</span> {a_name} {a_flag}
+                    <span>{a_owner}</span> {a_name} &nbsp; {a_flag}
                 </div>
             </div>
         </div>
@@ -544,10 +496,8 @@ def fetch_sheet_data():
             lines = response.text.splitlines()
             reader = csv.reader(lines)
             
-            # Read header row
             headers = [h.strip().lower() for h in next(reader)]
             
-            # Identify columns based on header indexes safely
             try:
                 date_idx = headers.index("date")
                 time_idx = headers.index("time") if "time" in headers else -1
@@ -557,7 +507,6 @@ def fetch_sheet_data():
                 h_score_idx = next(i for i, h in enumerate(headers) if "home" in h and ("score" in h or "goal" in h))
                 a_score_idx = next(i for i, h in enumerate(headers) if "away" in h and ("score" in h or "goal" in h))
             except Exception as e:
-                # Absolute static index array fallbacks if titles mismatched
                 date_idx, home_idx, away_idx, status_idx, h_score_idx, a_score_idx = 0, 2, 3, 4, 5, 6
                 time_idx = 1
 
@@ -565,15 +514,13 @@ def fetch_sheet_data():
                 if len(row) <= max(home_idx, away_idx):
                     continue
                 
-                # Rebuild full timestamp representation
                 date_val = row[date_idx]
                 if time_idx != -1 and len(row) > time_idx and row[time_idx]:
                     date_val += f" {row[time_idx]}"
 
-                # Parse numerical strings into safe integer types
                 try:
-                    h_score = int(float(row[h_score_idx])) if row[h_score_idx].strip() not in ["-", ""] else 0
-                    a_score = int(float(row[a_score_idx])) if row[a_score_idx].strip() not in ["-", ""] else 0
+                    h_score = int(float(row[h_score_idx])) if row[h_score_idx].strip() not in ["", "-"] else 0
+                    a_score = int(float(row[a_score_idx])) if row[a_score_idx].strip() not in ["", "-"] else 0
                 except ValueError:
                     h_score, a_score = 0, 0
 
@@ -590,12 +537,10 @@ def fetch_sheet_data():
         
     return all_matches
 
-# Fetch match data row rows matrix from Google Sheet
 all_matches = fetch_sheet_data()
 
 # ── Re-calculate Standings Internally based on Fixtures Matrix ──────────
 standings_map = {}
-# Initialize all active team rows from map definitions
 for team in SWEEPSTAKE_MAPPING.keys():
     standings_map[team] = {"name": team, "played": 0, "won": 0, "draw": 0, "lost": 0, "gf": 0, "ga": 0, "gd": 0, "pts": 0}
 
@@ -603,7 +548,6 @@ for m in all_matches:
     status_upper = m["status"].upper()
     h, a = m["homeTeam"], m["awayTeam"]
     
-    # Process only if game row represents valid team references and is Finished
     if h in standings_map and a in standings_map and "FINISHED" in status_upper:
         hs, as_ = m["homeScore"], m["awayScore"]
         
@@ -630,7 +574,6 @@ for m in all_matches:
             standings_map[h]["pts"] += 1
             standings_map[a]["pts"] += 1
 
-# Flatten to sort master leaderboard row arrays
 master_flat_leaderboard = list(standings_map.values())
 top_performer_text = "N/A"
 
@@ -645,13 +588,11 @@ if master_flat_leaderboard:
     op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
     top_performer_text = f"{best['name']} ({op_owner})"
 
-# ── Dynamic Match Filtering ─────────────────────────────────────────────
 live_matches = [m for m in all_matches if m["status"].upper() in ["LIVE", "IN_PLAY", "FIRST HALF", "SECOND HALF", "HALF TIME", "PAUSED"]]
 upcoming_matches = [m for m in all_matches if m["status"].upper() in ["TIMED", "SCHEDULED"]]
 
 next_kickoff_matches = []
 if upcoming_matches:
-    # Safely show the immediate next matches in the list queue
     first_date = upcoming_matches[0]["date"]
     next_kickoff_matches = [m for m in upcoming_matches if m["date"] == first_date]
 
@@ -663,7 +604,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Render hero banners directly
 if live_matches:
     for live_match in live_matches:
         st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
@@ -683,7 +623,7 @@ with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
-    st.markdown(f'/div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
@@ -703,7 +643,6 @@ else:
                     st.markdown('<div class="group-row-spacer">', unsafe_allow_html=True)
                     st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
 
-                    # Build internal standings sorted subset array
                     group_teams_data = [standings_map[t] for t in teams_in_group if t in standings_map]
                     group_teams_data.sort(key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"]))
 
@@ -728,8 +667,9 @@ else:
                     for t_row in group_teams_data:
                         t_name = t_row["name"]
                         owner = SWEEPSTAKE_MAPPING.get(t_name, "Unassigned")
+                        t_flag = TEAM_FLAGS.get(t_name, "🏳️")
                         table_html += f"""<tr>
-                            <td><b>{t_name}</b> <span style="font-size:11px; color:#666;">({owner})</span></td>
+                            <td>{t_flag} &nbsp;<b>{t_name}</b> <span style="font-size:11px; color:#666;">({owner})</span></td>
                             <td style="text-align:center;">{t_row["played"]}</td>
                             <td style="text-align:center;">{t_row["won"]}</td>
                             <td style="text-align:center;">{t_row["draw"]}</td>
@@ -742,7 +682,6 @@ else:
                     table_html += "</tbody></table></div>"
                     st.markdown(table_html, unsafe_allow_html=True)
 
-                    # Group Fixtures parsed out from Sheet matrix
                     st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                     group_fixtures = [
                         m for m in all_matches
@@ -758,6 +697,8 @@ else:
                             a_name = match["awayTeam"]
                             h_owner = SWEEPSTAKE_MAPPING.get(h_name, "Unassigned")
                             a_owner = SWEEPSTAKE_MAPPING.get(a_name, "Unassigned")
+                            h_flag = TEAM_FLAGS.get(h_name, "🏳️")
+                            a_flag = TEAM_FLAGS.get(a_name, "🏳️")
 
                             local_time_str = match["date"]
 
@@ -774,18 +715,18 @@ else:
                             st.markdown(f"""
                                 <div class="{row_class}">
                                     <div style="text-align: left; width: 42%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        <span>{h_name}</span> <span style="font-size:9px; color:#777;">({h_owner})</span>
+                                        <span>{h_flag} &nbsp; {h_name}</span> <span style="font-size:9px; color:#777;">({h_owner})</span>
                                     </div>
                                     <div style="text-align: center; width: 16%; font-size:11px;">
                                         {display_score}
                                     </div>
                                     <div style="text-align: right; width: 42%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        <span style="font-size:9px; color:#777;">({a_owner})</span> <span>{a_name}</span>
+                                        <span style="font-size:9px; color:#777;">({a_owner})</span> <span>{a_name} &nbsp; {a_flag}</span>
                                     </div>
                                 </div>
                             """, unsafe_allow_html=True)
 
-                    # Key players component layout
+                    # Key Players layout fix: Re-applied box gaps (margin: 5px)
                     import streamlit.components.v1 as components
 
                     active_cards = []
@@ -793,9 +734,9 @@ else:
                         if team_name in GROUP_PLAYERS:
                             p = GROUP_PLAYERS[team_name]
                             card = f"""
-                            <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center;">
+                            <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 125px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin: 5px;">
                                 <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
-                                <div style="font-size: 10px; font-weight: 800; color: #33; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
+                                <div style="font-size: 10px; font-weight: 800; color: #333333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
                                 <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                             </div>
                             """
@@ -815,7 +756,7 @@ else:
     # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
     st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Expected Rank - Actual Performance)</p>", unsafe_allow_html=True)
 
     master_flat_leaderboard.sort(key=lambda x: (-x["overperformance"], x["actual_rank"]))
 
@@ -826,7 +767,7 @@ else:
                 <tr>
                     <th style="width: 60px;">Pos</th>
                     <th>Team</th>
-                    <th style="text-align:center;">Rank</th>
+                    <th style="text-align:center;">Expected</th>
                     <th style="text-align:center;">Actual</th>
                     <th style="text-align:center;">P</th>
                     <th style="text-align:center;">GD</th>
@@ -837,7 +778,9 @@ else:
             <tbody>
     """
     for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
-        owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
+        t_name = team_row['name']
+        owner = SWEEPSTAKE_MAPPING.get(t_name, "Unassigned")
+        t_flag = TEAM_FLAGS.get(t_name, "🏳️")
         pos_str = f"🚀 {display_idx}" if display_idx == 1 else (f"💩 {display_idx}" if display_idx == 48 else str(display_idx))
         op_val = team_row["overperformance"]
         op_formatted = f"+{op_val}" if op_val > 0 else str(op_val)
@@ -845,7 +788,7 @@ else:
 
         master_table_html += f"""<tr>
             <td><b>{pos_str}</b></td>
-            <td><b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
+            <td>{t_flag} &nbsp;<b>{t_name}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
             <td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>
             <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
             <td style='text-align:center;'>{team_row['played']}</td>
