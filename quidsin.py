@@ -541,51 +541,59 @@ def build_match_banner(match, is_live=False):
     """
 
 # ── Data fetching ────────────────────────────────────────────────────────────
-all_matches = []
-standings_list = []
+@st.cache_data(ttl=60)  # Cache for 60 seconds to stay within quota
+def fetch_football_data():
+    all_matches = []
+    standings_list = []
+    
+    if API_TOKEN == "placeholder":
+        return all_matches, standings_list
+
+    try:
+        # Fetch Standings
+        s_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/standings", headers=HEADERS, timeout=10)
+        if s_res.status_code == 200:
+            standings_list = s_res.json().get("standings", [])
+            
+        # Fetch Matches
+        m_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches", headers=HEADERS, timeout=10)
+        if m_res.status_code == 200:
+            all_matches = m_res.json().get("matches", [])
+            
+    except Exception as e:
+        st.error(f"Error connecting to API: {e}")
+        
+    return all_matches, standings_list
+
+# Fetch the data
+all_matches, standings_list = fetch_football_data()
+
+# Process Leaderboard
 master_flat_leaderboard = []
 top_performer_text = "N/A"
 
-if API_TOKEN != "placeholder":
-    try:
-        # Standings
-        standings_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/standings", headers=HEADERS)
-        standings_list = standings_res.json().get("standings", [])
+for group in standings_list:
+    for row in group.get("table", []):
+        t_info = row.get("team", {})
+        master_flat_leaderboard.append({
+            "name": t_info.get("name", "Unknown"),
+            "played": row.get("playedGames", 0),
+            "won": row.get("won", 0),
+            "gd": row.get("goalDifference", 0),
+            "gf": row.get("goalsFor", 0),
+            "pts": row.get("points", 0)
+        })
 
-        for group in standings_list:
-            for row in group.get("table", []):
-                t_info = row.get("team", {})
-                master_flat_leaderboard.append({
-                    "name": t_info.get("name", "Unknown"),
-                    "crest": t_info.get("crest", ""),
-                    "played": row.get("playedGames", 0),
-                    "won": row.get("won", 0),
-                    "drawn": row.get("draw", 0),
-                    "lost": row.get("lost", 0),
-                    "gf": row.get("goalsFor", 0),
-                    "ga": row.get("goalsAgainst", 0),
-                    "gd": row.get("goalDifference", 0),
-                    "pts": row.get("points", 0)
-                })
+if master_flat_leaderboard:
+    master_flat_leaderboard.sort(key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"], x["name"]))
+    for idx, team_item in enumerate(master_flat_leaderboard, start=1):
+        team_item["actual_rank"] = idx
+        team_item["expected_rank"] = EXPECTED_RANKINGS.get(team_item["name"], 25)
+        team_item["overperformance"] = team_item["expected_rank"] - idx
 
-        if master_flat_leaderboard:
-            master_flat_leaderboard.sort(key=lambda x: (-x["pts"], -x["won"], -x["gd"], -x["gf"], x["name"]))
-            for idx, team_item in enumerate(master_flat_leaderboard, start=1):
-                name = team_item["name"]
-                team_item["actual_rank"] = idx
-                team_item["expected_rank"] = EXPECTED_RANKINGS.get(name, 25)
-                team_item["overperformance"] = team_item["expected_rank"] - idx
-
-            best = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
-            op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
-            top_performer_text = f"{best['name']} ({op_owner})"
-
-        # Matches
-        matches_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches", headers=HEADERS)
-        all_matches = matches_res.json().get("matches", [])
-
-    except Exception:
-        pass
+    best = max(master_flat_leaderboard, key=lambda x: (x["overperformance"], -x["actual_rank"]))
+    op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
+    top_performer_text = f"{best['name']} ({op_owner})"
 
 # ── Derived match lists ──────────────────────────────────────────────────────
 live_matches = [m for m in all_matches if m.get("status") in ["IN_PLAY", "PAUSED"]]
@@ -594,12 +602,10 @@ upcoming_matches = sorted(
     key=lambda x: x.get("utcDate", "")
 )
 
-# Group upcoming by kick-off time so simultaneous games all appear together
 next_kickoff_matches = []
 if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
-
 # ── HEADER ───────────────────────────────────────────────────────────────────
 st.markdown("""
     <div class="title-area">
