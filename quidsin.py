@@ -673,23 +673,25 @@ else:
                                 """, unsafe_allow_html=True)
                         
                         # --- IN-GROUP PLAYERS SUB-SECTION ---
+# 1. Initialize the list to avoid NameError
+active_cards = [team for team in teams_in_group if team in GROUP_PLAYERS]
+
 if active_cards:
     st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
     
-    # Create columns dynamically for the players
-    # Adjust the number of columns (e.g., 4) based on your needs
-    cols = st.columns(4) 
-    for idx, team_name in enumerate(teams_in_group):
-        if team_name in GROUP_PLAYERS:
-            p = GROUP_PLAYERS[team_name]
-            with cols[idx % 4]:
-                st.markdown(f"""
-                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin-bottom: 10px;">
-                    <img src="{p['img_url']}" style="width: 100%; border-radius: 4px;">
-                    <div style="font-size: 10px; font-weight: 800; margin-top: 5px;">{p['player_name']}</div>
-                    <div style="font-size: 8px; font-weight: 600; color: #006847;">{team_name}</div>
-                </div>
-                """, unsafe_allow_html=True)
+    # 2. Use 4 columns for a clean grid on desktop, it will stack on mobile
+    cols = st.columns(4)
+    
+    for idx, team_name in enumerate(active_cards):
+        p = GROUP_PLAYERS[team_name]
+        with cols[idx % 4]:
+            st.markdown(f"""
+            <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin-bottom: 10px;">
+                <img src="{p['img_url']}" style="width: 100%; border-radius: 4px;">
+                <div style="font-size: 10px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{p['player_name']}</div>
+                <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase;">{team_name}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
         # --- OVERPERFORMANCE LEADERBOARD ---
         st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
