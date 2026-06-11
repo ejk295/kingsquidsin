@@ -327,18 +327,18 @@ BASE_URL = "https://api.football-data.org/v4"
 HEADERS = {"X-Auth-Token": API_TOKEN}
 
 SWEEPSTAKE_MAPPING = {
-    "Mexico": "TBC", "South Africa": "TBC", "Canada": "TBC", "Switzerland": "TBC",
-    "Argentina": "TBC", "France": "TBC", "Brazil": "TBC", "Spain": "TBC",
-    "Bosnia-Herzegovina": "TBC", "Czechia": "TBC", "Qatar": "TBC", "Morocco": "TBC",
-    "Haiti": "TBC", "Turkey": "TBC", "Paraguay": "TBC", "Germany": "TBC",
-    "Curaçao": "TBC", "Ecuador": "TBC", "Japan": "TBC", "Belgium": "TBC",
-    "Egypt": "TBC", "Tunisia": "TBC", "Netherlands": "TBC", "Ivory Coast": "TBC",
-    "Australia": "TBC", "Cape Verde Islands": "TBC", "Uruguay": "TBC", "Sweden": "TBC",
-    "Saudi Arabia": "TBC", "Scotland": "TBC", "United States": "TBC", "Senegal": "TBC",
-    "New Zealand": "TBC", "Iran": "TBC", "Iraq": "TBC", "Norway": "TBC",
-    "Algeria": "TBC", "Austria": "TBC", "Jordan": "TBC", "Congo DR": "TBC",
-    "Portugal": "TBC", "Uzbekistan": "TBC", "Colombia": "TBC", "England": "TBC",
-    "Panama": "TBC", "Ghana": "TBC", "Croatia": "TBC", "South Korea": "TBC",
+    "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
+    "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
+    "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
+    "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
+    "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
+    "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
+    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
+    "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
+    "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
+    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
+    "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
+    "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
 }
 
 EXPECTED_RANKINGS = {
