@@ -719,7 +719,7 @@ else:
                                     row_class = "fixture-row"
                                 elif m_status in ["IN_PLAY", "PAUSED"]:
                                     h_s, a_s = get_live_score(match)
-                                    display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE🔴 {h_s}-{a_s}</span>"
+                                    display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE 🔴 {h_s}-{a_s}</span>"
                                     row_class = "fixture-row fixture-row-live"
                                 else:
                                     display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
@@ -761,7 +761,7 @@ else:
                                 {"".join(active_cards)}
                             </div>
                             """
-                            components.html(full_html, height=165, scrolling=False)
+                            components.html(full_html, height=170, scrolling=False)
 
                         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -795,9 +795,9 @@ else:
             
             # Leader (Rocket) and Wooden Spoon (Poop) emojis securely preserved
             if display_idx == 1:
-                pos_str = "Leader 🚀"
+                pos_str = "1 🚀"
             elif display_idx == 48:
-                pos_str = "Wooden Spoon 💩"
+                pos_str = "48 💩"
             else:
                 pos_str = str(display_idx)
                 
