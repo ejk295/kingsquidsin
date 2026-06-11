@@ -541,8 +541,8 @@ def build_match_banner(match, is_live=False):
     """
 
 # ── Data fetching ────────────────────────────────────────────────────────────
-@st.cache_data(ttl=60)  # Cache for 60 seconds to stay within quota
-def fetch_football_data():
+@st.cache_data(ttl=30)  # Shorter TTL for live data
+def fetch_football_data(cache_buster=None):
     all_matches = []
     standings_list = []
     
@@ -565,8 +565,10 @@ def fetch_football_data():
         
     return all_matches, standings_list
 
-# Fetch the data
-all_matches, standings_list = fetch_football_data()
+# Fetch the data with a time-based cache buster
+import time
+cache_buster = int(time.time() / 30)  # Changes every 30 seconds
+all_matches, standings_list = fetch_football_data(cache_buster=cache_buster)
 
 # Process Leaderboard
 master_flat_leaderboard = []
