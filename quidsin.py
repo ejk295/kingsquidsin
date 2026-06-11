@@ -736,7 +736,7 @@ else:
                                     row_class = "fixture-row"
                                 elif m_status in ["IN_PLAY", "PAUSED"]:
                                     h_s, a_s = get_live_score(match)
-                                    display_score = f"<span style='color:#CC0000; font-weight:800;'>🔴 {h_s}-{a_s}</span>"
+                                    display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE🔴 {h_s}-{a_s}</span>"
                                     row_class = "fixture-row fixture-row-live"
                                 else:
                                     display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
