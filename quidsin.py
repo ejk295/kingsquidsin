@@ -815,19 +815,8 @@ else:
         """
         for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
-            # Using .get() returns None if "crest" is missing, preventing the crash
-crest_url = team_row.get("crest")
-flag_html = f'<img src="{crest_url}" class="flag-img">' if crest_url else ''
-            # Ensure this block is aligned exactly like this
-    for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
-        # Everything here should be indented by 8 or 12 spaces
-        crest_url = team_row.get("crest")
-        flag_html = f'<img src="{crest_url}" class="flag-img">' if crest_url else ''
-        
-        # This line must be at the same indentation level as the lines above
-        pos_str = f"🚀 {display_idx}" if display_idx == 1 else (f"💩 {display_idx}" if display_idx == 48 else str(display_idx))
-        
-        # ... rest of your code ...
+            flag_html = f'<img src="{team_row["crest"]}" class="flag-img">' if team_row["crest"] else ''
+            pos_str = f"🚀 {display_idx}" if display_idx == 1 else (f"💩 {display_idx}" if display_idx == 48 else str(display_idx))
             op_val = team_row["overperformance"]
             op_formatted = f"+{op_val}" if op_val > 0 else str(op_val)
             score_color = "#107C41" if op_val > 0 else ("#A80000" if op_val < 0 else "#333333")
