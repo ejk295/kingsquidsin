@@ -421,7 +421,7 @@ GROUP_PLAYERS = {
     "Netherlands": {"player_name": "Frenkie de Jong", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"},
     "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"},
     "Ivory Coast": {"player_name": "Yan Diomande", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/yan-diomande-ivory-coast-forward-profile-full.png"},
-    "Bosnia-Herzegovina": {"player_name": "Esmir Bajraktarevic", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/esmir-bajraktarevic-bosnia-and-herzegovina-forward-profile-full.png"},
+    "Bosnia-Herzegovina": {"player_name": "Esmir Bajraktarevic", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/esmir-bajraktarevic-bosnia-and-herzegovina-forward-profile[...]
     "Cape Verde Islands": {"player_name": "Ryan Mendes", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ryan-mendes-cape-verde-midfielder-profile-full.png"},
     "Curaçao": {"player_name": "Juninho Bacuna", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/juninho-bacuna-curacao-midfielder-profile-full.png"},
     "Haiti": {"player_name": "Wilson Isidor", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/wilson-isidor-haiti-forward-profile-full.png"},
@@ -477,11 +477,20 @@ def format_to_uk_time(utc_str):
 def get_live_score(match):
     """Extract the best available score from a match object (handles mid-game where fullTime is null)."""
     score_obj = match.get("score", {})
-    # Try fullTime first, then currentScore / halfTime as fallbacks
-    for key in ["fullTime", "regularTime", "halfTime"]:
+    match_status = match.get("status")
+    
+    # If match is finished, fullTime should have the real score
+    if match_status == "FINISHED":
+        s = score_obj.get("fullTime", {})
+        if s and s.get("home") is not None and s.get("away") is not None:
+            return s.get("home", 0), s.get("away", 0)
+    
+    # For live/paused matches, try regularTime first (current score), then fullTime/halfTime
+    for key in ["regularTime", "fullTime", "halfTime"]:
         s = score_obj.get(key, {})
         if s and s.get("home") is not None and s.get("away") is not None:
             return s.get("home", 0), s.get("away", 0)
+    
     return 0, 0
 
 def build_match_banner(match, is_live=False):
@@ -622,28 +631,14 @@ if live_matches:
         st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
 
 # ── NEXT MATCH BANNERS (one per simultaneous kick-off) ───────────────────────
-if not next_kickoff_matches and not live_matches:
-    # Fallback static banner when no API data
-    st.markdown(f"""
-    <div class="match-banner-container">
-        <div class="banner-top-pane"><div class="next-match-title">⏳ Next Match</div></div>
-        <div class="matchup-split-screen">
-            <div class="team-panel home-panel" style="background-color: {DEFAULT_LEFT_COLOR};">
-                <div class="team-panel-text">Mexico <span> (Izzy)</span></div>
-            </div>
-            <div class="vs-marker-bubble">VS</div>
-            <div class="team-panel away-panel" style="background-color: {DEFAULT_RIGHT_COLOR};">
-                <div class="team-panel-text"><span>(Ellis)</span> South Africa</div>
-            </div>
-        </div>
-        <div class="banner-bottom-time">🗓️ 11th June @ 20:00</div>
-    </div>
-    """, unsafe_allow_html=True)
-else:
+if next_kickoff_matches:
     for next_match in next_kickoff_matches:
         st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
+elif not live_matches:
+    # Only show this if there are no upcoming matches AND no live matches
+    st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
-# ── STATS ROW ──────────────────────────────────────────────────────────────
+# ── STATS ROW ────────────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
     st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£30</span></div>', unsafe_allow_html=True)
@@ -772,16 +767,16 @@ else:
                             if team_name in GROUP_PLAYERS:
                                 p = GROUP_PLAYERS[team_name]
                                 card = f"""
-                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center;">
-                                    <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
-                                    <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
+                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-[...]
+                                    <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-refer[...]
+                                    <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['pl[...]
                                     <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_h[...]
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; font-family: sans-serif;">
                                 {"".join(active_cards)}
