@@ -495,7 +495,7 @@ def build_match_banner(match, is_live=False):
 
     if is_live:
         h_score, a_score = get_live_score(match)
-        top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live Now</div></div>'
+        top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
         centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     else:
@@ -506,7 +506,7 @@ def build_match_banner(match, is_live=False):
             date_str = dt_uk.strftime(f"{day}{suffix} %B @ %H:%M")
         else:
             date_str = "TBD"
-        top_pane = '<div class="banner-top-pane"><div class="next-match-title">⏳ Next Match</div></div>'
+        top_pane = '<div class="banner-top-pane"><div class="next-match-title">🔜 Next match</div></div>'
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
@@ -621,7 +621,7 @@ if not live_matches and not next_kickoff_matches:
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
-    st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£30</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£30</span></div>', unsafe_allow_html=True)
 with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
@@ -754,7 +754,7 @@ else:
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🌟 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
                             # Added row-gap and column-gap (gap: 12px) to prevent structural crowding
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
