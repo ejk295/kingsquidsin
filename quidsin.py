@@ -12,8 +12,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# Run page auto-refresh every 12 seconds to keep live scores syncing
-st_autorefresh(interval=12 * 1000, key="datarefresh")
+# Run page auto-refresh every 3 minutes to keep live scores syncing
+st_autorefresh(interval=300 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
