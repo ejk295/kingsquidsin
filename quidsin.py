@@ -12,8 +12,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# Run page auto-refresh every 30 seconds to keep live scores syncing
-st_autorefresh(interval=30 * 1000, key="datarefresh")
+# Run page auto-refresh every 12 seconds to keep live scores syncing
+st_autorefresh(interval=12 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
@@ -541,9 +541,9 @@ def build_match_banner(match, is_live=False):
     """
 
 # ── Data fetching ─────────────────────────────────────────────────────────
-@st.cache_data(ttl=10)  # Very short TTL—refresh every 10 seconds to stay current
+@st.cache_data(ttl=60)  # Cache for 60 seconds to respect API rate limits (10 calls/min across 2 sites = 5 calls/min per site = 1 call per 12 seconds)
 def fetch_football_data():
-    """Fetch live data from API with no cache buster parameter."""
+    """Fetch live data from API."""
     all_matches = []
     standings_list = []
     
@@ -566,7 +566,7 @@ def fetch_football_data():
         
     return all_matches, standings_list
 
-# Fetch the data—no cache buster needed with short TTL
+# Fetch the data
 all_matches, standings_list = fetch_football_data()
 
 # Process Leaderboard
@@ -583,7 +583,7 @@ for group in standings_list:
             "gd": row.get("goalDifference", 0),
             "gf": row.get("goalsFor", 0),
             "pts": row.get("points", 0),
-            "crest": t_info.get("crest", "")  # Add this line
+            "crest": t_info.get("crest", "")
         })
 
 if master_flat_leaderboard:
