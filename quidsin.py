@@ -550,9 +550,6 @@ if API_TOKEN != "placeholder":
     try:
         # Standings
         standings_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/standings", headers=HEADERS)
-        # Check if the API request was successful
-if standings_res.status_code != 200:
-    st.error(f"API Error: {standings_res.status_code} - {standings_res.text}")
         standings_list = standings_res.json().get("standings", [])
 
         for group in standings_list:
