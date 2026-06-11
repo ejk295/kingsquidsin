@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # Run page auto-refresh every 30 seconds to keep live scores syncing
-st_autorefresh(interval=90 * 1000, key="datarefresh")
+st_autorefresh(interval=30 * 1000, key="datarefresh")
 
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
@@ -540,9 +540,10 @@ def build_match_banner(match, is_live=False):
     </div>
     """
 
-# ── Data fetching ────────────────────────────────────────────────────────────
-@st.cache_data(ttl=30)  # Shorter TTL for live data
-def fetch_football_data(cache_buster=None):
+# ── Data fetching ─────────────────────────────────────────────────────────
+@st.cache_data(ttl=10)  # Very short TTL—refresh every 10 seconds to stay current
+def fetch_football_data():
+    """Fetch live data from API with no cache buster parameter."""
     all_matches = []
     standings_list = []
     
@@ -565,10 +566,8 @@ def fetch_football_data(cache_buster=None):
         
     return all_matches, standings_list
 
-# Fetch the data with a time-based cache buster
-import time
-cache_buster = int(time.time() / 30)  # Changes every 30 seconds
-all_matches, standings_list = fetch_football_data(cache_buster=cache_buster)
+# Fetch the data—no cache buster needed with short TTL
+all_matches, standings_list = fetch_football_data()
 
 # Process Leaderboard
 master_flat_leaderboard = []
@@ -609,7 +608,7 @@ next_kickoff_matches = []
 if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
-# ── HEADER ───────────────────────────────────────────────────────────────────
+# ── HEADER ─────────────────────────────────────────────────────────────────
 st.markdown("""
     <div class="title-area">
         <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
@@ -644,7 +643,7 @@ else:
     for next_match in next_kickoff_matches:
         st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
 
-# ── STATS ROW ────────────────────────────────────────────────────────────────
+# ── STATS ROW ──────────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
     st.markdown('<div class="stat-banner-box"><medium>💰 Prize Pot</medium><span>£30</span></div>', unsafe_allow_html=True)
@@ -656,7 +655,7 @@ with stat_cols[2]:
 
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
-# ── GROUPS CANVAS ────────────────────────────────────────────────────────────
+# ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
     st.warning("⚠️ Using placeholder API key. Please insert your true Football-Data.org token to pull live group lists and matches.")
 else:
@@ -773,7 +772,7 @@ else:
                             if team_name in GROUP_PLAYERS:
                                 p = GROUP_PLAYERS[team_name]
                                 card = f"""
-                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; display: inline-block; vertical-align: top; margin: 4px; overflow: hidden;">
+                                <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 130px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
                                     <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
