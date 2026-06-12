@@ -22,7 +22,7 @@ st.markdown("""
         @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
 
         /* Force global app body background, standard text, and Figtree font */
-        .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        .stApp, [data-testid=\"stAppViewContainer\"], [data-testid=\"stHeader\"] {
             background-color: #FAFAFA !important;
             color: #333333 !important;
             font-family: 'Figtree', sans-serif !important;
@@ -508,30 +508,32 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── HELPER: LOOKUP COLUMNS C & D -> COLUMN H FROM THE 'FIXTURES' SHEET ──
+# ── HELPER: DIRECT LOOKUP BY MATCHING EXACT OR NORMALIZED TEAM NAMES ──
 def get_spreadsheet_url_fallback(h_name, a_name):
     """
-    Loads the spreadsheet, checks the 'Fixtures' tab, and matches the
-    exact website home and away team names (Cols C & D) to pull the URL (Col H).
+    Loads spreadsheet data, standardizes string variants (e.g. Korea Republic -> South Korea),
+    compares columns C and D, and directly returns column H's URL.
     """
     import pandas as pd
     import os
 
-    # Standardize name variations returned from external API to match your spreadsheet names perfectly
-    def clean_api_name(name):
-        n = name.strip()
-        if n == "DR Congo":
-            return "Congo DR"
-        if n == "Cape Verde":
-            return "Cape Verde Islands"
-        if "Turkey" in n or "Türkiye" in n or "Turkiye" in n:
-            return "Turkey"
-        return n
+    # Force common name differences between the external API and your layout variables to harmonize
+    def normalize(name_str):
+        ns = str(name_str).strip().lower()
+        if ns in ["korea republic", "south korea", "korea"]:
+            return "south korea"
+        if ns in ["dr congo", "congo dr"]:
+            return "congo dr"
+        if ns in ["cape verde", "cape verde islands"]:
+            return "cape verde islands"
+        if ns in ["czechia", "czech republic"]:
+            return "czechia"
+        return ns
 
-    target_home = clean_api_name(h_name)
-    target_away = clean_api_name(a_name)
+    target_home = normalize(h_name)
+    target_away = normalize(a_name)
 
-    # List of possible filenames in the root directory
+    # List of possible target filenames to scan
     possible_files = ["fixtures.xlsx", "data.xlsx", "sweepstake.xlsx", "world_cup.xlsx", "fixtures.csv"]
     sheet_path = st.secrets.get("SPREADSHEET_PATH", None)
     if sheet_path and os.path.exists(sheet_path):
@@ -548,24 +550,23 @@ def get_spreadsheet_url_fallback(h_name, a_name):
                 if df.empty or len(df.columns) < 8:
                     continue
 
-                # Position index-based tracking: C=2, D=3, H=7
+                # Strict absolute row positioning: Column C (Home), Column D (Away), Column H (URL)
                 home_col = df.columns[2]
                 away_col = df.columns[3]
                 url_col = df.columns[7]
 
                 for _, row in df.iterrows():
-                    # Handle internal variations in spreadsheet rows safely
-                    row_h = clean_api_name(str(row[home_col]))
-                    row_a = clean_api_name(str(row[away_col]))
+                    row_home = normalize(row[home_col])
+                    row_away = normalize(row[away_col])
 
-                    if row_h == target_home and row_a == target_away:
+                    if row_home == target_home and row_away == target_away:
                         found_url = str(row[url_col]).strip()
                         if found_url and found_url.startswith("http"):
                             return found_url
             except Exception:
                 pass
 
-    # Backup inspection of global environment state dataframes
+    # Safety fall-through tracking lookups against global state parameters
     possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df", "sheet"]
     for name in possible_df_names:
         if name in globals():
@@ -576,25 +577,28 @@ def get_spreadsheet_url_fallback(h_name, a_name):
                     away_col = possible_df.columns[3]
                     url_col = possible_df.columns[7]
                     for _, row in possible_df.iterrows():
-                        row_h = clean_api_name(str(row[home_col]))
-                        row_a = clean_api_name(str(row[away_col]))
-                        if row_h == target_home and row_a == target_away:
+                        row_home = normalize(row[home_col])
+                        row_away = normalize(row[away_col])
+                        if row_home == target_home and row_away == target_away:
                             found_url = str(row[url_col]).strip()
                             if found_url and found_url.startswith("http"):
                                 return found_url
                 except Exception:
                     pass
 
-    # Final backup channel
     return "https://www.youtube.com/@fifa/videos"
 
-# ── UPDATED MATCH BANNER BUILDER ──
+# ── MATCH BANNER BUILDER ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
-    h_name = home_team_obj.get("name", "TBD")
-    a_name = away_team_obj.get("name", "TBD")
+    raw_h_name = home_team_obj.get("name", "TBD")
+    raw_a_name = away_team_obj.get("name", "TBD")
+
+    # Clean the displayed names down to match the dashboard's mappings natively
+    h_name = "South Korea" if raw_h_name == "Korea Republic" else raw_h_name
+    a_name = "South Korea" if raw_a_name == "Korea Republic" else raw_a_name
 
     left_color = TEAM_COLORS.get(h_name, DEFAULT_LEFT_COLOR)
     right_color = TEAM_COLORS.get(a_name, DEFAULT_RIGHT_COLOR)
@@ -623,8 +627,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     elif is_result:
         h_score, a_score = get_live_score(match)
         
-        # FIXED: Look up link matching your 1:1 formatted team structure safely
-        highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
+        # FIXED: Will now normalize 'Korea Republic' -> 'South Korea' and pull the link
+        highlights_url = get_spreadsheet_url_fallback(raw_h_name, raw_a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
@@ -690,8 +694,10 @@ top_performer_text = "N/A"
 for group in standings_list:
     for row in group.get("table", []):
         t_info = row.get("team", {})
+        raw_name = t_info.get("name", "Unknown")
+        name = "South Korea" if raw_name == "Korea Republic" else raw_name
         master_flat_leaderboard.append({
-            "name": t_info.get("name", "Unknown"),
+            "name": name,
             "played": row.get("playedGames", 0),
             "won": row.get("won", 0),
             "gd": row.get("goalDifference", 0),
@@ -790,7 +796,10 @@ else:
                 if i + j < len(standings_list):
                     group_data = standings_list[i + j]
                     group_name = group_data.get("group")
-                    teams_in_group = [row.get("team", {}).get("name") for row in group_data.get("table", [])]
+                    teams_in_group = []
+                    for row in group_data.get("table", []):
+                        raw_tname = row.get("team", {}).get("name", "")
+                        teams_in_group.append("South Korea" if raw_tname == "Korea Republic" else raw_tname)
 
                     with row_cols[j]:
                         st.markdown('<div class="group-row-spacer">', unsafe_allow_html=True)
@@ -816,7 +825,8 @@ else:
                         """
                         for row in group_data.get("table", []):
                             team_info = row.get("team", {})
-                            t_name = team_info.get("name")
+                            raw_t_name = team_info.get("name")
+                            t_name = "South Korea" if raw_t_name == "Korea Republic" else raw_t_name
                             owner = SWEEPSTAKE_MAPPING.get(t_name, "Unassigned")
                             flag_html = get_flag_html(t_name)
                             table_html += f"""<tr>
@@ -834,11 +844,15 @@ else:
                         st.markdown(table_html, unsafe_allow_html=True)
 
                         st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
-                        group_fixtures = [
-                            m for m in all_matches
-                            if m.get("homeTeam", {}).get("name") in teams_in_group
-                            or m.get("awayTeam", {}).get("name") in teams_in_group
-                        ]
+                        
+                        group_fixtures = []
+                        for m in all_matches:
+                            r_h = m.get("homeTeam", {}).get("name", "")
+                            r_a = m.get("awayTeam", {}).get("name", "")
+                            norm_h = "South Korea" if r_h == "Korea Republic" else r_h
+                            norm_a = "South Korea" if r_a == "Korea Republic" else r_a
+                            if norm_h in teams_in_group or norm_a in teams_in_group:
+                                group_fixtures.append(m)
 
                         if not group_fixtures:
                             st.caption("No fixtures currently listed for this group.")
@@ -848,8 +862,8 @@ else:
                                 m_status = match.get("status")
                                 home_t = match.get("homeTeam", {})
                                 away_t = match.get("awayTeam", {})
-                                h_name = home_t.get("name", "TBD")
-                                a_name = away_t.get("name", "TBD")
+                                h_name = "South Korea" if home_t.get("name") == "Korea Republic" else home_t.get("name", "TBD")
+                                a_name = "South Korea" if away_t.get("name") == "Korea Republic" else away_t.get("name", "TBD")
                                 h_owner = SWEEPSTAKE_MAPPING.get(h_name, "Unassigned")
                                 a_owner = SWEEPSTAKE_MAPPING.get(a_name, "Unassigned")
 
