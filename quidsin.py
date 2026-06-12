@@ -54,7 +54,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #006847;
+        background-color: #E05206;
         padding: 8px 15px;
     }
 
@@ -80,8 +80,10 @@ GLOBAL_STYLE_TOKENS = """
         padding: 6px 10px;
     }
 
+    /* --- FIX: RESTORED SIDE-BY-SIDE MATCHUP LAYOUT (NO VERTICAL STACKING) --- */
     .matchup-split-screen {
-        display: flex;
+        display: flex !important;
+        flex-direction: row !important;
         position: relative;
         align-items: center;
         height: 75px;
@@ -89,24 +91,23 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .team-panel {
-        width: 50%;
-        display: flex;
+        width: 50% !important;
+        display: flex !important;
         align-items: center;
-        padding: 10px 25px;
         box-sizing: border-box;
         height: 100%;
         overflow: hidden;
     }
     
     .home-panel {
-        justify-content: flex-end;
-        padding-right: 50px;
+        justify-content: flex-end !important;
+        padding-right: 50px !important;
         border-right: 1px solid rgba(255, 255, 255, 0.15);
     }
     
     .away-panel {
-        justify-content: flex-start;
-        padding-left: 50px;
+        justify-content: flex-start !important;
+        padding-left: 50px !important;
     }
 
     .team-panel-text {
@@ -158,6 +159,7 @@ GLOBAL_STYLE_TOKENS = """
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
+    /* --- ROBUST MEMORY SAFE DISCLOSURE ARCHITECTURE --- */
     details.score-disclosure summary {
         list-style: none;
         outline: none;
@@ -185,7 +187,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-bottom-time {
-        background-color: #006847;
+        background-color: #E05206;
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
@@ -239,10 +241,10 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE RE-DOCKING MECHANISM --- */
+    /* --- MOBILE RESPONSIVE ENGINE RE-DOCKING --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
-            flex-direction: column;
+            flex-direction: column !important;
             height: auto;
             min-height: 120px;
         }
@@ -401,6 +403,7 @@ GROUP_PLAYERS = {
     "Curaçao": {"player_name": "Juninho Bacuna", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/juninho-bacuna-curacao-midfielder-profile-full.png"},
     "Haiti": {"player_name": "Wilson Isidor", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/wilson-isidor-haiti-forward-profile-full.png"},
     "Congo DR": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
+    "DR Congo": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "Ghana": {"player_name": "Antoine Semenyo", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/antoine-semenyo-ghana-forward-profile-full.png"},
     "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-algeria-forward-profile-full.png"},
     "Australia": {"player_name": "Jackson Irvine", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jackson-irvine-australia-midfielder-profile-full.png"},
@@ -649,7 +652,7 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER ROW (TITLE LEFT, DYNAMIC BANNER OR FILTERABLE LIST RIGHT) ──────
+# ── HEADER ROW (TITLE LEFT, DYNAMIC IN-PLAY BANNER OR FILTERABLE LIST RIGHT) ──────
 header_cols = st.columns([1, 1], gap="large")
 
 with header_cols[0]:
