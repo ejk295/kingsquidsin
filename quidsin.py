@@ -111,7 +111,7 @@ GLOBAL_STYLE_TOKENS = """
 
     .team-panel-text {
         color: #FFFFFF !important;
-        font-size: 16px;
+        font-size: 17px; /* Made bigger on Desktop */
         font-weight: 800 !important;
         text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
         display: flex;
@@ -120,11 +120,16 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .team-panel-text span {
-        font-size: 12px;
+        font-size: 13px !important; /* Made bigger on Desktop */
         font-weight: 400 !important;
         opacity: 0.95;
         color: #FFFFFF !important;
         margin: 0 6px;
+    }
+    
+    /* Targets for toggling standard vs mobile abbreviation blocks */
+    .mobile-abbrev-text {
+        display: none;
     }
 
     .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
@@ -255,12 +260,21 @@ GLOBAL_STYLE_TOKENS = """
             padding-left: 32px !important;
         }
         .team-panel-text {
-            font-size: 11px !important;
+            font-size: 14px !important; /* Made bigger on Mobile */
         }
         .team-panel-text span {
-            font-size: 9px !important;
+            font-size: 11px !important; /* Made bigger on Mobile */
             margin: 0 2px !important;
         }
+        
+        /* Swapping names out with 3-letter abbreviations on mobile viewports */
+        .desktop-full-text {
+            display: none !important;
+        }
+        .mobile-abbrev-text {
+            display: inline-block !important;
+        }
+        
         .banner-flag {
             width: 20px !important;
             height: 14px !important;
@@ -299,7 +313,7 @@ st.markdown("""
         .group-row-spacer { margin-bottom: 15px !important; }
         .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
         
-        /* --- STSTRICT STANDARD INLINE FLAG OVERRIDES --- */
+        /* --- STRICT INLINE FLAG AND TABLE FIX OVERRIDES --- */
         .flag-img { 
             vertical-align: middle !important; 
             margin: 0px 4px !important; 
@@ -370,6 +384,22 @@ SWEEPSTAKE_MAPPING = {
     "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff", "DR Congo": "Jeff",
     "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
     "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
+}
+
+# ISO 3-Letter Country Abbreviation Mapping Engine
+COUNTRY_ABBREVIATIONS = {
+    "Mexico": "MEX", "South Africa": "RSA", "Canada": "CAN", "Switzerland": "SUI",
+    "Argentina": "ARG", "France": "FRA", "Brazil": "BRA", "Spain": "ESP",
+    "Bosnia and Herzegovina": "BIH", "Bosnia-Herzegovina": "BIH", "Czechia": "CZE", "Qatar": "QAT", "Morocco": "MAR",
+    "Haiti": "HAI", "Turkey": "TUR", "Paraguay": "PAR", "Germany": "GER",
+    "Curaçao": "CUW", "Ecuador": "ECU", "Japan": "JPN", "Belgium": "BEL",
+    "Egypt": "EGY", "Tunisia": "TUN", "Netherlands": "NED", "Ivory Coast": "CIV",
+    "Australia": "AUS", "Cape Verde Islands": "CPV", "Cape Verde": "CPV", "Uruguay": "URU", "Sweden": "SWE",
+    "Saudi Arabia": "KSA", "Scotland": "SCO", "United States": "USA", "Senegal": "SEN",
+    "New Zealand": "NZL", "Iran": "IRN", "Iraq": "IRQ", "Norway": "NOR",
+    "Algeria": "ALG", "Austria": "AUT", "Jordan": "JOR", "Congo DR": "COD", "DR Congo": "COD",
+    "Portugal": "POR", "Uzbekistan": "UZB", "Colombia": "COL", "England": "ENG",
+    "Panama": "PAN", "Ghana": "GHA", "Croatia": "CRO", "South Korea": "KOR"
 }
 
 EXPECTED_RANKINGS = {
@@ -482,7 +512,6 @@ def get_cached_team_crests():
 
 CACHED_CRESTS = get_cached_team_crests()
 
-# Distinct width limit locks to avoid visual bleeding into table grids
 def get_banner_flag_html(team_name):
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
@@ -512,7 +541,7 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── MASTER SHEET INGESTION OVERRIDES (A=Date, B=Time, C=Home, D=Away, E=Status, F=HomeScore, G=AwayScore, H=Highlights) ──
+# ── MASTER SPREADSHEET SCHEDULE OVERRIDES ENGINE ──
 @st.cache_data(ttl=15)
 def fetch_spreadsheet_overrides_master():
     override_dict = {}
@@ -547,13 +576,17 @@ def fetch_spreadsheet_overrides_master():
 
 SPREADSHEET_OVERRIDES = fetch_spreadsheet_overrides_master()
 
-# ── ORIGINAL DESIGN MATCH HERO CARD GENERATOR ──
+# ── DESIGN HERO BANNER GENERATOR WITH MOBILE 3-LETTER ABBREVIATION RULES ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
     h_name = home_team_obj.get("name", "TBD")
     a_name = away_team_obj.get("name", "TBD")
+
+    # Map country codes cleanly, falling back to first 3 letters if unmapped
+    h_abbrev = COUNTRY_ABBREVIATIONS.get(h_name, h_name[:3].upper())
+    a_abbrev = COUNTRY_ABBREVIATIONS.get(a_name, a_name[:3].upper())
 
     left_color = TEAM_COLORS.get(h_name, DEFAULT_LEFT_COLOR)
     right_color = TEAM_COLORS.get(a_name, DEFAULT_RIGHT_COLOR)
@@ -611,13 +644,19 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             <div class="matchup-split-screen">
                 <div class="team-panel home-panel" style="background-color: {left_color};">
                     <div class="team-panel-text">
-                        {h_flag} {h_name} <span>{h_owner}</span>
+                        {h_flag} 
+                        <span class="desktop-full-text">{h_name}</span>
+                        <span class="mobile-abbrev-text">{h_abbrev}</span>
+                        <span>{h_owner}</span>
                     </div>
                 </div>
                 {centre_bubble}
                 <div class="team-panel away-panel" style="background-color: {right_color};">
                     <div class="team-panel-text">
-                        <span>{a_owner}</span> {a_name} {a_flag}
+                        <span>{a_owner}</span> 
+                        <span class="desktop-full-text">{a_name}</span>
+                        <span class="mobile-abbrev-text">{a_abbrev}</span>
+                        {a_flag}
                     </div>
                 </div>
             </div>
@@ -674,7 +713,7 @@ if master_flat_leaderboard:
     op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
     top_performer_text = f"{best['name']} ({op_owner})"
 
-# ── SHEET SOURCE ARCHITECTURE FILTER ENGINE ──
+# ── ROUTING CLASSIFICATIONS OVER spreadsheet MASTER PARSER ENTRIES ──
 live_matches = []
 upcoming_matches = []
 finished_matches = []
@@ -784,15 +823,6 @@ with hero_cols[1]:
         components.html(result_banner_html, height=160, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
-
-# Additional matches are appended cleanly lower down if multi-events occur simultaneously
-if len(live_matches) > 1:
-    for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
-
-if len(next_kickoff_matches) > 1:
-    for idx, next_match in enumerate(next_kickoff_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
