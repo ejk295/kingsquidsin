@@ -16,6 +16,10 @@ st.set_page_config(
 # Run page auto-refresh every 3 minutes to keep live scores syncing
 st_autorefresh(interval=180 * 1000, key="datarefresh")
 
+# Initialize Session State for spoiler tracking if not present
+if "revealed_scores" not in st.session_state:
+    st.session_state.revealed_scores = set()
+
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
     <style>
@@ -68,7 +72,6 @@ st.markdown("""
             background-color: #FFFFFF;
         }
 
-        /* Special variant container for the small sidebar result widget */
         .compact-sidebar-card {
             max-width: 100% !important;
             margin-left: auto;
@@ -91,7 +94,6 @@ st.markdown("""
             display: inline-block;
         }
 
-        /* In-play/Result banner top panes */
         .inplay-top-pane {
             background-color: #8B0000;
             padding: 8px 15px;
@@ -267,6 +269,25 @@ st.markdown("""
             margin: 0 5px !important;
         }
 
+        /* Spoiler Button Styling Injection inside HTML string context */
+        .spoiler-inline-btn {
+            background-color: #111111 !important;
+            color: #FFFFFF !important;
+            border: 2px solid #FFFFFF !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 10px !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+            cursor: pointer;
+            text-decoration: none !important;
+            display: inline-block;
+        }
+        .spoiler-inline-btn:hover {
+            background-color: #333333 !important;
+        }
+
         .stat-banner-box {
             background: #FFFFFF !important;
             padding: 12px 20px;
@@ -353,22 +374,6 @@ st.markdown("""
             margin-bottom: 4px !important;
             margin-top: 0px !important;
             display: inline-block;
-        }
-        
-        /* Spoiler protection custom styling override */
-        div.stButton > button {
-            background-color: #444444 !important;
-            color: white !important;
-            font-size: 11px !important;
-            padding: 2px 10px !important;
-            height: auto !important;
-            min-height: 0px !important;
-            border-radius: 4px !important;
-            border: 1px solid #FFFFFF !important;
-        }
-        div.stButton > button:hover {
-            background-color: #222222 !important;
-            color: white !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -563,27 +568,10 @@ def get_spreadsheet_url_fallback(h_name, a_name):
             except Exception:
                 pass
 
-    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df", "sheet"]
-    for name in possible_df_names:
-        if name in globals():
-            possible_df = globals()[name]
-            if isinstance(possible_df, pd.DataFrame) and not possible_df.empty:
-                try:
-                    home_col = possible_df.columns[2]
-                    away_col = possible_df.columns[3]
-                    url_col = possible_df.columns[7]
-                    for _, row in possible_df.iterrows():
-                        if str(row[home_col]).strip() == h_name.strip() and str(row[away_col]).strip() == a_name.strip():
-                            found_url = str(row[url_col]).strip()
-                            if found_url and found_url.startswith("http"):
-                                return found_url
-                except Exception:
-                    pass
-
     return "https://www.youtube.com/@fifa/videos"
 
 # ── UPDATED MATCH BANNER BUILDER ──
-def build_match_banner(match, is_live=False, is_result=False, match_idx=2, show_spoiler=False):
+def build_match_banner(match, is_live=False, is_result=False, match_idx=2, match_id=None):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
@@ -609,14 +597,22 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2, show_
 
     container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
 
+    # Evaluate unique match identifier string for tracking spoiler reveals
+    m_uid = match_id if match_id else f"{h_name}-{a_name}"
+    show_spoiler = m_uid in st.session_state.revealed_scores
+
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
+        
         if show_spoiler:
             centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         else:
-            centre_bubble = '<div class="vs-marker-bubble">LIVE</div>'
+            # Inline links utilizing a fallback query trick to force quick session reload on click
+            centre_bubble = f'<a href="?reveal={m_uid}" class="score-bubble spoiler-inline-btn" style="border-radius:30px; background-color:#8B0000 !important; transform: translate(-50%, -50%); padding: 6px 12px !important;">Show score</a>'
+            
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
+        
     elif is_result:
         h_score, a_score = get_live_score(match)
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
@@ -625,7 +621,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2, show_
         if show_spoiler:
             centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
         else:
-            centre_bubble = '<div class="vs-marker-bubble" style="font-size:10px; border-radius:4px; padding:4px 6px;">FT</div>'
+            centre_bubble = f'<a href="?reveal={m_uid}" class="score-bubble score-bubble-compact spoiler-inline-btn" style="transform: translate(-50%, -50%); padding: 4px 10px !important;">Show Score</a>'
             
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER-FREE HIGHLIGHTS</a></div>'
     else:
@@ -681,6 +677,11 @@ def fetch_football_data():
     return all_matches, standings_list
 
 all_matches, standings_list = fetch_football_data()
+
+# Process Query Params to reveal spoiler instantly upon center bubble action
+query_params = st.query_params
+if "reveal" in query_params:
+    st.session_state.revealed_scores.add(query_params["reveal"])
 
 # Process Leaderboard Data safely
 master_flat_leaderboard = []
@@ -741,11 +742,9 @@ with header_cols[0]:
     """, unsafe_allow_html=True)
 
 with header_cols[1]:
-    # In-play match banner is now assigned here, where the latest result banner used to be.
     if live_matches:
         live_match = live_matches[0]
-        reveal_live_score = st.button("Show score", key="live_score_toggle")
-        live_banner_html = build_match_banner(live_match, is_live=True, show_spoiler=reveal_live_score)
+        live_banner_html = build_match_banner(live_match, is_live=True, match_id="live-hero")
         st.markdown(live_banner_html, unsafe_allow_html=True)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
@@ -762,8 +761,7 @@ with banner_cols[0]:
         except ValueError:
             match_index = 2
             
-        reveal_latest_score = st.button("Show Score", key="latest_score_toggle")
-        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index, show_spoiler=reveal_latest_score)
+        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index, match_id="latest-result-hero")
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
         st.info("No completed results yet.")
