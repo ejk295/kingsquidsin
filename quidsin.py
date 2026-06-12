@@ -115,27 +115,15 @@ st.markdown("""
             overflow: hidden;
         }
         
-        .team-panel-compact {
-            padding: 6px 12px !important;
-        }
-
         .home-panel {
             justify-content: flex-end;
             padding-right: 50px;
             border-right: 1px solid rgba(255, 255, 255, 0.15);
         }
         
-        .home-panel-compact {
-            padding-right: 35px !important;
-        }
-
         .away-panel {
             justify-content: flex-start;
             padding-left: 50px;
-        }
-        
-        .away-panel-compact {
-            padding-left: 35px !important;
         }
 
         .team-panel-text {
@@ -147,10 +135,6 @@ st.markdown("""
             align-items: center;
             white-space: nowrap;
         }
-        
-        .team-panel-text-compact {
-            font-size: 13px !important;
-        }
 
         .team-panel-text span {
             font-size: 12px;
@@ -159,20 +143,13 @@ st.markdown("""
             color: #FFFFFF !important;
             margin: 0 6px;
         }
-        
-        .team-panel-text-compact span {
-            font-size: 10px !important;
-            margin: 0 4px;
-        }
 
-        .vs-marker-bubble, .score-bubble {
+        .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             white-space: nowrap;
         }
 
@@ -183,41 +160,34 @@ st.markdown("""
             font-weight: 900 !important;
             padding: 5px 9px;
             border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .score-bubble {
-            background-color: #8B0000;
+            background-color: #444444;
             color: #FFFFFF !important;
             font-size: 16px;
             font-weight: 900 !important;
             padding: 6px 14px;
             border-radius: 6px;
-        }
-        
-        .score-bubble-compact {
-            background-color: #444444 !important;
-            font-size: 13px !important;
-            padding: 4px 10px !important;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .score-reveal-btn {
-            background-color: #444444;
+            background-color: #111111;
             color: #FFFFFF !important;
             font-size: 11px !important;
-            font-weight: 800 !important;
-            padding: 5px 10px !important;
+            font-weight: 900 !important;
+            padding: 6px 12px !important;
             border-radius: 6px;
             cursor: pointer;
             border: 2px solid #FFFFFF;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 11;
-            white-space: nowrap;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: inline-block;
         }
 
         .banner-bottom-time {
@@ -274,12 +244,6 @@ st.markdown("""
             display: inline-block;
             margin: 0 8px;
             vertical-align: middle;
-        }
-        
-        .banner-flag-compact {
-            width: 22px !important;
-            height: 14px !important;
-            margin: 0 5px !important;
         }
 
         .stat-banner-box {
@@ -564,19 +528,11 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     if left_color == right_color:
         right_color = "#222222" if left_color != "#222222" else "#555555"
 
-    flag_class = "banner-flag"  # Keeping flags consistent in size across horizontal hero lines
-    h_flag = get_flag_html(h_name, extra_class=flag_class)
-    a_flag = get_flag_html(a_name, extra_class=flag_class)
+    h_flag = get_flag_html(h_name, extra_class="banner-flag")
+    a_flag = get_flag_html(a_name, extra_class="banner-flag")
 
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
-
-    panel_text_class = "team-panel-text"
-    home_panel_class = "team-panel home-panel"
-    away_panel_class = "team-panel away-panel"
-    span_class = ""
-
-    container_class = "match-banner-container"
 
     if is_live:
         h_score, a_score = get_live_score(match)
@@ -589,10 +545,12 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         
-        # Interactive HTML client button container targeting elements to replace dynamically 
+        # Wrapped the interactive layer cleanly inside a parent wrapper element to stop CSS collapsing
         centre_bubble = f"""
-        <button class="score-reveal-btn" id="reveal-btn-{match_idx}" onclick="document.getElementById('score-bubble-{match_idx}').style.display='block'; this.style.display='none';">Show Score</button>
-        <div class="score-bubble score-bubble-compact" id="score-bubble-{match_idx}" style="display: none;">{h_score} – {a_score}</div>
+        <div class="score-reveal-wrapper">
+            <button class="score-reveal-btn" id="reveal-btn-{match_idx}" onclick="document.getElementById('score-bubble-{match_idx}').style.display='block'; this.style.display='none';">Show Score</button>
+            <div class="score-bubble" id="score-bubble-{match_idx}" style="display: none;">{h_score} – {a_score}</div>
+        </div>
         """
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
     else:
@@ -609,18 +567,18 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
 
     return f"""
     <div class="match-banner-wrapper">
-        <div class="{container_class}">
+        <div class="match-banner-container">
             {top_pane}
             <div class="matchup-split-screen">
-                <div class="{home_panel_class}" style="background-color: {left_color};">
-                    <div class="{panel_text_class}">
-                        {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+                <div class="team-panel home-panel" style="background-color: {left_color};">
+                    <div class="team-panel-text">
+                        {h_flag} {h_name} <span>{h_owner}</span>
                     </div>
                 </div>
                 {centre_bubble}
-                <div class="{away_panel_class}" style="background-color: {right_color};">
-                    <div class="{panel_text_class}">
-                        <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
+                <div class="team-panel away-panel" style="background-color: {right_color};">
+                    <div class="team-panel-text">
+                        <span>{a_owner}</span> {a_name} {a_flag}
                     </div>
                 </div>
             </div>
@@ -705,7 +663,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── RENDERING HERO BANNER COMPONENT ──
-# Displays 'Next Match' and 'Latest Result' at the same level with equal horizontal space.
 hero_cols = st.columns([1, 1], gap="small")
 
 with hero_cols[0]:
