@@ -77,7 +77,7 @@ GLOBAL_STYLE_TOKENS = """
     
     .result-top-pane {
         background-color: #444444;
-        padding: 8px 15px;
+        padding: 8px 10px;
     }
 
     .matchup-split-screen {
@@ -474,15 +474,15 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         h_score, a_score = get_live_score(match)
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
-        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
+        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
             <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
-            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show score</label>
+            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show</label>
             <div class="score-bubble" style="display: none;">{h_score} – {a_score}</div>
         </div>
         """
-        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
+        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER FREE HIGHLIGHTS 📺</a></div>'
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
