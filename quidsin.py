@@ -51,11 +51,19 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- MATCH BANNER LAYOUT (DYNAMIC COLOURS) --- */
+        /* --- MATCH BANNER LAYOUT (FIXED OVERFLOW & STRETCH) --- */
+        .match-banner-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 8px 0px;
+        }
+
         .match-banner-container {
+            width: 100%;
+            max-width: 550px; /* Locks the size so elements do not drift on wide monitors */
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
-            margin: 8px 0px;
             overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
             text-align: center;
@@ -96,6 +104,7 @@ st.markdown("""
             position: relative;
             align-items: center;
             height: 70px;
+            width: 100%;
         }
 
         .team-panel {
@@ -105,6 +114,7 @@ st.markdown("""
             padding: 10px 15px;
             box-sizing: border-box;
             height: 100%;
+            overflow: hidden;
         }
         
         .team-panel-compact {
@@ -113,30 +123,31 @@ st.markdown("""
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 40px;
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            padding-right: 45px; /* Spaces out text from the absolute center badge */
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .home-panel-compact {
-            padding-right: 30px !important;
+            padding-right: 35px !important;
         }
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 40px;
+            padding-left: 45px; /* Spaces out text from the absolute center badge */
         }
         
         .away-panel-compact {
-            padding-left: 30px !important;
+            padding-left: 35px !important;
         }
 
         .team-panel-text {
             color: #FFFFFF !important;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800 !important;
-            text-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+            text-shadow: 0px 1px 3px rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
+            white-space: nowrap;
         }
         
         .team-panel-text-compact {
@@ -156,40 +167,32 @@ st.markdown("""
         }
 
         .vs-marker-bubble, .score-bubble {
-            pointer-events: none !important;
-        }
-
-        .vs-marker-bubble {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+
+        .vs-marker-bubble {
             background-color: #111111;
             color: #FFFFFF !important;
             font-size: 11px;
             font-weight: 900 !important;
             padding: 4px 8px;
             border-radius: 50%;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .score-bubble {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
             background-color: #8B0000;
             color: #FFFFFF !important;
             font-size: 15px;
             font-weight: 900 !important;
             padding: 6px 12px;
             border-radius: 6px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            white-space: nowrap;
         }
         
         .score-bubble-compact {
@@ -216,13 +219,12 @@ st.markdown("""
         
         .result-bottom-bar {
             background-color: #333333;
-            padding: 6px 15px;
+            padding: 8px 15px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        /* Direct styles to guarantee the watch highlights link text is readable */
         .highlights-btn {
             background-color: #FF0000 !important;
             color: #FFFFFF !important;
@@ -230,28 +232,33 @@ st.markdown("""
             font-size: 11px !important;
             text-transform: uppercase;
             text-decoration: none !important;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 4px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .highlights-btn:hover {
+            background-color: #CC0000 !important;
         }
         
         .banner-flag {
-            width: 28px !important;
-            height: 18px !important;
+            width: 26px !important;
+            height: 17px !important;
             object-fit: cover !important;
             border-radius: 2px;
             border: 1px solid rgba(255,255,255,0.4);
             display: inline-block;
-            margin: 0 8px;
+            margin: 0 6px;
             vertical-align: middle;
         }
         
         .banner-flag-compact {
             width: 22px !important;
             height: 14px !important;
-            margin: 0 6px !important;
+            margin: 0 5px !important;
         }
 
         .stat-banner-box {
@@ -548,7 +555,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
         bottom_bar = f"""
         <div class="result-bottom-bar">
-            <a href="{highlights_url}">
+            <a href="{highlights_url}" target="_blank" class="highlights-btn">
                 📺 Watch Highlights
             </a>
         </div>
@@ -565,23 +572,26 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
+    # Wrapped in match-banner-wrapper flexbox to constrain alignment on wide viewports
     return f"""
-    <div class="match-banner-container">
-        {top_pane}
-        <div class="matchup-split-screen">
-            <div class="{home_panel_class}" style="background-color: {left_color};">
-                <div class="{panel_text_class}">
-                    {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+    <div class="match-banner-wrapper">
+        <div class="match-banner-container">
+            {top_pane}
+            <div class="matchup-split-screen">
+                <div class="{home_panel_class}" style="background-color: {left_color};">
+                    <div class="{panel_text_class}">
+                        {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+                    </div>
+                </div>
+                {centre_bubble}
+                <div class="{away_panel_class}" style="background-color: {right_color};">
+                    <div class="{panel_text_class}">
+                        <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
+                    </div>
                 </div>
             </div>
-            {centre_bubble}
-            <div class="{away_panel_class}" style="background-color: {right_color};">
-                <div class="{panel_text_class}">
-                    <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
-                </div>
-            </div>
+            {bottom_bar}
         </div>
-        {bottom_bar}
     </div>
     """
     
@@ -661,11 +671,11 @@ finished_matches = sorted(
 )
 
 # ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
-header_cols = st.columns([0.55, 0.45], gap="medium")
+header_cols = st.columns([0.52, 0.48], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 15px;">
+        <div class="title-area" style="padding-top: 18px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -681,8 +691,6 @@ with header_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        
-        # Bypasses link rendering bugs completely without broken iframe clipping
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
