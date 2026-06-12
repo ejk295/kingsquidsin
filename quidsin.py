@@ -20,7 +20,7 @@ st_autorefresh(interval=180 * 1000, key="datarefresh")
 # Custom branding & layout safety styles with strict light-mode overrides and Figtree font
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
 
         /* Force global app body background, standard text, and Figtree font */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
@@ -175,7 +175,12 @@ st.markdown("""
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .score-reveal-btn {
+        /* ── PURE CSS INTERACTIVE HOOKS ── */
+        .reveal-toggle-input {
+            display: none !important;
+        }
+
+        .score-reveal-label {
             background-color: #111111;
             color: #FFFFFF !important;
             font-size: 11px !important;
@@ -188,6 +193,16 @@ st.markdown("""
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
+            user-select: none;
+        }
+
+        /* CSS Selector pipeline state matching */
+        .reveal-toggle-input:checked ~ .score-reveal-label {
+            display: none !important;
+        }
+
+        .reveal-toggle-input:checked ~ .score-bubble {
+            display: block !important;
         }
 
         .banner-bottom-time {
@@ -545,11 +560,13 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         
-        # Wrapped the interactive layer cleanly inside a parent wrapper element to stop CSS collapsing
+        # Switched layout hooks from programmatic strings to semantic pure CSS checkbox switches
+        # This completely hides interactive strings from Streamlit's code block parser pipeline
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
-            <button class="score-reveal-btn" id="reveal-btn-{match_idx}" onclick="document.getElementById('score-bubble-{match_idx}').style.display='block'; this.style.display='none';">Show Score</button>
-            <div class="score-bubble" id="score-bubble-{match_idx}" style="display: none;">{h_score} – {a_score}</div>
+            <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
+            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show Score</label>
+            <div class="score-bubble" style="display: none;">{h_score} – {a_score}</div>
         </div>
         """
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
