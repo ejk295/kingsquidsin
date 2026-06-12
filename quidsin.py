@@ -297,12 +297,6 @@ st.markdown("""
         .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
         .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
-        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
-        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
-        .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
-        .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
-        
-        /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
         .compact-sweep-container {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
@@ -414,7 +408,7 @@ GROUP_PLAYERS = {
     "Belgium": {"player_name": "Jeremy Doku", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jeremy-doku-belgium-forward-profile-full.png"},
     "Qatar": {"player_name": "Hassan Al-Haydos", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/hassan-al-haydos-qatar-forward-profile-full.png"},
     "Colombia": {"player_name": "Luis Suarez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/luis-suarez-colombia-forward-profile-full.png"},
-    "Iran": {"player_name": "Alireza Beiranvand", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/alireza-beiranvand-iran-goalkeeper-profile-full.png"},
+    "Iran": {"player_name": "Alireza Beiranvand", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/alphonso-davies-canada-defender-profile-full.png"},
     "South Africa": {"player_name": "Mbekezeli Mbokazi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/mbekezeli-mbokazi-south-africa-defender-profile-full.png"},
     "Norway": {"player_name": "Erling Haaland", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/erling-haaland-norway-forward-profile-full.png"},
     "Croatia": {"player_name": "Luka Vuskovic", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/luka-vuskovic-croatia-defender-profile-full.png"},
@@ -464,7 +458,7 @@ def get_cached_team_crests():
 
 CACHED_CRESTS = get_cached_team_crests()
 
-# Explicit sizing mapping to stop massive image container inflating
+# Fixed sizing targets for flag components to stay proportional
 def get_banner_flag_html(team_name):
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
@@ -486,7 +480,15 @@ def format_to_uk_time(utc_str):
     except Exception:
         return None
 
-# ── SINGLE OVERRIDE PARSER INGESTING LIVE DATA VIA THE SPREADSHEET MAPPINGS ──
+def get_live_score(match):
+    score_obj = match.get("score", {})
+    for target_key in ["fullTime", "regularTime", "halfTime"]:
+        s = score_obj.get(target_key, {})
+        if s and s.get("home") is not None and s.get("away") is not None:
+            return int(s.get("home")), int(s.get("away"))
+    return 0, 0
+
+# ── FULL SPREADSHEET PARSER AND HYBRID SCORE INTERSECTION OVERRIDES ──
 @st.cache_data(ttl=15)
 def fetch_spreadsheet_overrides_master():
     override_dict = {}
@@ -498,13 +500,12 @@ def fetch_spreadsheet_overrides_master():
                 try:
                     if len(row) < 7:
                         continue
-                    # Format matching user columns mapping architecture: A=Date, B=Time, C=Home, D=Away, E=Status, F=HomeScore, G=AwayScore, H=Highlights
-                    home_t = str(row[2]).strip()
-                    away_t = str(row[3]).strip()
-                    status_str = str(row[4]).strip().lower()
-                    h_score = str(row[5]).strip()
-                    a_score = str(row[6]).strip()
-                    h_link = str(row[7]).strip() if len(row) >= 8 else ""
+                    home_t = str(row[2]).strip() if pd.notna(row[2]) else ""
+                    away_t = str(row[3]).strip() if pd.notna(row[3]) else ""
+                    status_str = str(row[4]).strip().lower() if pd.notna(row[4]) else ""
+                    h_score = str(row[5]).strip() if pd.notna(row[5]) else "0"
+                    a_score = str(row[6]).strip() if pd.notna(row[6]) else "0"
+                    h_link = str(row[7]).strip() if (len(row) >= 8 and pd.notna(row[7])) else ""
 
                     if home_t and away_t:
                         lookup_key = f"{home_t.lower()}_v_{away_t.lower()}"
@@ -522,7 +523,7 @@ def fetch_spreadsheet_overrides_master():
 
 SPREADSHEET_OVERRIDES = fetch_spreadsheet_overrides_master()
 
-# ── BRAND NEW HERO FRAME GENERATOR ──
+# ── ORIGINAL DESIGN HERO BANNER ENGINE GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -541,21 +542,23 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
-    # Pull overridden live scores or result markers if logged inside our sheet parameters
-    lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
-    sheet_data = SPREADSHEET_OVERRIDES.get(lookup_key, {})
+    # Intersection score parsing logic injected straight from spreadsheet references
+    h_score, a_score = get_live_score(match)
+    highlights_url = "https://www.youtube.com/@fifa/videos"
+    
+    if h_name and a_name:
+        lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
+        if lookup_key in SPREADSHEET_OVERRIDES:
+            sheet_row = SPREADSHEET_OVERRIDES[lookup_key]
+            h_score = sheet_row.get("homeScore", h_score)
+            a_score = sheet_row.get("awayScore", a_score)
+            highlights_url = sheet_row.get("highlightsUrl", highlights_url)
 
     if is_live:
-        h_score = sheet_data.get("homeScore", "0")
-        a_score = sheet_data.get("awayScore", "0")
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
         centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
-        h_score = sheet_data.get("homeScore", "0")
-        a_score = sheet_data.get("awayScore", "0")
-        highlights_url = sheet_data.get("highlightsUrl", "https://www.youtube.com/@fifa/videos")
-        
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
@@ -600,7 +603,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     </div>
     """
     
-# ── Data Fetching pipeline ──
+# ── Data Fetching Pipeline ──
 @st.cache_data(ttl=120)  
 def fetch_football_data():
     all_matches = []
@@ -648,33 +651,34 @@ if master_flat_leaderboard:
     op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
     top_performer_text = f"{best['name']} ({op_owner})"
 
-# ── IMPLEMENT HYBRID MATCH ROUTING VIA USER EXPLICIT REQ ──
+# ── MULTI-SOURCE PIPELINE ROUTING ENGINE ──
 live_matches = []
 upcoming_matches = []
 finished_matches = []
 
-# Process match pipelines by shifting score logic and state to match our spreadsheet dictionaries
 for m in all_matches:
-    h_name = m.get("homeTeam", {}).get("name", "")
-    a_name = m.get("awayTeam", {}).get("name", "")
-    lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
+    h_name = m.get("homeTeam", {}).get("name")
+    a_name = m.get("awayTeam", {}).get("name")
     
-    if lookup_key in SPREADSHEET_OVERRIDES:
-        sheet_status = SPREADSHEET_OVERRIDES[lookup_key]["status"]
-        if "live" in sheet_status:
-            live_matches.append(m)
-        elif "finished" in sheet_status or "completed" in sheet_status:
-            finished_matches.append(m)
-        else:
-            upcoming_matches.append(m)
+    if h_name and a_name:
+        lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
+        if lookup_key in SPREADSHEET_OVERRIDES:
+            sheet_status = SPREADSHEET_OVERRIDES[lookup_key]["status"]
+            if "live" in sheet_status:
+                live_matches.append(m)
+            elif "finished" in sheet_status or "completed" in sheet_status:
+                finished_matches.append(m)
+            else:
+                upcoming_matches.append(m)
+            continue
+
+    api_status = m.get("status")
+    if api_status in ["IN_PLAY", "PAUSED"]:
+        live_matches.append(m)
+    elif api_status == "FINISHED":
+        finished_matches.append(m)
     else:
-        api_status = m.get("status", "")
-        if api_status in ["IN_PLAY", "PAUSED"]:
-            live_matches.append(m)
-        elif api_status == "FINISHED":
-            finished_matches.append(m)
-        else:
-            upcoming_matches.append(m)
+        upcoming_matches.append(m)
 
 upcoming_matches = sorted(upcoming_matches, key=lambda x: x.get("utcDate", ""))
 next_kickoff_matches = []
@@ -684,7 +688,7 @@ if upcoming_matches:
 
 finished_matches = sorted(finished_matches, key=lambda x: x.get("utcDate", ""), reverse=True)
 
-# ── HEADER ROW ────────────────────────────────────────────────────────────
+# ── HEADER ROW (TITLE LEFT, DYNAMIC CONTEXT CONTAINER RIGHT) ──────────────────
 header_cols = st.columns([1, 1], gap="medium")
 
 with header_cols[0]:
@@ -734,8 +738,8 @@ with header_cols[1]:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── RENDERING HERO BANNER COMPONENT VIA SAFE FRAME CONTAINERS ──
-hero_cols = st.columns([1, 1], gap="small")
+# ── SECONDARY CONTENT ROW (NEXT FIXTURE LEFT, LATEST RESULT RIGHT SIDE-BY-SIDE) ──
+hero_cols = st.columns([1, 1], gap="medium")
 
 with hero_cols[0]:
     if next_kickoff_matches:
@@ -758,6 +762,7 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
+# Additional matches are appended cleanly lower down if multi-events ever occur simultaneously
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
         components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
@@ -832,7 +837,6 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        # --- RESTORED FIXTURES LOGIC VIA EMBEDDED API SCHEDULE LOOPS ---
                         st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
@@ -857,33 +861,33 @@ else:
 
                                 h_flg = get_group_flag_html(h_n)
                                 a_flg = get_group_flag_html(a_n)
-                                
-                                # Read live overrides for table rows from spreadsheet mapping dicts
-                                lookup_key = f"{h_n.lower()}_v_{a_n.lower()}"
-                                if lookup_key in SPREADSHEET_OVERRIDES:
-                                    s_row = SPREADSHEET_OVERRIDES[lookup_key]
-                                    if "live" in s_row["status"]:
-                                        display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE 🔴 {s_row['homeScore']}-{s_row['awayScore']}</span>"
-                                        row_class = "fixture-row fixture-row-live"
-                                    elif "finished" in s_row["status"] or "completed" in s_row["status"]:
-                                        display_score = f"<b>{s_row['homeScore']} - {s_row['awayScore']}</b>"
-                                        row_class = "fixture-row"
+
+                                if h_n and a_n:
+                                    lookup_key = f"{h_n.lower()}_v_{a_n.lower()}"
+                                    if lookup_key in SPREADSHEET_OVERRIDES:
+                                        s_row = SPREADSHEET_OVERRIDES[lookup_key]
+                                        if "live" in s_row["status"]:
+                                            display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE 🔴 {s_row['homeScore']}-{s_row['awayScore']}</span>"
+                                            row_class = "fixture-row fixture-row-live"
+                                        elif "finished" in s_row["status"] or "completed" in s_row["status"]:
+                                            display_score = f"<b>{s_row['homeScore']} - {s_row['awayScore']}</b>"
+                                            row_class = "fixture-row"
+                                        else:
+                                            display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
+                                            row_class = "fixture-row"
                                     else:
-                                        display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
-                                        row_class = "fixture-row"
-                                else:
-                                    m_status = match.get("status")
-                                    if m_status == "FINISHED":
-                                        h_s, a_s = get_live_score(match)
-                                        display_score = f"<b>{h_s} - {a_s}</b>"
-                                        row_class = "fixture-row"
-                                    elif m_status in ["IN_PLAY", "PAUSED"]:
-                                        h_s, a_s = get_live_score(match)
-                                        display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE 🔴 {h_s}-{a_s}</span>"
-                                        row_class = "fixture-row fixture-row-live"
-                                    else:
-                                        display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
-                                        row_class = "fixture-row"
+                                        m_status = match.get("status")
+                                        if m_status == "FINISHED":
+                                            h_s, a_s = get_live_score(match)
+                                            display_score = f"<b>{h_s} - {a_s}</b>"
+                                            row_class = "fixture-row"
+                                        elif m_status in ["IN_PLAY", "PAUSED"]:
+                                            h_s, a_s = get_live_score(match)
+                                            display_score = f"<span style='color:#CC0000; font-weight:800;'>LIVE 🔴 {h_s}-{a_s}</span>"
+                                            row_class = "fixture-row fixture-row-live"
+                                        else:
+                                            display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
+                                            row_class = "fixture-row"
 
                                 st.markdown(f"""
                                     <div class="{row_class}">
