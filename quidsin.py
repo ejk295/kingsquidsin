@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 # 1. Page Configurations & Branding Styles
 st.set_page_config(
-    page_title="Byway World Cup Sweepstake", 
+    page_title="King Family World Cup Sweepstake", 
     page_icon="⚽", 
     layout="wide"
 )
@@ -54,7 +54,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #ff7d23;
+        background-color: #006847;
         padding: 8px 15px;
     }
 
@@ -187,7 +187,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-bottom-time {
-        background-color: #ff7d23;
+        background-color: #006847;
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
@@ -250,24 +250,24 @@ st.markdown("""
             background-color: #FAFAFA !important;
         }
         h1, h2, h3 {
-            color: #ff7d23 !important;
+            color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
         .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
         .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
         .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #ff7d23 !important; }
+        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
         .group-row-spacer { margin-bottom: 15px !important; }
         .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
         .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
-        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #ff7d23; }
+        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
         .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
         .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
-        .group-header-text { color: #ff7d23 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+        .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -371,8 +371,8 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-DEFAULT_LEFT_COLOR = "#ff7d23"
-DEFAULT_RIGHT_COLOR = "#ff7d23"
+DEFAULT_LEFT_COLOR = "#006847"
+DEFAULT_RIGHT_COLOR = "#006847"
 
 # 3. Cache Country Flags
 @st.cache_data(ttl=86400)
@@ -588,7 +588,7 @@ finished_matches = sorted(
 # ── HEADER ROW ────────────────────────────────────────────────────────────
 st.markdown("""
     <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-        <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
+        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
         <p>Live standings</p>
     </div>
 """, unsafe_allow_html=True)
@@ -640,7 +640,7 @@ with stat_cols[1]:
 with stat_cols[2]:
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #ff7d23;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
 # ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
@@ -696,7 +696,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
                             if m.get("homeTeam", {}).get("name") in teams_in_group
@@ -756,13 +756,13 @@ else:
                                 <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 140px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin: 4px;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
-                                    <div style="font-size: 8px; font-weight: 600; color: #ff7d23; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>🔑 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
                                 {"".join(active_cards)}
@@ -773,7 +773,7 @@ else:
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #ff7d23;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
 
