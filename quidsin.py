@@ -17,7 +17,7 @@ st.set_page_config(
 # Run page auto-refresh every 3 minutes to keep live scores syncing
 st_autorefresh(interval=180 * 1000, key="datarefresh")
 
-# Global baseline dashboard system architecture style tokens
+# Global baseline dashboard system architecture style tokens - RESTORED ORIGINAL STYLES EXACTLY
 GLOBAL_STYLE_TOKENS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
@@ -241,15 +241,15 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE STYLES: ADJUST ONLY FOR MOBILE SCREENFOOTPRINT --- */
+    /* --- MOBILE STYLES: CURRENTLY ADJUSTS ONLY ON MOBILE VIEWPORTS --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
             height: auto !important;
-            min-height: 90px;
-            padding: 10px 0;
+            min-height: 85px;
+            padding: 8px 0;
         }
         .team-panel {
-            padding: 5px 10px !important;
+            padding: 5px 12px !important;
         }
         .home-panel {
             padding-right: 35px !important;
@@ -265,8 +265,8 @@ GLOBAL_STYLE_TOKENS = """
             margin: 0 2px !important;
         }
         .banner-flag {
-            width: 20px !important;
-            height: 14px !important;
+            width: 22px !important;
+            height: 15px !important;
             margin: 0 4px !important;
         }
         .vs-marker-bubble {
@@ -274,12 +274,12 @@ GLOBAL_STYLE_TOKENS = """
             padding: 4px 7px !important;
         }
         .score-bubble {
-            font-size: 12px !important;
-            padding: 4px 10px !important;
+            font-size: 13px !important;
+            padding: 5px 11px !important;
         }
         .score-reveal-label {
             font-size: 10px !important;
-            padding: 4px 8px !important;
+            padding: 5px 9px !important;
         }
     }
 </style>
@@ -311,24 +311,26 @@ st.markdown("""
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
         .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
         
-        /* --- NON-INPLAY SWEEPSTAKE ALLOCATION MODULE --- */
-        .header-sweep-card {
+        /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
+        .compact-sweep-container {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
             border-radius: 10px;
             padding: 8px 12px;
             box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
         }
-        .header-sweep-grid {
+        .compact-teams-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 5px;
+            margin-top: 4px;
         }
-        .header-sweep-pill {
+        .compact-team-item {
             background: #FAFAFA;
             border: 1px solid #EAEAEA;
             font-size: 11px;
             font-weight: 700;
+            color: #333333;
             padding: 2px 6px;
             border-radius: 5px;
             display: inline-flex;
@@ -466,7 +468,7 @@ def get_cached_team_crests():
 
 CACHED_CRESTS = get_cached_team_crests()
 
-def get_flag_html(team_name, extra_class="flag-img"):
+def get_flag_html(team_name, extra_class="banner-flag"):
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
         return f'<img src="{crest_url}" class="{extra_class}" alt="{team_name}">'
@@ -512,7 +514,7 @@ def get_spreadsheet_url_fallback(h_name, a_name):
 
     return "https://www.youtube.com/@fifa/videos"
 
-# ── FULLY WORKING HERO BANNER RENDER ENGINE ──
+# ── RESTORED ORIGINAL HERO BANNER ENGINE GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -534,9 +536,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
-        centre_bubble = f"""
-        <div class="score-bubble" style="display: block !important;">{h_score} – {a_score}</div>
-        """
+        centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
@@ -564,6 +564,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
     return f"""
+    {GLOBAL_STYLE_TOKENS}
     <div class="match-banner-wrapper">
         <div class="match-banner-container">
             {top_pane}
@@ -652,12 +653,12 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER ROW ────────────────────────────────────────────────────────────
+# ── HEADER ROW (TITLE LEFT, DYNAMIC IN-PLAY BANNER OR COMPACT LIST RIGHT) ──────
 header_cols = st.columns([1, 1], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
+        <div class="title-area" style="padding-top: 15px; margin-bottom: 5px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -668,7 +669,7 @@ with header_cols[1]:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
         components.html(payload, height=160, scrolling=False)
     else:
-        # Render clean compact selector for allocated teams when no active game is in play
+        # Show each person's teams cleanly inside a space-conscious selector component
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
         teams_by_person = {p: [] for p in requested_people}
         for team, person in SWEEPSTAKE_MAPPING.items():
@@ -688,13 +689,13 @@ with header_cols[1]:
         selected_teams = teams_by_person[chosen_person]
         p_teams_html = ""
         for t in selected_teams:
-            p_teams_html += f'<div class="header-sweep-pill">{get_flag_html(t)} {t}</div>'
+            p_teams_html += f'<div class="compact-team-item">{get_flag_html(t)} {t}</div>'
         if not p_teams_html:
             p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
             
         st.markdown(f"""
-            <div class="header-sweep-card">
-                <div class="header-sweep-grid">
+            <div class="compact-sweep-container">
+                <div class="compact-teams-grid">
                     {p_teams_html}
                 </div>
             </div>
@@ -703,8 +704,8 @@ with header_cols[1]:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── RENDERING HERO BANNER SIDE-BY-SIDE GRID COMPONENT ──
-hero_cols = st.columns([1, 1], gap="small")
+# ── SECONDARY CONTENT ROW (NEXT FIXTURE LEFT, LATEST RESULT RIGHT SIDE-BY-SIDE) ──
+hero_cols = st.columns([1, 1], gap="medium")
 
 with hero_cols[0]:
     if next_kickoff_matches:
@@ -727,7 +728,7 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Render additional fixtures seamlessly if multiple instances occur simultaneously
+# Append cleanly lower down if multi-events ever occur simultaneously
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
         components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
