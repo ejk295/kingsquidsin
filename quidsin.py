@@ -710,7 +710,7 @@ hero_cols = st.columns([1, 1], gap="medium")
 with hero_cols[0]:
     if next_kickoff_matches:
         payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
-        components.html(payload, height=160, scrolling=False)
+        components.html(payload, height=140, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
