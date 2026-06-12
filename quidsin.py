@@ -284,8 +284,8 @@ st.markdown("""
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
-        .title-area h1 { margin: 0px !important; font-size: 26px; font-weight: 900 !important; }
-        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 15px; }
+        .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
+        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
         .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
@@ -299,37 +299,39 @@ st.markdown("""
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
         .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
         
-        /* --- ALLOCATION BOX MATRIX HEADER PANEL --- */
-        .allocation-card-holder {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+        /* --- HIGHLY COMPRESSED ALLOCATION SELECTION AREA --- */
+        .compact-sweep-container {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
-            padding: 8px;
             border-radius: 10px;
-            max-height: 120px;
-            overflow-y: auto;
+            padding: 10px 14px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
         }
-        .participant-pill {
-            background: #FAFAFA;
-            border-left: 3px solid #006847;
-            padding: 4px 6px;
-            border-radius: 4px;
-        }
-        .participant-pill div:first-child {
-            font-size: 10px;
-            font-weight: 900;
-            color: #006847;
-            text-transform: uppercase;
-        }
-        .participant-pill div:last-child {
+        .compact-sweep-title {
             font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #006847;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        .compact-teams-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .compact-team-item {
+            background: #FAFAFA;
+            border: 1px solid #EAEAEA;
+            font-size: 12px;
             font-weight: 700;
-            color: #444444;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            color: #333333;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -399,7 +401,6 @@ GROUP_PLAYERS = {
     "Curaçao": {"player_name": "Juninho Bacuna", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/juninho-bacuna-curacao-midfielder-profile-full.png"},
     "Haiti": {"player_name": "Wilson Isidor", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/wilson-isidor-haiti-forward-profile-full.png"},
     "Congo DR": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
-    "DR Congo": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "Ghana": {"player_name": "Antoine Semenyo", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/antoine-semenyo-ghana-forward-profile-full.png"},
     "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-algeria-forward-profile-full.png"},
     "Australia": {"player_name": "Jackson Irvine", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jackson-irvine-australia-midfielder-profile-full.png"},
@@ -508,7 +509,7 @@ def get_spreadsheet_url_fallback(h_name, a_name):
 
     return "https://www.youtube.com/@fifa/videos"
 
-# ── BRAND NEW HERO FRAME GENERATOR ──
+# ── BRAND NEW HERO BANNER GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -648,12 +649,12 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER ROW (TITLE LEFT, DYNAMIC CONTENT RIGHT) ───────────────────────
-header_cols = st.columns([2, 3], gap="medium")
+# ── HEADER ROW (TITLE LEFT, DYNAMIC BANNER OR FILTERABLE LIST RIGHT) ──────
+header_cols = st.columns([1, 1], gap="large")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
+        <div class="title-area" style="padding-top: 15px; margin-bottom: 5px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -662,43 +663,51 @@ with header_cols[0]:
 with header_cols[1]:
     if live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
-        components.html(payload, height=160, scrolling=False)
+        components.html(payload, height=145, scrolling=False)
     else:
-        # Fallback matrix view showing specific requested individual team allocations
+        # Ultra-compact selector list that avoids any scrolling completely
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
         teams_by_person = {p: [] for p in requested_people}
         for team, person in SWEEPSTAKE_MAPPING.items():
             normalized_person = person.capitalize()
             if normalized_person in teams_by_person:
                 teams_by_person[normalized_person].append(team)
-                
-        matrix_items_html = ""
-        for person in requested_people:
-            teams_str = ", ".join(teams_by_person[person]) if teams_by_person[person] else "None"
-            matrix_items_html += f"""
-            <div class="participant-pill">
-                <div>{person}</div>
-                <div title="{teams_str}">{teams_str}</div>
-            </div>
-            """
+
+        st.markdown('<div style="padding-top:10px;">', unsafe_allow_html=True)
+        chosen_person = st.radio(
+            "Select Person to Show Teams:", 
+            options=requested_people, 
+            horizontal=True, 
+            index=0,
+            key="header_sweep_selector"
+        )
+        
+        selected_teams = teams_by_person[chosen_person]
+        p_teams_html = ""
+        for t in selected_teams:
+            p_teams_html += f'<div class="compact-team-item">{get_flag_html(t)} {t}</div>'
+        if not p_teams_html:
+            p_teams_html = '<span style="font-size:12px; color:#777;">No teams currently assigned.</span>'
             
         st.markdown(f"""
-            <div style="padding-top: 10px;">
-                <div class="allocation-card-holder">
-                    {matrix_items_html}
+            <div class="compact-sweep-container">
+                <div class="compact-sweep-title">🏃‍♂️ {chosen_person.upper()}'S ASSIGNED TEAMS:</div>
+                <div class="compact-teams-grid">
+                    {p_teams_html}
                 </div>
+            </div>
             </div>
         """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── SECONDARY BANNER ROW (NEXT FIXTURE & LATEST RESULT SIDE-BY-SIDE) ──
-hero_cols = st.columns([1, 1], gap="small")
+# ── SECONDARY CONTENT ROW (NEXT MATCH LEFT, LATEST RESULT RIGHT) ──
+hero_cols = st.columns([1, 1], gap="medium")
 
 with hero_cols[0]:
     if next_kickoff_matches:
         payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
-        components.html(payload, height=160, scrolling=False)
+        components.html(payload, height=145, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
@@ -712,18 +721,18 @@ with hero_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        components.html(result_banner_html, height=160, scrolling=False)
+        components.html(result_banner_html, height=145, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Render extra hidden lines gracefully down below if secondary stacks ever trigger overflow
+# Additional matches are appended cleanly lower down if multi-events ever occur
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
+        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=145, scrolling=False)
 
 if len(next_kickoff_matches) > 1:
     for idx, next_match in enumerate(next_kickoff_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
+        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=145, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
