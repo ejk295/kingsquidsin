@@ -65,7 +65,7 @@ GLOBAL_STYLE_TOKENS = """
         font-weight: 800 !important;
         color: #FFFFFF !important;
         background: rgba(255, 255, 255, 0.15);
-        padding: 4px 10px;
+        padding: 8px 15px;
         border-radius: 6px;
         display: inline-block;
     }
