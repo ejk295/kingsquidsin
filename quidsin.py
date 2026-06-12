@@ -541,6 +541,18 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
+def generate_spoilerfree_url(match, match_index_from_two=2):
+    """Generates the external URL format based on parameters."""
+    stage = match.get("stage", "")
+    group_str = "a"
+    if "GROUP_" in stage:
+        group_str = stage.replace("GROUP_", "").lower()
+        
+    home_slug = match.get("homeTeam", {}).get("name", "home").lower().replace(" ", "-")
+    away_slug = match.get("awayTeam", {}).get("name", "away").lower().replace(" ", "-")
+    
+    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_index_from_two}"
+
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -568,11 +580,13 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     elif is_result:
         h_score, a_score = get_live_score(match)
         
-        # Grab the URL from your new Column I field. Falls back to generator if missing.
+        # Pulls the URL from column I parameter parsed into the match, falls back to standard url if missing
         highlights_url = match.get("result_url", generate_spoilerfree_url(match, match_idx))
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
+        
+        # Clean safe layout container ensuring HTML tags do not split/leak text onto UI
         bottom_bar = f"""
         <div class="result-bottom-bar">
             <a href="{highlights_url}" target="_blank" class="highlights-btn">
@@ -690,6 +704,10 @@ finished_matches = sorted(
     key=lambda x: x.get("utcDate", ""),
     reverse=True
 )
+
+# NOTE: If your external data/spreadsheet parsing routine injects 'result_url' 
+# into the match dictionaries inside all_matches, it will map immediately here.
+# e.g., if you process spreadsheets, ensure 'match["result_url"] = row_column_i' is run.
 
 # ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
 header_cols = st.columns([0.6, 0.4], gap="medium")
