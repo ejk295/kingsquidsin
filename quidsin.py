@@ -81,7 +81,8 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .matchup-split-screen {
-        display: flex;
+        display: flex !important;
+        flex-direction: row !important;
         position: relative;
         align-items: center;
         height: 75px;
@@ -89,8 +90,8 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .team-panel {
-        width: 50%;
-        display: flex;
+        width: 50% !important;
+        display: flex !important;
         align-items: center;
         padding: 10px 25px;
         box-sizing: border-box;
@@ -99,14 +100,14 @@ GLOBAL_STYLE_TOKENS = """
     }
     
     .home-panel {
-        justify-content: flex-end;
-        padding-right: 50px;
+        justify-content: flex-end !important;
+        padding-right: 50px !important;
         border-right: 1px solid rgba(255, 255, 255, 0.15);
     }
     
     .away-panel {
-        justify-content: flex-start;
-        padding-left: 50px;
+        justify-content: flex-start !important;
+        padding-left: 50px !important;
     }
 
     .team-panel-text {
@@ -241,7 +242,7 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE STYLES: ADJUSTS ONLY ON MOBILE VIEWPORTS --- */
+    /* --- MOBILE STYLES: CURRENTLY ADJUSTS ONLY ON MOBILE VIEWPORTS --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
             height: auto !important;
@@ -474,14 +475,14 @@ def get_flag_html(team_name, extra_class="flag-img"):
         return f'<img src="{crest_url}" class="{extra_class}" alt="{team_name}">'
     return ''
 
-# ── FULL SPREADSHEET PARSER AND MATCH CONTEXT ENGINE ──
+# ── SPREADSHEET BACKEND SCHEDULING PARSER ──
 @st.cache_data(ttl=15)
 def fetch_spreadsheet_matches_master():
     live_list = []
     upcoming_list = []
     finished_list = []
     try:
-        csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW6FLNDfaB9Hg4w/pub?gid=0&single=true&output=csv"
+        csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW9FLNDfaB9Hg4w/pub?gid=0&single=true&output=csv"
         df = pd.read_csv(csv_url, header=None)
         
         if not df.empty:
@@ -521,7 +522,7 @@ def fetch_spreadsheet_matches_master():
         pass
     return live_list, upcoming_list, finished_list
 
-# ── BRAND NEW HERO BANNER ENGINE GENERATOR ──
+# ── ORIGINAL DESIGN HERO BANNER ENGINE GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
