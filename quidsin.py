@@ -156,6 +156,11 @@ st.markdown("""
             font-size: 10px !important;
         }
 
+        /* FIX 1A: prevent these overlays from intercepting underlying link cursor events */
+        .vs-marker-bubble, .score-bubble {
+            pointer-events: none !important;
+        }
+
         .vs-marker-bubble {
             position: absolute;
             left: 50%;
@@ -220,6 +225,8 @@ st.markdown("""
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative !important;
+            z-index: 20 !important;
         }
         
         .highlights-btn {
@@ -236,6 +243,10 @@ st.markdown("""
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            position: relative !important;
+            z-index: 21 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
         }
         .highlights-btn:hover {
             background-color: #CC0000 !important;
@@ -572,11 +583,11 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
-    # --- FIX 1: Extract inline classes into safe variables ---
+    # FIX 2: Extracted text classes cleanly and fixed the trailing element string bug
     panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
     home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
-    span_class = "team-panel-text-compact span" if is_result else ""
+    span_class = "team-panel-text-compact" if is_result else ""
 
     if is_live:
         h_score, a_score = get_live_score(match)
@@ -607,9 +618,9 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
-    # --- FIX 2: Applied clean span_class references below ---
+    # Clean styling context used within the container shell block
     return f"""
-    <div class="match-banner-container">
+    <div class="match-banner-container" style="margin: 0px; box-sizing: border-box;">
         {top_pane}
         <div class="matchup-split-screen">
             <div class="{home_panel_class}" style="background-color: {left_color};">
@@ -703,10 +714,6 @@ finished_matches = sorted(
     reverse=True
 )
 
-# NOTE: If your external data/spreadsheet parsing routine injects 'result_url' 
-# into the match dictionaries inside all_matches, it will map immediately here.
-# e.g., if you process spreadsheets, ensure 'match["result_url"] = row_column_i' is run.
-
 # ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
 header_cols = st.columns([0.6, 0.4], gap="medium")
 
@@ -721,7 +728,6 @@ with header_cols[0]:
 with header_cols[1]:
     if finished_matches:
         latest_match = finished_matches[0]
-        # Calculate index starting from 2 based on position in chronological order
         chronological_matches = sorted(all_matches, key=lambda x: x.get("utcDate", ""))
         try:
             match_index = chronological_matches.index(latest_match) + 2
@@ -729,19 +735,20 @@ with header_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        st.markdown(result_banner_html, unsafe_allow_html=True)
+        
+        # FIX 3: Embed inside safe iframe context container rather than parsing inside st.markdown loops
+        components.html(result_banner_html, height=135, scrolling=False)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 # ── RENDERING THE HERO BANNERS DETERMINISTICALLY ──────────────────────────
 if live_matches:
     for live_match in live_matches:
-        # DO NOT use st.write() here! Always use st.markdown with unsafe_allow_html=True
-        st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
+        components.html(build_match_banner(live_match, is_live=True), height=155, scrolling=False)
 
 if next_kickoff_matches:
     for next_match in next_kickoff_matches:
-        st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
+        components.html(build_match_banner(next_match, is_live=False), height=155, scrolling=False)
 
 if not live_matches and not next_kickoff_matches:
     st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
