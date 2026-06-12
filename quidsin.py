@@ -944,7 +944,7 @@ else:
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
             flag_html = get_flag_html(team_row["name"])
             
-            # EMOJI LOGIC ADDED HERE
+            # EMOJI LOGIC
             if display_idx == 1:
                 pos_str = "1 🚀"
             elif display_idx == 48:
@@ -969,4 +969,3 @@ else:
 
         master_table_html += "</tbody></table></div>"
         st.markdown(master_table_html, unsafe_allow_html=True)
-}
