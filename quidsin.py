@@ -223,7 +223,7 @@ st.markdown("""
         }
         
         .result-bottom-bar {
-            background-color: #FFFFFF !important;
+            background-color: #444444 !important;
             padding: 10px 15px !important;
             display: flex !important;
             justify-content: center !important;
@@ -233,7 +233,7 @@ st.markdown("""
         
         .highlights-btn {
             background-color: #444444 !important;
-            color: #006847 !important;
+            color: #FFFFFF !important;
             font-weight: 800 !important;
             font-size: 11px !important;
             text-transform: uppercase;
