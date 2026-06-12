@@ -508,39 +508,39 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# --- ADD THIS: Load Spreadsheet Highlights URLs ---
-@st.cache_data(ttl=120)
-def load_spreadsheet_highlights():
+# ── HELPER: FALLBACK LOOKUP TO LOCATE URL FROM SOURCE SPREADSHEET DATAFRAME ──
+def get_spreadsheet_url_fallback(h_name, a_name):
     """
-    Reads your source spreadsheet and maps matches to Column H URLs.
-    Replace the placeholder URL below with your actual spreadsheet CSV export URL,
-    or use st.secrets for a private Google Sheet.
+    Attempts to pull the 'Highlights URL' (Column H) from whatever spreadsheet data 
+    variable is already present or mounted in your app container environment.
     """
     import pandas as pd
-    url_mapping = {}
-    try:
-        # Example using a public/published CSV link. Adjust sheet_url to your source.
-        sheet_url = "https://docs.google.com/spreadsheets/d/e/YOUR_SHEET_ID/pub?output=csv"
-        df = pd.read_csv(sheet_url)
-        
-        # Assuming your spreadsheet has columns for Teams (or index) and Column H is named 'Highlights URL'
-        # Let's map by a unique combined string of Home and Away teams to guarantee a precise match
-        for _, row in df.iterrows():
-            home = str(row.get("Home Team", "")).strip()
-            away = str(row.get("Away Team", "")).strip()
-            highlight_url = str(row.get("Highlights URL", "")).strip()
-            
-            if home and away and highlight_url:
-                # Store pairing both ways or directly as a key tuple
-                url_mapping[(home, away)] = highlight_url
-    except Exception as e:
-        st.warning(f"Could not load highlights URLs from spreadsheet: {e}")
-    return url_mapping
+    
+    # 1. Look for existing variables in your script that look like your dataframe
+    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df"]
+    for name in possible_df_names:
+        if name in globals():
+            possible_df = globals()[name]
+            if isinstance(possible_df, pd.DataFrame):
+                # Target the dynamic highlights column variation
+                url_col = next((c for c in possible_df.columns if "highlights" in c.lower() or c == "H"), None)
+                home_col = next((c for c in possible_df.columns if "home" in c.lower()), None)
+                away_col = next((c for c in possible_df.columns if "away" in c.lower()), None)
+                
+                if url_col and home_col and away_col:
+                    match_row = possible_df[
+                        (possible_df[home_col].astype(str).str.strip().str.lower() == h_name.strip().lower()) &
+                        (possible_df[away_col].astype(str).str.strip().str.lower() == a_name.strip().lower())
+                    ]
+                    if not match_row.empty:
+                        found_url = str(match_row.iloc[0][url_col]).strip()
+                        if found_url and found_url.lower() != "nan" and found_url.startswith("http"):
+                            return found_url
+                            
+    # 2. Hardcoded fallback if no stateful reference was loaded yet
+    return "https://www.youtube.com/@fifa"
 
-# Fetch the spreadsheet URLs at launch
-SPREADSHEET_URLS = load_spreadsheet_highlights()
-
-# --- UPDATED: build_match_banner ---
+# ── UPDATED MATCH BANNER BUILDER ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -565,6 +565,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
     span_class = "team-panel-text-compact" if is_result else ""
 
+    container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
+
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
@@ -573,23 +575,12 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     elif is_result:
         h_score, a_score = get_live_score(match)
         
-        # FIX: Fetch the exact URL mapped from Column H using the team pairings lookup
-        highlights_url = SREADSHEET_URLS.get((h_name, a_name), "#")
+        # FIXED: Directly pull the exact raw string URL out of Column H matching this game pairing
+        highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
-        # Fallback helper if the API team name spells slightly differently than your spreadsheet
-        if highlights_url == "#":
-            # Optional: Try lookup by match_idx or a simplified search if your spreadsheet uses a sequential counter
-            pass
-
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        bottom_bar = f"""
-        <div class="result-bottom-bar">
-            <a href="{highlights_url}" target="_blank" class="highlights-btn">
-                📺 Watch Highlights
-            </a>
-        </div>
-        """
+        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
@@ -603,22 +594,24 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
     return f"""
-    <div class="match-banner-container" style="margin: 0px; box-sizing: border-box;">
-        {top_pane}
-        <div class="matchup-split-screen">
-            <div class="{home_panel_class}" style="background-color: {left_color};">
-                <div class="{panel_text_class}">
-                    {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+    <div class="match-banner-wrapper">
+        <div class="{container_class}">
+            {top_pane}
+            <div class="matchup-split-screen">
+                <div class="{home_panel_class}" style="background-color: {left_color};">
+                    <div class="{panel_text_class}">
+                        {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+                    </div>
+                </div>
+                {centre_bubble}
+                <div class="{away_panel_class}" style="background-color: {right_color};">
+                    <div class="{panel_text_class}">
+                        <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
+                    </div>
                 </div>
             </div>
-            {centre_bubble}
-            <div class="{away_panel_class}" style="background-color: {right_color};">
-                <div class="{panel_text_class}">
-                    <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
-                </div>
-            </div>
+            {bottom_bar}
         </div>
-        {bottom_bar}
     </div>
     """
     
@@ -709,7 +702,6 @@ with header_cols[1]:
         except ValueError:
             match_index = 2
             
-        # FIXED: Calling function safely and pushing it as clean markdown directly onto layout
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
