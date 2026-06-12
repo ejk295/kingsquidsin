@@ -158,7 +158,6 @@ GLOBAL_STYLE_TOKENS = """
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    /* --- ROBUST DISCLOSURE STYLES FOR MEMORY EFFICIENCY --- */
     details.score-disclosure summary {
         list-style: none;
         outline: none;
@@ -435,10 +434,35 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-DEFAULT_LEFT_COLOR = "#006847"
-DEFAULT_RIGHT_COLOR = "#006847"
+EXPECTED_RANKINGS = {
+    "France": 1, "Spain": 2, "Argentina": 3, "England": 4, "Portugal": 5, "Brazil": 6,
+    "Netherlands": 7, "Morocco": 8, "Belgium": 9, "Germany": 10, "Croatia": 11, "Colombia": 12,
+    "Senegal": 13, "Mexico": 14, "United States": 15, "Uruguay": 16, "Japan": 17, "Switzerland": 18,
+    "Iran": 19, "Turkey": 20, "Ecuador": 21, "Austria": 22, "South Korea": 23, "Australia": 24,
+    "Algeria": 25, "Egypt": 26, "Canada": 27, "Norway": 28, "Panama": 29, "Ivory Coast": 30,
+    "Sweden": 31, "Paraguay": 32, "Czechia": 33, "Scotland": 34, "Tunisia": 35, "Congo DR": 36, 
+    "DR Congo": 36, "Uzbekistan": 37, "Qatar": 38, "Iraq": 39, "South Africa": 40, "Saudi Arabia": 41,
+    "Jordan": 42, "Bosnia-Herzegovina": 43, "Bosnia and Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
+    "Curaçao": 46, "Haiti": 47, "New Zealand": 48
+}
 
-# 3. Cache Country Flags
+TEAM_COLORS = {
+    "Mexico": "#006847", "South Africa": "#007A4D", "Canada": "#FF0000", "Switzerland": "#D52B1E",
+    "Argentina": "#74ACDF", "France": "#002395", "Brazil": "#009739", "Spain": "#AA151B",
+    "Bosnia-Herzegovina": "#002F6C", "Bosnia and Herzegovina": "#002F6C", "Czechia": "#11457E", "Qatar": "#8A1538", "Morocco": "#C1272D",
+    "Haiti": "#00209F", "Turkey": "#E30A17", "Paraguay": "#D52B1E", "Germany": "#222222",
+    "Curaçao": "#002B7F", "Ecuador": "#FFDD00", "Japan": "#00005C", "Belgium": "#E30A17",
+    "Egypt": "#C1272D", "Tunisia": "#E70013", "Netherlands": "#E05206", "Ivory Coast": "#E87722",
+    "Australia": "#00008B", "Cape Verde Islands": "#003893", "Cape Verde": "#003893", "Uruguay": "#0081C8", 
+    "Sweden": "#006AA7", "Saudi Arabia": "#006C35", "Scotland": "#005EB8", "United States": "#002868", 
+    "Senegal": "#00853F", "New Zealand": "#111111", "Iran": "#239E46", "Iraq": "#007A3D", 
+    "Norway": "#EF2B2D", "Algeria": "#006233", "Austria": "#ED2939", "Jordan": "#1A1A1A", 
+    "Congo DR": "#007FFF", "DR Congo": "#007FFF", "Portugal": "#FF0000", "Uzbekistan": "#0099B5", 
+    "Colombia": "#FCD116", "England": "#CE1124", "Panama": "#DA121A", "Ghana": "#DA121A", 
+    "Croatia": "#FF0000", "South Korea": "#111111"
+}
+
+# 3. Cache Country Flags One Time Daily Only
 @st.cache_data(ttl=86400)
 def get_cached_team_crests():
     crests = {}
@@ -470,7 +494,7 @@ def get_flag_html(team_name, extra_class="flag-img"):
         return f'<img src="{crest_url}" class="{extra_class}" alt="{team_name}">'
     return ''
 
-# ── SPREADSHEET BACKEND ENGINE INGESTION layer ─────────────────────────────
+# ── SPREADSHEET BACKEND ENGINE INGESTION LAYER ──
 @st.cache_data(ttl=30)
 def fetch_spreadsheet_matches_master():
     live_list = []
@@ -483,16 +507,17 @@ def fetch_spreadsheet_matches_master():
         if not df.empty:
             for idx, row in df.iterrows():
                 try:
-                    # Parse spreadsheet architecture structure positions safely
+                    if len(row) < 4:
+                        continue
                     status_str = str(row[0]).strip().upper() if pd.notna(row[0]) else ""
                     time_info = str(row[1]).strip() if pd.notna(row[1]) else ""
                     home_t = str(row[2]).strip() if pd.notna(row[2]) else ""
                     away_t = str(row[3]).strip() if pd.notna(row[3]) else ""
                     home_score = str(row[4]).strip() if pd.notna(row[4]) else ""
                     away_score = str(row[5]).strip() if pd.notna(row[5]) else ""
-                    highlights = str(row[7]).strip() if pd.notna(row[7]) else "https://www.youtube.com/@fifa/videos"
+                    highlights = str(row[7]).strip() if (len(row) >= 8 and pd.notna(row[7])) else "https://www.youtube.com/@fifa/videos"
                     
-                    if not home_t or not away_t:
+                    if not home_t or not away_t or "home team" in home_t.lower():
                         continue
                         
                     match_payload = {
@@ -505,9 +530,9 @@ def fetch_spreadsheet_matches_master():
                         "rowIdx": idx
                     }
                     
-                    if status_str in ["LIVE", "IN_PLAY", "INPLAY", "🔴 LIVE NOW"]:
+                    if "LIVE" in status_str or "IN_PLAY" in status_str or "INPLAY" in status_str:
                         live_list.append(match_payload)
-                    elif status_str in ["FINISHED", "COMPLETED", "LATEST RESULT"]:
+                    elif "FINISHED" in status_str or "COMPLETED" in status_str or "RESULT" in status_str:
                         finished_list.append(match_payload)
                     else:
                         upcoming_list.append(match_payload)
@@ -548,7 +573,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         highlights_url = match.get("highlightsUrl", "https://www.youtube.com/@fifa/videos")
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
-        # Memory-stable non-crashing CSS disclosure details component setup
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
             <details class="score-disclosure">
@@ -688,15 +712,6 @@ with hero_cols[0]:
         components.html(result_banner_html, height=160, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
-
-# Render additional fixtures seamlessly if multiple instances occur simultaneously
-if len(live_matches) > 1:
-    for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
-
-if len(upcoming_matches) > 1:
-    for idx, next_match in enumerate(upcoming_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
