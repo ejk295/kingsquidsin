@@ -478,7 +478,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
             <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
-            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show Score</label>
+            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show score</label>
             <div class="score-bubble" style="display: none;">{h_score} – {a_score}</div>
         </div>
         """
