@@ -77,7 +77,7 @@ GLOBAL_STYLE_TOKENS = """
     
     .result-top-pane {
         background-color: #444444;
-        padding: 8px 10px;
+        padding: 6px 10px;
     }
 
     .matchup-split-screen {
@@ -203,12 +203,11 @@ GLOBAL_STYLE_TOKENS = """
     }
     
     .result-bottom-bar {
-        background-color: #444444 !important;
-        padding: 8px 15px !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        border-top: 1px solid #EEEEEE !important;
+        background-color: #444444;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
     }
     
     .highlights-btn {
