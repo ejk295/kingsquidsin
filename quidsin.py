@@ -218,7 +218,7 @@ GLOBAL_STYLE_TOKENS = """
         font-size: 11px !important;
         text-transform: uppercase;
         text-decoration: none !important;
-        padding: 6px 16px;
+        padding: 6px 10px;
         border-radius: 5px;
         display: inline-flex !important;
         align-items: center;
