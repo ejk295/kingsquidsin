@@ -508,37 +508,42 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── HELPER: FALLBACK LOOKUP TO LOCATE URL FROM SOURCE SPREADSHEET DATAFRAME ──
+# ── HELPER: DIRECT LOOKUP BY EXACT TEAM NAMES (COLUMNS C & D -> COLUMN H) ──
 def get_spreadsheet_url_fallback(h_name, a_name):
     """
-    Attempts to pull the 'Highlights URL' (Column H) from whatever spreadsheet data 
-    variable is already present or mounted in your app container environment.
+    Directly matches the website's home and away team names against 
+    Columns C and D of the spreadsheet, returning the URL from Column H.
     """
     import pandas as pd
     
-    # 1. Look for existing variables in your script that look like your dataframe
+    # Check common variable names your dataframe might be assigned to
     possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df"]
     for name in possible_df_names:
         if name in globals():
             possible_df = globals()[name]
-            if isinstance(possible_df, pd.DataFrame):
-                # Target the dynamic highlights column variation
-                url_col = next((c for c in possible_df.columns if "highlights" in c.lower() or c == "H"), None)
-                home_col = next((c for c in possible_df.columns if "home" in c.lower()), None)
-                away_col = next((c for c in possible_df.columns if "away" in c.lower()), None)
-                
-                if url_col and home_col and away_col:
-                    match_row = possible_df[
-                        (possible_df[home_col].astype(str).str.strip().str.lower() == h_name.strip().lower()) &
-                        (possible_df[away_col].astype(str).str.strip().str.lower() == a_name.strip().lower())
-                    ]
-                    if not match_row.empty:
-                        found_url = str(match_row.iloc[0][url_col]).strip()
-                        if found_url and found_url.lower() != "nan" and found_url.startswith("http"):
-                            return found_url
-                            
-    # 2. Hardcoded fallback if no stateful reference was loaded yet
-    return "https://www.youtube.com/@fifa"
+            if isinstance(possible_df, pd.DataFrame) and not possible_df.empty:
+                try:
+                    # Identify columns strictly by position to avoid header text mismatches
+                    # Column C is index 2, Column D is index 3, Column H is index 7
+                    home_col = possible_df.columns[2]  # Column C
+                    away_col = possible_df.columns[3]  # Column D
+                    url_col = possible_df.columns[7]   # Column H
+                    
+                    # Search for the exact match row
+                    for _, row in possible_df.iterrows():
+                        row_home = str(row[home_col]).strip()
+                        row_away = str(row[away_col]).strip()
+                        
+                        # Perfect match check
+                        if row_home == h_name.strip() and row_away == a_name.strip():
+                            found_url = str(row[url_col]).strip()
+                            if found_url and found_url.startswith("http"):
+                                return found_url
+                except Exception:
+                    pass  # If a specific dataframe structure fails, check the next one
+
+    # Fallback if the dataframe is missing or a match isn't found
+    return "https://www.youtube.com/@fifa/videos"
 
 # ── UPDATED MATCH BANNER BUILDER ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
