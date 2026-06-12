@@ -232,8 +232,8 @@ st.markdown("""
         }
         
         .highlights-btn {
-            background-color: #FF0000 !important;
-            color: #FFFFFF !important;
+            background-color: #444444 !important;
+            color: #006847 !important;
             font-weight: 800 !important;
             font-size: 11px !important;
             text-transform: uppercase;
