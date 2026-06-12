@@ -79,10 +79,15 @@ st.markdown("""
             display: inline-block;
         }
 
-        /* In-play banner top pane */
+        /* In-play/Result banner top panes */
         .inplay-top-pane {
             background-color: #8B0000;
             padding: 10px 20px;
+        }
+        
+        .result-top-pane {
+            background-color: #444444;
+            padding: 8px 15px;
         }
 
         .matchup-split-screen {
@@ -100,16 +105,30 @@ st.markdown("""
             height: 100%;
             min-height: 80px;
         }
+        
+        /* Compact versions for result side-banner */
+        .team-panel-compact {
+            padding: 12px !important;
+            min-height: 50px !important;
+        }
 
         .home-panel {
             justify-content: flex-end;
             padding-right: 45px;
             border-right: 2px solid #FFFFFF;
         }
+        
+        .home-panel-compact {
+            padding-right: 30px !important;
+        }
 
         .away-panel {
             justify-content: flex-start;
             padding-left: 45px;
+        }
+        
+        .away-panel-compact {
+            padding-left: 30px !important;
         }
 
         .team-panel-text {
@@ -120,6 +139,10 @@ st.markdown("""
             display: flex;
             align-items: center;
         }
+        
+        .team-panel-text-compact {
+            font-size: 14px !important;
+        }
 
         .team-panel-text span {
             font-size: 13px;
@@ -127,6 +150,10 @@ st.markdown("""
             opacity: 0.9;
             color: #FFFFFF !important;
             margin: 0 4px;
+        }
+        
+        .team-panel-text-compact span {
+            font-size: 10px !important;
         }
 
         .vs-marker-bubble {
@@ -145,7 +172,7 @@ st.markdown("""
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
-        /* Score bubble for in-play matches */
+        /* Score bubble for in-play/finished matches */
         .score-bubble {
             position: absolute;
             left: 50%;
@@ -161,6 +188,12 @@ st.markdown("""
             border: 2px solid #FFFFFF;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             white-space: nowrap;
+        }
+        
+        .score-bubble-compact {
+            background-color: #444444 !important;
+            font-size: 14px !important;
+            padding: 4px 10px !important;
         }
 
         .banner-bottom-time {
@@ -180,6 +213,34 @@ st.markdown("""
             color: #FFFFFF !important;
         }
         
+        /* Finished bottom bar */
+        .result-bottom-bar {
+            background-color: #333333;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .highlights-btn {
+            background-color: #FF0000 !important;
+            color: #FFFFFF !important;
+            font-weight: 800 !important;
+            font-size: 11px !important;
+            text-transform: uppercase;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            border-radius: 4px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .highlights-btn:hover {
+            background-color: #CC0000 !important;
+        }
+        
         .banner-flag {
             width: 32px !important;
             height: 22px !important;
@@ -190,6 +251,12 @@ st.markdown("""
             margin: 0 10px;
             vertical-align: middle;
             box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .banner-flag-compact {
+            width: 24px !important;
+            height: 16px !important;
+            margin: 0 6px !important;
         }
 
         .stat-banner-box {
@@ -439,7 +506,6 @@ def get_cached_team_crests():
                 crest_url = t.get("crest")
                 if name and crest_url:
                     crests[name] = crest_url
-                    # Account for alternative spellings / inconsistencies in payload strings
                     if name == "DR Congo": crests["Congo DR"] = crest_url
                     if name == "Congo DR": crests["DR Congo"] = crest_url
                     if name == "Cape Verde": crests["Cape Verde Islands"] = crest_url
@@ -475,7 +541,20 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-def build_match_banner(match, is_live=False):
+def generate_spoilerfree_url(match, match_index_from_two=2):
+    """Generates the external URL format based on parameters."""
+    # Format components safely
+    stage = match.get("stage", "")
+    group_str = "a"
+    if "GROUP_" in stage:
+        group_str = stage.replace("GROUP_", "").lower()
+        
+    home_slug = match.get("homeTeam", {}).get("name", "home").lower().replace(" ", "-")
+    away_slug = match.get("awayTeam", {}).get("name", "away").lower().replace(" ", "-")
+    
+    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_index_from_two}"
+
+def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
@@ -487,8 +566,9 @@ def build_match_banner(match, is_live=False):
     if left_color == right_color:
         right_color = "#222222" if left_color != "#222222" else "#555555"
 
-    h_flag = get_flag_html(h_name, extra_class="banner-flag")
-    a_flag = get_flag_html(a_name, extra_class="banner-flag")
+    flag_class = "banner-flag banner-flag-compact" if is_result else "banner-flag"
+    h_flag = get_flag_html(h_name, extra_class=flag_class)
+    a_flag = get_flag_html(a_name, extra_class=flag_class)
 
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
@@ -498,6 +578,18 @@ def build_match_banner(match, is_live=False):
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
         centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
+    elif is_result:
+        h_score, a_score = get_live_score(match)
+        highlights_url = generate_spoilerfree_url(match, match_idx)
+        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
+        centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
+        bottom_bar = f"""
+        <div class="result-bottom-bar">
+            <a href="{highlights_url}" target="_blank" class="highlights-btn">
+                📺 Watch Highlights
+            </a>
+        </div>
+        """
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
@@ -510,19 +602,23 @@ def build_match_banner(match, is_live=False):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
+    panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
+    home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
+    away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
+
     return f"""
     <div class="match-banner-container">
         {top_pane}
         <div class="matchup-split-screen">
-            <div class="team-panel home-panel" style="background-color: {left_color};">
-                <div class="team-panel-text">
-                    {h_flag} {h_name} <span>{h_owner}</span>
+            <div class="{home_panel_class}" style="background-color: {left_color};">
+                <div class="{panel_text_class}">
+                    {h_flag} {h_name} <span class="{'team-panel-text-compact span' if is_result else ''}">{h_owner}</span>
                 </div>
             </div>
             {centre_bubble}
-            <div class="team-panel away-panel" style="background-color: {right_color};">
-                <div class="team-panel-text">
-                    <span>{a_owner}</span> {a_name} {a_flag}
+            <div class="{away_panel_class}" style="background-color: {right_color};">
+                <div class="{panel_text_class}">
+                    <span class="{'team-panel-text-compact span' if is_result else ''}">{a_owner}</span> {a_name} {a_flag}
                 </div>
             </div>
         </div>
@@ -598,13 +694,38 @@ if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
 
-# ── HEADER ─────────────────────────────────────────────────────────────
-st.markdown("""
-    <div class="title-area">
-        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
-        <p>Live standings</p>
-    </div>
-""", unsafe_allow_html=True)
+# Find the most recently finished match for our new banner
+finished_matches = sorted(
+    [m for m in all_matches if m.get("status") == "FINISHED"],
+    key=lambda x: x.get("utcDate", ""),
+    reverse=True
+)
+
+# ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
+header_cols = st.columns([0.6, 0.4], gap="medium")
+
+with header_cols[0]:
+    st.markdown("""
+        <div class="title-area" style="padding-top: 10px;">
+            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+            <p>Live standings</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with header_cols[1]:
+    if finished_matches:
+        latest_match = finished_matches[0]
+        # Calculate index starting from 2 based on position in chronological order
+        chronological_matches = sorted(all_matches, key=lambda x: x.get("utcDate", ""))
+        try:
+            match_index = chronological_matches.index(latest_match) + 2
+        except ValueError:
+            match_index = 2
+            
+        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
+        st.markdown(result_banner_html, unsafe_allow_html=True)
+    else:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 # ── RENDERING THE HERO BANNERS DETERMINISTICALLY ──────────────────────────
 if live_matches:
@@ -626,7 +747,6 @@ with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
-    # Rocket emoji maintained
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
@@ -755,7 +875,6 @@ else:
 
                         if active_cards:
                             st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
-                            # Added row-gap and column-gap (gap: 12px) to prevent structural crowding
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
                                 {"".join(active_cards)}
@@ -793,7 +912,6 @@ else:
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
             flag_html = get_flag_html(team_row["name"])
             
-            # Leader (Rocket) and Wooden Spoon (Poop) emojis securely preserved
             if display_idx == 1:
                 pos_str = "1 🚀"
             elif display_idx == 48:
