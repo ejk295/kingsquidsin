@@ -541,19 +541,6 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-def generate_spoilerfree_url(match, match_index_from_two=2):
-    """Generates the external URL format based on parameters."""
-    # Format components safely
-    stage = match.get("stage", "")
-    group_str = "a"
-    if "GROUP_" in stage:
-        group_str = stage.replace("GROUP_", "").lower()
-        
-    home_slug = match.get("homeTeam", {}).get("name", "home").lower().replace(" ", "-")
-    away_slug = match.get("awayTeam", {}).get("name", "away").lower().replace(" ", "-")
-    
-    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_index_from_two}"
-
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -580,7 +567,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
-        highlights_url = generate_spoilerfree_url(match, match_idx)
+        
+        # Grab the URL from your new Column I field. Falls back to generator if missing.
+        highlights_url = match.get("result_url", generate_spoilerfree_url(match, match_idx))
+        
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
         bottom_bar = f"""
