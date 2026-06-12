@@ -508,41 +508,84 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── HELPER: DIRECT LOOKUP BY EXACT TEAM NAMES (COLUMNS C & D -> COLUMN H) ──
+# ── HELPER: LOOKUP COLUMNS C & D -> COLUMN H FROM THE 'FIXTURES' SHEET ──
 def get_spreadsheet_url_fallback(h_name, a_name):
     """
-    Directly matches the website's home and away team names against 
-    Columns C and D of the spreadsheet, returning the URL from Column H.
+    Loads the spreadsheet, checks the 'Fixtures' tab, and matches the
+    exact website home and away team names (Cols C & D) to pull the URL (Col H).
     """
     import pandas as pd
-    
-    # Check common variable names your dataframe might be assigned to
-    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df"]
+    import os
+
+    # Standardize name variations returned from external API to match your spreadsheet names perfectly
+    def clean_api_name(name):
+        n = name.strip()
+        if n == "DR Congo":
+            return "Congo DR"
+        if n == "Cape Verde":
+            return "Cape Verde Islands"
+        if "Turkey" in n or "Türkiye" in n or "Turkiye" in n:
+            return "Turkey"
+        return n
+
+    target_home = clean_api_name(h_name)
+    target_away = clean_api_name(a_name)
+
+    # List of possible filenames in the root directory
+    possible_files = ["fixtures.xlsx", "data.xlsx", "sweepstake.xlsx", "world_cup.xlsx", "fixtures.csv"]
+    sheet_path = st.secrets.get("SPREADSHEET_PATH", None)
+    if sheet_path and os.path.exists(sheet_path):
+        possible_files.insert(0, sheet_path)
+
+    for file_name in possible_files:
+        if os.path.exists(file_name):
+            try:
+                if file_name.endswith(('.xlsx', '.xls')):
+                    df = pd.read_excel(file_name, sheet_name='Fixtures')
+                else:
+                    df = pd.read_csv(file_name)
+                
+                if df.empty or len(df.columns) < 8:
+                    continue
+
+                # Position index-based tracking: C=2, D=3, H=7
+                home_col = df.columns[2]
+                away_col = df.columns[3]
+                url_col = df.columns[7]
+
+                for _, row in df.iterrows():
+                    # Handle internal variations in spreadsheet rows safely
+                    row_h = clean_api_name(str(row[home_col]))
+                    row_a = clean_api_name(str(row[away_col]))
+
+                    if row_h == target_home and row_a == target_away:
+                        found_url = str(row[url_col]).strip()
+                        if found_url and found_url.startswith("http"):
+                            return found_url
+            except Exception:
+                pass
+
+    # Backup inspection of global environment state dataframes
+    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df", "sheet"]
     for name in possible_df_names:
         if name in globals():
             possible_df = globals()[name]
             if isinstance(possible_df, pd.DataFrame) and not possible_df.empty:
                 try:
-                    # Identify columns strictly by position to avoid header text mismatches
-                    # Column C is index 2, Column D is index 3, Column H is index 7
-                    home_col = possible_df.columns[2]  # Column C
-                    away_col = possible_df.columns[3]  # Column D
-                    url_col = possible_df.columns[7]   # Column H
-                    
-                    # Search for the exact match row
+                    home_col = possible_df.columns[2]
+                    away_col = possible_df.columns[3]
+                    url_col = possible_df.columns[7]
                     for _, row in possible_df.iterrows():
-                        row_home = str(row[home_col]).strip()
-                        row_away = str(row[away_col]).strip()
-                        
-                        # Perfect match check
-                        if row_home == h_name.strip() and row_away == a_name.strip():
+                        row_h = clean_api_name(str(row[home_col]))
+                        row_a = clean_api_name(str(row[away_col]))
+                        if row_h == target_home and row_a == target_away:
                             found_url = str(row[url_col]).strip()
                             if found_url and found_url.startswith("http"):
                                 return found_url
                 except Exception:
-                    pass  # If a specific dataframe structure fails, check the next one
+                    pass
 
-    # Fallback if the dataframe is missing or a match isn't found
+    # Final backup channel
     return "https://www.youtube.com/@fifa/videos"
 
 # ── UPDATED MATCH BANNER BUILDER ──
@@ -580,7 +623,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     elif is_result:
         h_score, a_score = get_live_score(match)
         
-        # FIXED: Directly pull the exact raw string URL out of Column H matching this game pairing
+        # FIXED: Look up link matching your 1:1 formatted team structure safely
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
