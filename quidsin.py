@@ -17,337 +17,258 @@ st.set_page_config(
 # Run page auto-refresh every 3 minutes to keep live scores syncing
 st_autorefresh(interval=180 * 1000, key="datarefresh")
 
-# Custom branding & layout safety styles with strict light-mode overrides and Figtree font
+# Global baseline dashboard system architecture style tokens
+GLOBAL_STYLE_TOKENS = """
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
+    
+    body, html {
+        background-color: #FAFAFA !important;
+        color: #333333 !important;
+        font-family: 'Figtree', sans-serif !important;
+        margin: 0;
+        padding: 0;
+    }
+    
+    p, span, div, label, small, td, th, b {
+        color: #333333;
+        font-family: 'Figtree', sans-serif !important;
+    }
+
+    /* --- MATCH BANNER LAYOUT --- */
+    .match-banner-wrapper {
+        width: 100%;
+        margin: 0px;
+        box-sizing: border-box;
+    }
+
+    .match-banner-container {
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        font-family: 'Figtree', sans-serif !important;
+        text-align: center;
+        border: 1px solid #DDDDDD;
+        background-color: #FFFFFF;
+    }
+
+    .banner-top-pane {
+        background-color: #ff7d23;
+        padding: 8px 15px;
+    }
+
+    .next-match-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 800 !important;
+        color: #FFFFFF !important;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+
+    .inplay-top-pane {
+        background-color: #8B0000;
+        padding: 8px 15px;
+    }
+    
+    .result-top-pane {
+        background-color: #444444;
+        padding: 6px 12px;
+    }
+
+    .matchup-split-screen {
+        display: flex;
+        position: relative;
+        align-items: center;
+        height: 75px;
+        width: 100%;
+    }
+
+    .team-panel {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        padding: 10px 25px;
+        box-sizing: border-box;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .home-panel {
+        justify-content: flex-end;
+        padding-right: 50px;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .away-panel {
+        justify-content: flex-start;
+        padding-left: 50px;
+    }
+
+    .team-panel-text {
+        color: #FFFFFF !important;
+        font-size: 16px;
+        font-weight: 800 !important;
+        text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .team-panel-text span {
+        font-size: 12px;
+        font-weight: 400 !important;
+        opacity: 0.95;
+        color: #FFFFFF !important;
+        margin: 0 6px;
+    }
+
+    .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        white-space: nowrap;
+    }
+
+    .vs-marker-bubble {
+        background-color: #111111;
+        color: #FFFFFF !important;
+        font-size: 12px;
+        font-weight: 900 !important;
+        padding: 5px 9px;
+        border-radius: 50%;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .score-bubble {
+        background-color: #444444;
+        color: #FFFFFF !important;
+        font-size: 16px;
+        font-weight: 900 !important;
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .reveal-toggle-input {
+        display: none !important;
+    }
+
+    .score-reveal-label {
+        background-color: #111111;
+        color: #FFFFFF !important;
+        font-size: 11px !important;
+        font-weight: 900 !important;
+        padding: 6px 12px !important;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        user-select: none;
+    }
+
+    .reveal-toggle-input:checked ~ .score-reveal-label {
+        display: none !important;
+    }
+
+    .reveal-toggle-input:checked ~ .score-bubble {
+        display: block !important;
+    }
+
+    .banner-bottom-time {
+        background-color: #ff7d23;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+    }
+
+    .inplay-bottom-bar {
+        background-color: #8B0000;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .result-bottom-bar {
+        background-color: #444444 !important;
+        padding: 10px 15px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border-top: 1px solid #EEEEEE !important;
+    }
+    
+    .highlights-btn {
+        background-color: #444444 !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        font-size: 11px !important;
+        text-transform: uppercase;
+        text-decoration: none !important;
+        padding: 6px 16px;
+        border-radius: 5px;
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 2px 4px rgba(255,0,0,0.2);
+    }
+
+    .highlights-btn:hover {
+        background-color: #CC0000 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .banner-flag {
+        width: 28px !important;
+        height: 19px !important;
+        object-fit: cover !important;
+        border-radius: 2px;
+        border: 1px solid rgba(255,255,255,0.3);
+        display: inline-block;
+        margin: 0 8px;
+        vertical-align: middle;
+    }
+</style>
+"""
+
+st.markdown(GLOBAL_STYLE_TOKENS, unsafe_allow_html=True)
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
-
-        /* Force global app body background, standard text, and Figtree font */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
             background-color: #FAFAFA !important;
-            color: #333333 !important;
-            font-family: 'Figtree', sans-serif !important;
         }
-        
-        p, span, div, label, small, td, th, b {
-            color: #333333;
-            font-family: 'Figtree', sans-serif !important;
-        }
-        
         h1, h2, h3 {
             color: #ff7d23 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
-        
-        .title-area h1 {
-            margin: 0px !important;
-            font-size: 28px;
-            font-weight: 900 !important;
-        }
-        .title-area p {
-            margin: 4px 0px 0px 0px !important;
-            color: #555555 !important;
-            font-weight: 700 !important;
-            font-size: 16px;
-        }
-
-        /* --- MATCH BANNER LAYOUT --- */
-        .match-banner-wrapper {
-            width: 100%;
-            margin: 12px 0px;
-        }
-
-        .match-banner-container {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-            font-family: 'Figtree', sans-serif !important;
-            text-align: center;
-            border: 1px solid #DDDDDD;
-            background-color: #FFFFFF;
-        }
-
-        .banner-top-pane {
-            background-color: #ff7d23;
-            padding: 8px 15px;
-        }
-
-        .next-match-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800 !important;
-            color: #FFFFFF !important;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 4px 10px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-
-        /* In-play/Result banner top panes */
-        .inplay-top-pane {
-            background-color: #8B0000;
-            padding: 8px 15px;
-        }
-        
-        .result-top-pane {
-            background-color: #444444;
-            padding: 6px 12px;
-        }
-
-        .matchup-split-screen {
-            display: flex;
-            position: relative;
-            align-items: center;
-            height: 75px;
-            width: 100%;
-        }
-
-        .team-panel {
-            width: 50%;
-            display: flex;
-            align-items: center;
-            padding: 10px 25px;
-            box-sizing: border-box;
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        .home-panel {
-            justify-content: flex-end;
-            padding-right: 50px;
-            border-right: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        
-        .away-panel {
-            justify-content: flex-start;
-            padding-left: 50px;
-        }
-
-        .team-panel-text {
-            color: #FFFFFF !important;
-            font-size: 16px;
-            font-weight: 800 !important;
-            text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .team-panel-text span {
-            font-size: 12px;
-            font-weight: 400 !important;
-            opacity: 0.95;
-            color: #FFFFFF !important;
-            margin: 0 6px;
-        }
-
-        .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            white-space: nowrap;
-        }
-
-        .vs-marker-bubble {
-            background-color: #111111;
-            color: #FFFFFF !important;
-            font-size: 12px;
-            font-weight: 900 !important;
-            padding: 5px 9px;
-            border-radius: 50%;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .score-bubble {
-            background-color: #444444;
-            color: #FFFFFF !important;
-            font-size: 16px;
-            font-weight: 900 !important;
-            padding: 6px 14px;
-            border-radius: 6px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* ── PURE CSS INTERACTIVE HOOKS ── */
-        .reveal-toggle-input {
-            display: none !important;
-        }
-
-        .score-reveal-label {
-            background-color: #111111;
-            color: #FFFFFF !important;
-            font-size: 11px !important;
-            font-weight: 900 !important;
-            padding: 6px 12px !important;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
-            user-select: none;
-        }
-
-        /* CSS Selector pipeline state matching */
-        .reveal-toggle-input:checked ~ .score-reveal-label {
-            display: none !important;
-        }
-
-        .reveal-toggle-input:checked ~ .score-bubble {
-            display: block !important;
-        }
-
-        .banner-bottom-time {
-            background-color: #ff7d23;
-            padding: 8px 15px;
-            font-size: 12px;
-            font-weight: 700 !important;
-            color: #FFFFFF !important;
-        }
-
-        .inplay-bottom-bar {
-            background-color: #8B0000;
-            padding: 8px 15px;
-            font-size: 12px;
-            font-weight: 700 !important;
-            color: #FFFFFF !important;
-        }
-        
-        .result-bottom-bar {
-            background-color: #444444 !important;
-            padding: 10px 15px !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            border-top: 1px solid #EEEEEE !important;
-        }
-        
-        .highlights-btn {
-            background-color: #444444 !important;
-            color: #FFFFFF !important;
-            font-weight: 800 !important;
-            font-size: 11px !important;
-            text-transform: uppercase;
-            text-decoration: none !important;
-            padding: 6px 16px;
-            border-radius: 5px;
-            display: inline-flex !important;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 4px rgba(255,0,0,0.2);
-        }
-
-        .highlights-btn:hover {
-            background-color: #CC0000 !important;
-            color: #FFFFFF !important;
-        }
-        
-        .banner-flag {
-            width: 28px !important;
-            height: 19px !important;
-            object-fit: cover !important;
-            border-radius: 2px;
-            border: 1px solid rgba(255,255,255,0.3);
-            display: inline-block;
-            margin: 0 8px;
-            vertical-align: middle;
-        }
-
-        .stat-banner-box {
-            background: #FFFFFF !important;
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 2px solid #EAEAEA;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .stat-banner-box medium {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 800 !important;
-            color: #ff7d23 !important;
-        }
-        .stat-banner-box span {
-            font-size: 14px;
-            font-weight: 800 !important;
-            text-align: right;
-            color: #333333 !important;
-        }
-
-        .group-row-spacer {
-            margin-bottom: 15px !important;
-        }
-
-        .table-responsive-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 8px !important;
-        }
-        
-        .custom-dashboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            text-align: left;
-            white-space: nowrap;
-        }
-        .custom-dashboard-table th {
-            background-color: #FAFAFA !important;
-            color: #333333 !important;
-            font-weight: 700 !important;
-            padding: 6px 6px !important;
-            border-bottom: 2px solid #ff7d23;
-        }
-        .custom-dashboard-table td {
-            padding: 6px 6px !important;
-            border-bottom: 1px solid #EAEAEA;
-            vertical-align: middle;
-            background-color: #FFFFFF !important;
-            color: #333333 !important;
-        }
-        
-        .fixture-row {
-            background-color: #FFFFFF !important;
-            padding: 6px 8px !important;
-            border-radius: 4px;
-            margin-bottom: 3px !important;
-            border: 1px solid #EAEAEA;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .fixture-row-live {
-            background-color: #FFF5F5 !important;
-            border: 1px solid #FFCCCC !important;
-        }
-        .flag-img {
-            vertical-align: middle;
-            margin: 0px 4px;
-            width: 20px !important;
-            height: 14px !important;
-            object-fit: cover !important;
-            display: inline-block;
-        }
-        .group-header-text {
-            color: #ff7d23 !important;
-            font-size: 18px;
-            font-weight: 800 !important;
-            margin-bottom: 4px !important;
-            margin-top: 0px !important;
-            display: inline-block;
-        }
+        .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
+        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
+        .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #ff7d23 !important; }
+        .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
+        .group-row-spacer { margin-bottom: 15px !important; }
+        .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
+        .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
+        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #ff7d23; }
+        .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
+        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
+        .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
+        .group-header-text { color: #ff7d23 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -502,13 +423,8 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── FIXED: RE-ENGINEERED GOOGLE SHEET LIVE PARSER ──
 @st.cache_data(ttl=60)
 def get_spreadsheet_url_fallback(h_name, a_name):
-    """
-    Fetches the live published Google Sheet over the web, cleanly parses 
-    the 'Fixtures' dataset via columns C & D, and falls back to FIFA video library.
-    """
     try:
         csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW6FLNDfaB9Hg4w/pub?gid=0&single=true&output=csv"
         df = pd.read_csv(csv_url, header=None)
@@ -518,11 +434,11 @@ def get_spreadsheet_url_fallback(h_name, a_name):
             target_away = str(a_name).strip().lower()
 
             for _, row in df.iterrows():
-                row_home = str(row[2]).strip().lower()  # Column C
-                row_away = str(row[3]).strip().lower()  # Column D
+                row_home = str(row[2]).strip().lower()
+                row_away = str(row[3]).strip().lower()
 
                 if row_home == target_home and row_away == target_away:
-                    found_url = str(row[7]).strip()     # Column H
+                    found_url = str(row[7]).strip()
                     if found_url and found_url.lower().startswith("http"):
                         return found_url
     except Exception:
@@ -530,7 +446,7 @@ def get_spreadsheet_url_fallback(h_name, a_name):
 
     return "https://www.youtube.com/@fifa/videos"
 
-# ── UPDATED MATCH BANNER BUILDER ──
+# ── BRAND NEW HERO FRAME GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -559,9 +475,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
-        
-        # Switched layout hooks from programmatic strings to semantic pure CSS checkbox switches
-        # This completely hides interactive strings from Streamlit's code block parser pipeline
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
             <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
@@ -582,7 +495,9 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
+    # Package the payload cleanly for isolated iframe environments
     return f"""
+    {GLOBAL_STYLE_TOKENS}
     <div class="match-banner-wrapper">
         <div class="match-banner-container">
             {top_pane}
@@ -679,14 +594,16 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# ── RENDERING HERO BANNER COMPONENT ──
+# ── RENDERING HERO BANNER COMPONENT VIA SAFE FRAME CONTAINERS ──
 hero_cols = st.columns([1, 1], gap="small")
 
 with hero_cols[0]:
     if next_kickoff_matches:
-        st.markdown(build_match_banner(next_kickoff_matches[0], is_live=False), unsafe_allow_html=True)
+        payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
+        components.html(payload, height=160, scrolling=False)
     elif live_matches:
-        st.markdown(build_match_banner(live_matches[0], is_live=True), unsafe_allow_html=True)
+        payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
+        components.html(payload, height=160, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
@@ -700,18 +617,19 @@ with hero_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        st.markdown(result_banner_html, unsafe_allow_html=True)
+        # Using iframe container to separate the interactive element cleanly from markdown selectors
+        components.html(result_banner_html, height=160, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Render additional live or upcoming fixtures if they exist
+# Render additional fixtures seamlessly if multiple instances occur simultaneously
 if len(live_matches) > 1:
-    for live_match in live_matches[1:]:
-        st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
+    for idx, live_match in enumerate(live_matches[1:]):
+        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
 
 if len(next_kickoff_matches) > 1:
-    for next_match in next_kickoff_matches[1:]:
-        st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
+    for idx, next_match in enumerate(next_kickoff_matches[1:]):
+        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
