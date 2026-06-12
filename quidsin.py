@@ -29,7 +29,7 @@ st.markdown("""
         }
         
         p, span, div, label, small, td, th, b {
-            color: #333333 !important;
+            color: #333333;
             font-family: 'Figtree', sans-serif !important;
         }
         
@@ -54,17 +54,18 @@ st.markdown("""
         /* --- MATCH BANNER LAYOUT (DYNAMIC COLOURS) --- */
         .match-banner-container {
             border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
             margin: 8px 0px;
             overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
             text-align: center;
-            border: 2px solid #DDDDDD;
+            border: 1px solid #DDDDDD;
+            background-color: #FFFFFF;
         }
 
         .banner-top-pane {
             background-color: #006847;
-            padding: 10px 20px;
+            padding: 8px 15px;
         }
 
         .next-match-title {
@@ -74,7 +75,7 @@ st.markdown("""
             font-weight: 800 !important;
             color: #FFFFFF !important;
             background: rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             display: inline-block;
         }
@@ -82,40 +83,38 @@ st.markdown("""
         /* In-play/Result banner top panes */
         .inplay-top-pane {
             background-color: #8B0000;
-            padding: 10px 20px;
+            padding: 8px 15px;
         }
         
         .result-top-pane {
             background-color: #444444;
-            padding: 8px 15px;
+            padding: 6px 12px;
         }
 
         .matchup-split-screen {
             display: flex;
             position: relative;
             align-items: center;
+            height: 70px;
         }
 
         .team-panel {
             width: 50%;
             display: flex;
             align-items: center;
-            padding: 20px;
+            padding: 10px 15px;
             box-sizing: border-box;
             height: 100%;
-            min-height: 80px;
         }
         
-        /* Compact versions for result side-banner */
         .team-panel-compact {
-            padding: 12px !important;
-            min-height: 50px !important;
+            padding: 6px 12px !important;
         }
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 45px;
-            border-right: 2px solid #FFFFFF;
+            padding-right: 40px;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .home-panel-compact {
@@ -124,7 +123,7 @@ st.markdown("""
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 45px;
+            padding-left: 40px;
         }
         
         .away-panel-compact {
@@ -133,19 +132,19 @@ st.markdown("""
 
         .team-panel-text {
             color: #FFFFFF !important;
-            font-size: 20px;
-            font-weight: 900 !important;
-            text-shadow: 0px 1px 4px rgba(0,0,0,0.8);
+            font-size: 16px;
+            font-weight: 800 !important;
+            text-shadow: 0px 1px 3px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
         }
         
         .team-panel-text-compact {
-            font-size: 14px !important;
+            font-size: 13px !important;
         }
 
         .team-panel-text span {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 400 !important;
             opacity: 0.9;
             color: #FFFFFF !important;
@@ -156,7 +155,6 @@ st.markdown("""
             font-size: 10px !important;
         }
 
-        /* FIX 1A: prevent these overlays from intercepting underlying link cursor events */
         .vs-marker-bubble, .score-bubble {
             pointer-events: none !important;
         }
@@ -169,15 +167,14 @@ st.markdown("""
             z-index: 10;
             background-color: #111111;
             color: #FFFFFF !important;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 900 !important;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 50%;
             border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Score bubble for in-play/finished matches */
         .score-bubble {
             position: absolute;
             left: 50%;
@@ -186,49 +183,46 @@ st.markdown("""
             z-index: 10;
             background-color: #8B0000;
             color: #FFFFFF !important;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 900 !important;
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             white-space: nowrap;
         }
         
         .score-bubble-compact {
             background-color: #444444 !important;
-            font-size: 14px !important;
+            font-size: 13px !important;
             padding: 4px 10px !important;
         }
 
         .banner-bottom-time {
             background-color: #006847;
-            padding: 10px 20px;
-            font-size: 13px;
+            padding: 8px 15px;
+            font-size: 12px;
             font-weight: 700 !important;
             color: #FFFFFF !important;
         }
 
-        /* In-play bottom bar */
         .inplay-bottom-bar {
             background-color: #8B0000;
-            padding: 10px 20px;
-            font-size: 13px;
+            padding: 8px 15px;
+            font-size: 12px;
             font-weight: 700 !important;
             color: #FFFFFF !important;
         }
         
-        /* Finished bottom bar */
         .result-bottom-bar {
             background-color: #333333;
-            padding: 8px 15px;
+            padding: 6px 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative !important;
-            z-index: 20 !important;
         }
         
+        /* Direct styles to guarantee the watch highlights link text is readable */
         .highlights-btn {
             background-color: #FF0000 !important;
             color: #FFFFFF !important;
@@ -236,37 +230,27 @@ st.markdown("""
             font-size: 11px !important;
             text-transform: uppercase;
             text-decoration: none !important;
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 4px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-            transition: background 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            position: relative !important;
-            z-index: 21 !important;
-            pointer-events: auto !important;
-            cursor: pointer !important;
-        }
-        .highlights-btn:hover {
-            background-color: #CC0000 !important;
         }
         
         .banner-flag {
-            width: 32px !important;
-            height: 22px !important;
+            width: 28px !important;
+            height: 18px !important;
             object-fit: cover !important;
-            border-radius: 3px;
+            border-radius: 2px;
             border: 1px solid rgba(255,255,255,0.4);
             display: inline-block;
-            margin: 0 10px;
+            margin: 0 8px;
             vertical-align: middle;
-            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
         }
         
         .banner-flag-compact {
-            width: 24px !important;
-            height: 16px !important;
+            width: 22px !important;
+            height: 14px !important;
             margin: 0 6px !important;
         }
 
@@ -359,42 +343,6 @@ st.markdown("""
             margin-top: 0px !important;
             display: inline-block;
         }
-
-        @media (max-width: 800px) {
-            .match-banner-container {
-                flex-direction: column;
-            }
-            .matchup-split-screen {
-                flex-direction: column;
-                width: 100%;
-            }
-            .team-panel {
-                width: 100% !important;
-                justify-content: center !important;
-                padding: 15px !important;
-                font-size: 16px;
-            }
-            .home-panel {
-                border-right: none !important;
-                border-bottom: 2px solid #FFFFFF;
-                padding-right: 20px !important;
-            }
-            .away-panel {
-                padding-left: 20px !important;
-            }
-            .vs-marker-bubble {
-                top: auto;
-                bottom: -14px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            .score-bubble {
-                top: auto;
-                bottom: -18px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -455,7 +403,7 @@ GROUP_PLAYERS = {
     "Germany": {"player_name": "Kai Havertz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kai-havertz-germany-forward-profile-full.png"},
     "Portugal": {"player_name": "Bruno Fernandes", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/bruno-fernandes-portugal-midfielder-profile-full.png"},
     "Netherlands": {"player_name": "Frenkie de Jong", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/frenkie-de-jong-netherlands-midfielder-profile-full.png"},
-    "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-messi-argentina-forward-profile-full.png"},
+    "Argentina": {"player_name": "Lionel Messi", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/lionel-mesi-argentina-forward-profile-full.png"},
     "Ivory Coast": {"player_name": "Yan Diomande", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/yan-diomande-ivory-coast-forward-profile-full.png"},
     "Bosnia-Herzegovina": {"player_name": "Esmir Bajraktarevic", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/esmir-bajraktarevic-bosnia-and-herzegovina-forward-profile-full.png"},
     "Cape Verde Islands": {"player_name": "Ryan Mendes", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/ryan-mendes-cape-verde-midfielder-profile-full.png"},
@@ -583,7 +531,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
-    # FIX 2: Extracted text classes cleanly and fixed the trailing element string bug
     panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
     home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
@@ -618,9 +565,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
-    # Clean styling context used within the container shell block
     return f"""
-    <div class="match-banner-container" style="margin: 0px; box-sizing: border-box;">
+    <div class="match-banner-container">
         {top_pane}
         <div class="matchup-split-screen">
             <div class="{home_panel_class}" style="background-color: {left_color};">
@@ -715,11 +661,11 @@ finished_matches = sorted(
 )
 
 # ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
-header_cols = st.columns([0.6, 0.4], gap="medium")
+header_cols = st.columns([0.55, 0.45], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 10px;">
+        <div class="title-area" style="padding-top: 15px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -736,19 +682,19 @@ with header_cols[1]:
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
         
-        # FIX 3: Embed inside safe iframe context container rather than parsing inside st.markdown loops
-        components.html(result_banner_html, height=135, scrolling=False)
+        # Bypasses link rendering bugs completely without broken iframe clipping
+        st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
-# ── RENDERING THE HERO BANNERS DETERMINISTICALLY ──────────────────────────
+# ── RENDERING THE MAIN HERO BANNERS DETERMINISTICALLY ─────────────────────
 if live_matches:
     for live_match in live_matches:
-        components.html(build_match_banner(live_match, is_live=True), height=155, scrolling=False)
+        st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
 
 if next_kickoff_matches:
     for next_match in next_kickoff_matches:
-        components.html(build_match_banner(next_match, is_live=False), height=155, scrolling=False)
+        st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
 
 if not live_matches and not next_kickoff_matches:
     st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
