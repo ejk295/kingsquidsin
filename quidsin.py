@@ -35,7 +35,7 @@ GLOBAL_STYLE_TOKENS = """
         font-family: 'Figtree', sans-serif !important;
     }
 
-    /* --- MATCH BANNER CONTAINER --- */
+    /* --- MATCH BANNER LAYOUT --- */
     .match-banner-wrapper {
         width: 100%;
         margin: 0px;
@@ -80,64 +80,60 @@ GLOBAL_STYLE_TOKENS = """
         padding: 6px 10px;
     }
 
-    /* --- BULLETPROOF FLEX SIDE-BY-SIDE GRID Layout --- */
     .matchup-split-screen {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        position: relative !important;
-        height: 75px !important;
-        width: 100% !important;
+        display: flex;
+        position: relative;
+        align-items: center;
+        height: 75px;
+        width: 100%;
     }
 
     .team-panel {
-        width: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        box-sizing: border-box !important;
-        height: 100% !important;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        padding: 10px 25px;
+        box-sizing: border-box;
+        height: 100%;
+        overflow: hidden;
     }
     
     .home-panel {
-        justify-content: flex-end !important;
-        padding-right: 60px !important;
+        justify-content: flex-end;
+        padding-right: 50px;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
     }
     
     .away-panel {
-        justify-content: flex-start !important;
-        padding-left: 60px !important;
+        justify-content: flex-start;
+        padding-left: 50px;
     }
 
     .team-panel-text {
         color: #FFFFFF !important;
-        font-size: 16px !important;
+        font-size: 16px;
         font-weight: 800 !important;
         text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-        display: flex !important;
-        align-items: center !important;
-        white-space: nowrap !important;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
     }
 
     .team-panel-text span {
-        font-size: 12px !important;
+        font-size: 12px;
         font-weight: 400 !important;
         opacity: 0.95;
         color: #FFFFFF !important;
-        margin: 0 6px !important;
+        margin: 0 6px;
     }
 
-    /* --- ABSOLUTE CENTERING ENGINE FOR MID-ROW BUBBLES --- */
-    .center-overlay-container {
-        position: absolute !important;
-        left: 50% !important;
-        top: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 100 !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
+    .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        white-space: nowrap;
     }
 
     .vs-marker-bubble {
@@ -149,7 +145,6 @@ GLOBAL_STYLE_TOKENS = """
         border-radius: 50%;
         border: 2px solid #FFFFFF;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        white-space: nowrap;
     }
 
     .score-bubble {
@@ -161,17 +156,12 @@ GLOBAL_STYLE_TOKENS = """
         border-radius: 6px;
         border: 2px solid #FFFFFF;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        white-space: nowrap;
     }
 
-    /* --- PERFORMANCE PRESERVING MOBILE DROP-DOWN REVEAL --- */
-    details.score-disclosure summary {
-        list-style: none;
-        outline: none;
+    .reveal-toggle-input {
+        display: none !important;
     }
-    details.score-disclosure summary::-webkit-details-marker {
-        display: none;
-    }
+
     .score-reveal-label {
         background-color: #111111;
         color: #FFFFFF !important;
@@ -186,10 +176,14 @@ GLOBAL_STYLE_TOKENS = """
         letter-spacing: 0.5px;
         display: inline-block;
         user-select: none;
-        white-space: nowrap;
     }
-    details.score-disclosure[open] summary {
+
+    .reveal-toggle-input:checked ~ .score-reveal-label {
         display: none !important;
+    }
+
+    .reveal-toggle-input:checked ~ .score-bubble {
+        display: block !important;
     }
 
     .banner-bottom-time {
@@ -247,31 +241,45 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE RE-DOCKING BREAKPOINT --- */
+    /* --- MOBILE STYLES: ADJUST ONLY FOR MOBILE SCREENFOOTPRINT --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
-            flex-direction: column !important;
             height: auto !important;
+            min-height: 90px;
+            padding: 10px 0;
         }
         .team-panel {
-            width: 100% !important;
-            justify-content: center !important;
-            padding: 12px 10px !important;
+            padding: 5px 10px !important;
+        }
+        .home-panel {
+            padding-right: 35px !important;
+        }
+        .away-panel {
+            padding-left: 35px !important;
         }
         .team-panel-text {
-            font-size: 13px !important;
-            flex-wrap: wrap;
-            justify-content: center;
+            font-size: 12px !important;
         }
         .team-panel-text span {
             font-size: 10px !important;
+            margin: 0 2px !important;
         }
-        .center-overlay-container {
-            position: relative !important;
-            left: 0 !important;
-            top: 0 !important;
-            transform: none !important;
-            margin: 8px auto !important;
+        .banner-flag {
+            width: 20px !important;
+            height: 14px !important;
+            margin: 0 4px !important;
+        }
+        .vs-marker-bubble {
+            font-size: 10px !important;
+            padding: 4px 7px !important;
+        }
+        .score-bubble {
+            font-size: 12px !important;
+            padding: 4px 10px !important;
+        }
+        .score-reveal-label {
+            font-size: 10px !important;
+            padding: 4px 8px !important;
         }
     }
 </style>
@@ -303,34 +311,24 @@ st.markdown("""
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
         .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
         
-        /* --- ALLOCATION HORIZONTAL RADS PANELS --- */
-        .compact-sweep-container {
+        /* --- NON-INPLAY SWEEPSTAKE ALLOCATION MODULE --- */
+        .header-sweep-card {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
             border-radius: 10px;
             padding: 8px 12px;
             box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
         }
-        .compact-sweep-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            font-weight: 800;
-            color: #006847;
-            margin-bottom: 3px;
-            letter-spacing: 0.5px;
-        }
-        .compact-teams-grid {
+        .header-sweep-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 4px;
+            gap: 4px;
         }
-        .compact-team-item {
+        .header-sweep-pill {
             background: #FAFAFA;
             border: 1px solid #EAEAEA;
             font-size: 11px;
             font-weight: 700;
-            color: #333333;
             padding: 2px 6px;
             border-radius: 5px;
             display: inline-flex;
@@ -514,7 +512,7 @@ def get_spreadsheet_url_fallback(h_name, a_name):
 
     return "https://www.youtube.com/@fifa/videos"
 
-# ── BRAND NEW HERO BANNER GENERATOR ──
+# ── FULLY WORKING HERO BANNER RENDER ENGINE ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -536,18 +534,21 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
-        center_inner_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
+        centre_bubble = f"""
+        <div class="score-bubble" style="display: block !important;">{h_score} – {a_score}</div>
+        """
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
-        center_inner_bubble = f"""
-        <details class="score-disclosure">
-            <summary><div class="score-reveal-label">Show</div></summary>
-            <div class="score-bubble" style="position:static; transform:none; margin:0;">{h_score} – {a_score}</div>
-        </details>
+        centre_bubble = f"""
+        <div class="score-reveal-wrapper">
+            <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
+            <label for="reveal-toggle-{match_idx}" class="score-reveal-label">Show</label>
+            <div class="score-bubble" style="display: none;">{h_score} – {a_score}</div>
+        </div>
         """
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER-FREE HIGHLIGHTS 📺</a></div>'
     else:
@@ -559,12 +560,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         else:
             date_str = "TBD"
         top_pane = '<div class="banner-top-pane"><div class="next-match-title">⏳ Next match</div></div>'
-        center_inner_bubble = '<div class="vs-marker-bubble">VS</div>'
+        centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
-    # Package ALL visual elements inside a single unified HTML block to lock horizontally
     return f"""
-    {GLOBAL_STYLE_TOKENS}
     <div class="match-banner-wrapper">
         <div class="match-banner-container">
             {top_pane}
@@ -574,9 +573,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
                         {h_flag} {h_name} <span>{h_owner}</span>
                     </div>
                 </div>
-                <div class="center-overlay-container">
-                    {center_inner_bubble}
-                </div>
+                {centre_bubble}
                 <div class="team-panel away-panel" style="background-color: {right_color};">
                     <div class="team-panel-text">
                         <span>{a_owner}</span> {a_name} {a_flag}
@@ -655,12 +652,12 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER ROW (TITLE LEFT, DYNAMIC IN-PLAY BANNER OR FILTERABLE LIST RIGHT) ──────
-header_cols = st.columns([1, 1], gap="large")
+# ── HEADER ROW ────────────────────────────────────────────────────────────
+header_cols = st.columns([1, 1], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 15px; margin-bottom: 5px;">
+        <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -671,7 +668,7 @@ with header_cols[1]:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
         components.html(payload, height=160, scrolling=False)
     else:
-        # Ultra-compact selector list that avoids any scrolling completely
+        # Render clean compact selector for allocated teams when no active game is in play
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
         teams_by_person = {p: [] for p in requested_people}
         for team, person in SWEEPSTAKE_MAPPING.items():
@@ -691,14 +688,13 @@ with header_cols[1]:
         selected_teams = teams_by_person[chosen_person]
         p_teams_html = ""
         for t in selected_teams:
-            p_teams_html += f'<div class="compact-team-item">{get_flag_html(t)} {t}</div>'
+            p_teams_html += f'<div class="header-sweep-pill">{get_flag_html(t)} {t}</div>'
         if not p_teams_html:
-            p_teams_html = '<span style="font-size:12px; color:#777;">No teams currently assigned.</span>'
+            p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
             
         st.markdown(f"""
-            <div class="compact-sweep-container">
-                <div class="compact-sweep-title">🏃‍♂️ {chosen_person.upper()}'S ASSIGNED TEAMS:</div>
-                <div class="compact-teams-grid">
+            <div class="header-sweep-card">
+                <div class="header-sweep-grid">
                     {p_teams_html}
                 </div>
             </div>
@@ -707,8 +703,8 @@ with header_cols[1]:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── SECONDARY CONTENT ROW (NEXT MATCH LEFT, LATEST RESULT RIGHT) ──
-hero_cols = st.columns([1, 1], gap="medium")
+# ── RENDERING HERO BANNER SIDE-BY-SIDE GRID COMPONENT ──
+hero_cols = st.columns([1, 1], gap="small")
 
 with hero_cols[0]:
     if next_kickoff_matches:
@@ -731,7 +727,7 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Additional matches are appended cleanly lower down if multi-events ever occur
+# Render additional fixtures seamlessly if multiple instances occur simultaneously
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
         components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
