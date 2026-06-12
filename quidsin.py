@@ -158,7 +158,6 @@ GLOBAL_STYLE_TOKENS = """
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    /* --- ROBUST MEMORY SAFE DISCLOSURE ARCHITECTURE --- */
     details.score-disclosure summary {
         list-style: none;
         outline: none;
@@ -240,7 +239,7 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE RESPONSIVE ENGINE RE-DOCKING --- */
+    /* --- MOBILE RE-DOCKING MECHANISM --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
             flex-direction: column;
@@ -285,8 +284,8 @@ st.markdown("""
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
-        .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
-        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
+        .title-area h1 { margin: 0px !important; font-size: 26px; font-weight: 900 !important; }
+        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 15px; }
         .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
@@ -299,6 +298,39 @@ st.markdown("""
         .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
         .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+        
+        /* --- ALLOCATION BOX MATRIX HEADER PANEL --- */
+        .allocation-card-holder {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            background: #FFFFFF;
+            border: 1px solid #DDDDDD;
+            padding: 8px;
+            border-radius: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .participant-pill {
+            background: #FAFAFA;
+            border-left: 3px solid #006847;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+        .participant-pill div:first-child {
+            font-size: 10px;
+            font-weight: 900;
+            color: #006847;
+            text-transform: uppercase;
+        }
+        .participant-pill div:last-child {
+            font-size: 11px;
+            font-weight: 700;
+            color: #444444;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -367,6 +399,7 @@ GROUP_PLAYERS = {
     "Curaçao": {"player_name": "Juninho Bacuna", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/juninho-bacuna-curacao-midfielder-profile-full.png"},
     "Haiti": {"player_name": "Wilson Isidor", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/wilson-isidor-haiti-forward-profile-full.png"},
     "Congo DR": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
+    "DR Congo": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "Ghana": {"player_name": "Antoine Semenyo", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/antoine-semenyo-ghana-forward-profile-full.png"},
     "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-algeria-forward-profile-full.png"},
     "Australia": {"player_name": "Jackson Irvine", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jackson-irvine-australia-midfielder-profile-full.png"},
@@ -615,22 +648,55 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER ROW ────────────────────────────────────────────────────────────
-st.markdown("""
-    <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
-        <p>Live standings</p>
-    </div>
-""", unsafe_allow_html=True)
+# ── HEADER ROW (TITLE LEFT, DYNAMIC CONTENT RIGHT) ───────────────────────
+header_cols = st.columns([2, 3], gap="medium")
 
-# ── RENDERING HERO BANNER COMPONENT VIA SAFE FRAME CONTAINERS ──
-hero_cols = st.columns([1, 1], gap="small")
+with header_cols[0]:
+    st.markdown("""
+        <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
+            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+            <p>Live standings</p>
+        </div>
+    """, unsafe_allow_html=True)
 
-with hero_cols[0]:
+with header_cols[1]:
     if live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
         components.html(payload, height=160, scrolling=False)
-    elif next_kickoff_matches:
+    else:
+        # Fallback matrix view showing specific requested individual team allocations
+        requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
+        teams_by_person = {p: [] for p in requested_people}
+        for team, person in SWEEPSTAKE_MAPPING.items():
+            normalized_person = person.capitalize()
+            if normalized_person in teams_by_person:
+                teams_by_person[normalized_person].append(team)
+                
+        matrix_items_html = ""
+        for person in requested_people:
+            teams_str = ", ".join(teams_by_person[person]) if teams_by_person[person] else "None"
+            matrix_items_html += f"""
+            <div class="participant-pill">
+                <div>{person}</div>
+                <div title="{teams_str}">{teams_str}</div>
+            </div>
+            """
+            
+        st.markdown(f"""
+            <div style="padding-top: 10px;">
+                <div class="allocation-card-holder">
+                    {matrix_items_html}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ── SECONDARY BANNER ROW (NEXT FIXTURE & LATEST RESULT SIDE-BY-SIDE) ──
+hero_cols = st.columns([1, 1], gap="small")
+
+with hero_cols[0]:
+    if next_kickoff_matches:
         payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
         components.html(payload, height=160, scrolling=False)
     else:
@@ -650,7 +716,7 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Render additional fixtures seamlessly if multiple instances occur simultaneously
+# Render extra hidden lines gracefully down below if secondary stacks ever trigger overflow
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
         components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
