@@ -508,17 +508,39 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-def generate_spoilerfree_url(match, match_idx=2):
-    stage = match.get("stage", "")
-    group_str = "a"
-    if "GROUP_" in stage:
-        group_str = stage.replace("GROUP_", "").lower()
+# --- ADD THIS: Load Spreadsheet Highlights URLs ---
+@st.cache_data(ttl=120)
+def load_spreadsheet_highlights():
+    """
+    Reads your source spreadsheet and maps matches to Column H URLs.
+    Replace the placeholder URL below with your actual spreadsheet CSV export URL,
+    or use st.secrets for a private Google Sheet.
+    """
+    import pandas as pd
+    url_mapping = {}
+    try:
+        # Example using a public/published CSV link. Adjust sheet_url to your source.
+        sheet_url = "https://docs.google.com/spreadsheets/d/e/YOUR_SHEET_ID/pub?output=csv"
+        df = pd.read_csv(sheet_url)
         
-    home_slug = str(match.get("homeTeam", {}).get("name", "home")).lower().replace(" ", "-")
-    away_slug = str(match.get("awayTeam", {}).get("name", "away")).lower().replace(" ", "-")
-    
-    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_idx}"
+        # Assuming your spreadsheet has columns for Teams (or index) and Column H is named 'Highlights URL'
+        # Let's map by a unique combined string of Home and Away teams to guarantee a precise match
+        for _, row in df.iterrows():
+            home = str(row.get("Home Team", "")).strip()
+            away = str(row.get("Away Team", "")).strip()
+            highlight_url = str(row.get("Highlights URL", "")).strip()
+            
+            if home and away and highlight_url:
+                # Store pairing both ways or directly as a key tuple
+                url_mapping[(home, away)] = highlight_url
+    except Exception as e:
+        st.warning(f"Could not load highlights URLs from spreadsheet: {e}")
+    return url_mapping
 
+# Fetch the spreadsheet URLs at launch
+SPREADSHEET_URLS = load_spreadsheet_highlights()
+
+# --- UPDATED: build_match_banner ---
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -543,8 +565,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
     span_class = "team-panel-text-compact" if is_result else ""
 
-    container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
-
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
@@ -552,11 +572,24 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
-        highlights_url = generate_spoilerfree_url(match, match_idx)
+        
+        # FIX: Fetch the exact URL mapped from Column H using the team pairings lookup
+        highlights_url = SREADSHEET_URLS.get((h_name, a_name), "#")
+        
+        # Fallback helper if the API team name spells slightly differently than your spreadsheet
+        if highlights_url == "#":
+            # Optional: Try lookup by match_idx or a simplified search if your spreadsheet uses a sequential counter
+            pass
+
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        # FIXED: Removed internal text line breaking quirks inside link string interpolation
-        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
+        bottom_bar = f"""
+        <div class="result-bottom-bar">
+            <a href="{highlights_url}" target="_blank" class="highlights-btn">
+                📺 Watch Highlights
+            </a>
+        </div>
+        """
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
@@ -570,24 +603,22 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
     return f"""
-    <div class="match-banner-wrapper">
-        <div class="{container_class}">
-            {top_pane}
-            <div class="matchup-split-screen">
-                <div class="{home_panel_class}" style="background-color: {left_color};">
-                    <div class="{panel_text_class}">
-                        {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
-                    </div>
-                </div>
-                {centre_bubble}
-                <div class="{away_panel_class}" style="background-color: {right_color};">
-                    <div class="{panel_text_class}">
-                        <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
-                    </div>
+    <div class="match-banner-container" style="margin: 0px; box-sizing: border-box;">
+        {top_pane}
+        <div class="matchup-split-screen">
+            <div class="{home_panel_class}" style="background-color: {left_color};">
+                <div class="{panel_text_class}">
+                    {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
                 </div>
             </div>
-            {bottom_bar}
+            {centre_bubble}
+            <div class="{away_panel_class}" style="background-color: {right_color};">
+                <div class="{panel_text_class}">
+                    <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
+                </div>
+            </div>
         </div>
+        {bottom_bar}
     </div>
     """
     
