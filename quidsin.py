@@ -219,11 +219,11 @@ GLOBAL_STYLE_TOKENS = """
         text-transform: uppercase;
         text-decoration: none !important;
         padding: 6px 10px;
-        border-radius: 5px;
+        border-radius: 2px;
         display: inline-flex !important;
         align-items: center;
-        gap: 6px;
-        box-shadow: 0 2px 4px rgba(255,0,0,0.2);
+        gap: 2px;
+        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
     }
 
     .highlights-btn:hover {
