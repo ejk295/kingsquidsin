@@ -54,7 +54,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #E05206;
+        background-color: #006847;
         padding: 8px 15px;
     }
 
@@ -80,10 +80,11 @@ GLOBAL_STYLE_TOKENS = """
         padding: 6px 10px;
     }
 
-    /* --- FIX: RESTORED SIDE-BY-SIDE MATCHUP LAYOUT (NO VERTICAL STACKING) --- */
+    /* --- ABSOLUTE FIX: FORCE GENUINE SIDE-BY-SIDE INTERFACE CARDS --- */
     .matchup-split-screen {
         display: flex !important;
         flex-direction: row !important;
+        flex-wrap: nowrap !important;
         position: relative;
         align-items: center;
         height: 75px;
@@ -95,8 +96,7 @@ GLOBAL_STYLE_TOKENS = """
         display: flex !important;
         align-items: center;
         box-sizing: border-box;
-        height: 100%;
-        overflow: hidden;
+        height: 100% !important;
     }
     
     .home-panel {
@@ -159,7 +159,7 @@ GLOBAL_STYLE_TOKENS = """
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    /* --- ROBUST MEMORY SAFE DISCLOSURE ARCHITECTURE --- */
+    /* --- PERFORMANCE PRESERVING REVEAL LAYER --- */
     details.score-disclosure summary {
         list-style: none;
         outline: none;
@@ -187,7 +187,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-bottom-time {
-        background-color: #E05206;
+        background-color: #006847;
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
@@ -241,12 +241,11 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE RESPONSIVE ENGINE RE-DOCKING --- */
+    /* --- MOBILE RE-DOCKING MECHANISM --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
             flex-direction: column !important;
-            height: auto;
-            min-height: 120px;
+            height: auto !important;
         }
         .team-panel {
             width: 100% !important;
@@ -306,7 +305,7 @@ st.markdown("""
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
             border-radius: 10px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
         }
         .compact-sweep-title {
@@ -314,23 +313,23 @@ st.markdown("""
             text-transform: uppercase;
             font-weight: 800;
             color: #006847;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             letter-spacing: 0.5px;
         }
         .compact-teams-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
+            gap: 5px;
+            margin-top: 4px;
         }
         .compact-team-item {
             background: #FAFAFA;
             border: 1px solid #EAEAEA;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #333333;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 2px 6px;
+            border-radius: 5px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -405,7 +404,7 @@ GROUP_PLAYERS = {
     "Congo DR": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "DR Congo": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "Ghana": {"player_name": "Antoine Semenyo", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/antoine-semenyo-ghana-forward-profile-full.png"},
-    "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-algeria-forward-profile-full.png"},
+    "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-alria-forward-profile-full.png"},
     "Australia": {"player_name": "Jackson Irvine", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jackson-irvine-australia-midfielder-profile-full.png"},
     "Canada": {"player_name": "Alphonso Davies", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/alphonso-davies-canada-defender-profile-full.png"},
     "Czechia": {"player_name": "Patrik Schick", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/patrik-schick-czech-republic-forward-profile-full.png"},
@@ -666,7 +665,7 @@ with header_cols[0]:
 with header_cols[1]:
     if live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
-        components.html(payload, height=145, scrolling=False)
+        components.html(payload, height=160, scrolling=False)
     else:
         # Ultra-compact selector list that avoids any scrolling completely
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
@@ -710,7 +709,7 @@ hero_cols = st.columns([1, 1], gap="medium")
 with hero_cols[0]:
     if next_kickoff_matches:
         payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
-        components.html(payload, height=145, scrolling=False)
+        components.html(payload, height=160, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
@@ -724,18 +723,18 @@ with hero_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        components.html(result_banner_html, height=145, scrolling=False)
+        components.html(result_banner_html, height=160, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
 # Additional matches are appended cleanly lower down if multi-events ever occur
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=145, scrolling=False)
+        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
 
 if len(next_kickoff_matches) > 1:
     for idx, next_match in enumerate(next_kickoff_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=145, scrolling=False)
+        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
