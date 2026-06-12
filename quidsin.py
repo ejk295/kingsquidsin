@@ -508,77 +508,49 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── HELPER: LOOKUP COLUMNS C & D -> COLUMN H FROM THE 'FIXTURES' SHEET ──
+# ── ADJUSTED INTER-ROW BULLETPROOF SCANNING FOR SPREADSHEETS ──
 def get_spreadsheet_url_fallback(h_name, a_name):
     """
-    Loads the spreadsheet, checks the 'Fixtures' tab, and matches the
-    exact website home and away team names (Cols C & D) to pull the URL (Col H).
+    Scans row by row, ignoring static index restrictions. It searches all columns 
+    for the text strings of home and away teams. Once a row matching both teams 
+    is found, it grabs the first valid HTTP/HTTPS URL found on that line.
     """
     import pandas as pd
     import os
 
-    # Look for common spreadsheet filenames in your project directory
     possible_files = ["fixtures.xlsx", "data.xlsx", "sweepstake.xlsx", "world_cup.xlsx", "fixtures.csv"]
-    
-    # Also check if you have a file path stored in your secrets or env variables
     sheet_path = st.secrets.get("SPREADSHEET_PATH", None)
     if sheet_path and os.path.exists(sheet_path):
         possible_files.insert(0, sheet_path)
 
+    target_home = str(h_name).strip().lower()
+    target_away = str(a_name).strip().lower()
+
     for file_name in possible_files:
         if os.path.exists(file_name):
             try:
-                # Load the data - if it's an Excel file, target your 'Fixtures' tab
                 if file_name.endswith(('.xlsx', '.xls')):
                     df = pd.read_excel(file_name, sheet_name='Fixtures')
                 else:
                     df = pd.read_csv(file_name)
                 
-                if df.empty or len(df.columns) < 8:
+                if df.empty:
                     continue
 
-                # Identify columns cleanly by index position:
-                # Column C (index 2) -> Home Team
-                # Column D (index 3) -> Away Team
-                # Column H (index 7) -> Highlights URL
-                home_col = df.columns[2]
-                away_col = df.columns[3]
-                url_col = df.columns[7]
-
-                # Clean up white space and look for an exact 1:1 match
-                target_home = h_name.strip()
-                target_away = a_name.strip()
-
                 for _, row in df.iterrows():
-                    row_home = str(row[home_col]).strip()
-                    row_away = str(row[away_col]).strip()
-
-                    if row_home == target_home and row_away == target_away:
-                        found_url = str(row[url_col]).strip()
-                        if found_url and found_url.startswith("http"):
-                            return found_url
+                    # Turn everything in the current row into a string array
+                    row_strings = [str(val).strip().lower() for val in row.values]
+                    
+                    # Look for presence of both teams anywhere on this layout row
+                    if target_home in row_strings and target_away in row_strings:
+                        # Find the link column value anywhere on this verified matching row
+                        for item in row.values:
+                            item_str = str(item).strip()
+                            if item_str.startswith("http://") or item_str.startswith("https://"):
+                                return item_str
             except Exception:
-                pass # Try the next file choice if loading fails
+                pass
 
-    # If your file has a completely different name, you can also look inside Streamlit's state memory
-    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df", "sheet"]
-    for name in possible_df_names:
-        if name in globals():
-            possible_df = globals()[name]
-            if isinstance(possible_df, pd.DataFrame) and not possible_df.empty:
-                try:
-                    home_col = possible_df.columns[2]
-                    away_col = possible_df.columns[3]
-                    url_col = possible_df.columns[7]
-                    for _, row in possible_df.iterrows():
-                        if str(row[home_col]).strip() == h_name.strip() and str(row[away_col]).strip() == a_name.strip():
-                            found_url = str(row[url_col]).strip()
-                            if found_url and found_url.startswith("http"):
-                                return found_url
-                except Exception:
-                    pass
-
-    # Default fallback link if spreadsheet file can't be found or read
     return "https://www.youtube.com/@fifa/videos"
 
 # ── UPDATED MATCH BANNER BUILDER ──
@@ -616,7 +588,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     elif is_result:
         h_score, a_score = get_live_score(match)
         
-        # FIXED: Directly pull the exact raw string URL out of Column H matching this game pairing
+        # Scans the row horizontally for complete safety
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
