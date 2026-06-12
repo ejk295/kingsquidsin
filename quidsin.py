@@ -736,6 +736,7 @@ with header_cols[1]:
 # ── RENDERING THE HERO BANNERS DETERMINISTICALLY ──────────────────────────
 if live_matches:
     for live_match in live_matches:
+        # DO NOT use st.write() here! Always use st.markdown with unsafe_allow_html=True
         st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
 
 if next_kickoff_matches:
