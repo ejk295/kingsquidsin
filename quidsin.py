@@ -773,9 +773,9 @@ with header_cols[1]:
             if normalized_person in teams_by_person:
                 teams_by_person[normalized_person].append(team)
 
-        st.markdown('<div style="padding-top:10px;">', unsafe_allow_html=True)
+        st.markdown('<div style="padding-top:4px;">', unsafe_allow_html=True)
         chosen_person = st.radio(
-            "Select Person to Show Teams:", 
+            "Select person to show teams:", 
             options=requested_people, 
             horizontal=True, 
             index=0,
