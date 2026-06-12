@@ -51,7 +51,7 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- MATCH BANNER LAYOUT (RESTORED TO FULL WIDE SIZE) --- */
+        /* --- MATCH BANNER LAYOUT --- */
         .match-banner-wrapper {
             width: 100%;
             margin: 12px 0px;
@@ -71,7 +71,7 @@ st.markdown("""
         /* Special variant container for the small sidebar result widget */
         .compact-sidebar-card {
             max-width: 460px !important;
-            margin-left: auto; /* Aligns to right side of header split */
+            margin-left: auto;
         }
 
         .banner-top-pane {
@@ -126,7 +126,7 @@ st.markdown("""
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 50px; /* Spaces out text from the absolute center badge */
+            padding-right: 50px;
             border-right: 1px solid rgba(255, 255, 255, 0.15);
         }
         
@@ -136,7 +136,7 @@ st.markdown("""
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 50px; /* Spaces out text from the absolute center badge */
+            padding-left: 50px;
         }
         
         .away-panel-compact {
@@ -222,12 +222,12 @@ st.markdown("""
         }
         
         .result-bottom-bar {
-            background-color: #FFFFFF;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-top: 1px solid #EEEEEE;
+            background-color: #FFFFFF !important;
+            padding: 10px 15px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            border-top: 1px solid #EEEEEE !important;
         }
         
         .highlights-btn {
@@ -239,15 +239,15 @@ st.markdown("""
             text-decoration: none !important;
             padding: 6px 16px;
             border-radius: 5px;
-            display: inline-flex;
+            display: inline-flex !important;
             align-items: center;
             gap: 6px;
             box-shadow: 0 2px 4px rgba(255,0,0,0.2);
-            transition: background 0.2s ease;
         }
 
         .highlights-btn:hover {
             background-color: #CC0000 !important;
+            color: #FFFFFF !important;
         }
         
         .banner-flag {
@@ -276,8 +276,6 @@ st.markdown("""
             align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
-            height: auto;
-            min-height: 50px;
         }
         .stat-banner-box medium {
             font-size: 11px;
@@ -462,7 +460,7 @@ GROUP_PLAYERS = {
 DEFAULT_LEFT_COLOR = "#006847"
 DEFAULT_RIGHT_COLOR = "#006847"
 
-# 3. Cache Country Flag URLs using exactly 1 standalone initial API request
+# 3. Cache Country Flags
 @st.cache_data(ttl=86400)
 def get_cached_team_crests():
     crests = {}
@@ -485,11 +483,9 @@ def get_cached_team_crests():
         pass
     return crests
 
-# Fetch the global crest asset dictionary once at launch
 CACHED_CRESTS = get_cached_team_crests()
 
 def get_flag_html(team_name, extra_class="flag-img"):
-    """Securely returns an HTML image element for team flags based on API data."""
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
         return f'<img src="{crest_url}" class="{extra_class}" alt="{team_name}">'
@@ -505,7 +501,6 @@ def format_to_uk_time(utc_str):
         return None
 
 def get_live_score(match):
-    """Safely extracts valid integers, prioritizing final scores over shifting live states."""
     score_obj = match.get("score", {})
     for target_key in ["fullTime", "regularTime", "halfTime"]:
         s = score_obj.get(target_key, {})
@@ -513,17 +508,16 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-def generate_spoilerfree_url(match, match_index_from_two=2):
-    """Generates the external URL format based on parameters."""
+def generate_spoilerfree_url(match, match_idx=2):
     stage = match.get("stage", "")
     group_str = "a"
     if "GROUP_" in stage:
         group_str = stage.replace("GROUP_", "").lower()
         
-    home_slug = match.get("homeTeam", {}).get("name", "home").lower().replace(" ", "-")
-    away_slug = match.get("awayTeam", {}).get("name", "away").lower().replace(" ", "-")
+    home_slug = str(match.get("homeTeam", {}).get("name", "home")).lower().replace(" ", "-")
+    away_slug = str(match.get("awayTeam", {}).get("name", "away")).lower().replace(" ", "-")
     
-    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_index_from_two}"
+    return f"https://spoilerfreefootball.lovable.app/match/fifa-world-cup-group-{group_str}-{home_slug}-{away_slug}-{match_idx}"
 
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
@@ -549,7 +543,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
     span_class = "team-panel-text-compact" if is_result else ""
 
-    # Differentiate the styling target container class
     container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
 
     if is_live:
@@ -562,13 +555,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         highlights_url = generate_spoilerfree_url(match, match_idx)
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        bottom_bar = f"""
-        <div class="result-bottom-bar">
-            <a href="{highlights_url}" target="_blank" class="highlights-btn">
-                📺 Watch Highlights
-            </a>
-        </div>
-        """
+        # FIXED: Removed internal text line breaking quirks inside link string interpolation
+        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
@@ -603,30 +591,24 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     </div>
     """
     
-# ── Data Fetching (Protected TTL Cache to safeguard 10 req/min limits) ─────
+# ── Data Fetching ──────────────────────────────────────────────────────────
 @st.cache_data(ttl=120)  
 def fetch_football_data():
     all_matches = []
     standings_list = []
-    
     if API_TOKEN == "placeholder":
         return all_matches, standings_list
-
     try:
         s_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/standings", headers=HEADERS, timeout=10)
         if s_res.status_code == 200:
             standings_list = s_res.json().get("standings", [])
-            
         m_res = requests.get(f"{BASE_URL}/competitions/{COMPETITION_CODE}/matches", headers=HEADERS, timeout=10)
         if m_res.status_code == 200:
             all_matches = m_res.json().get("matches", [])
-            
     except Exception as e:
         st.error(f"Error connecting to API: {e}")
-        
     return all_matches, standings_list
 
-# Fetch the data safely
 all_matches, standings_list = fetch_football_data()
 
 # Process Leaderboard Data safely
@@ -660,7 +642,6 @@ if master_flat_leaderboard:
 # ── Dynamic Match Filtering & Layout Deduplication ────────────────────────
 live_matches = [m for m in all_matches if m.get("status") in ["IN_PLAY", "PAUSED"]]
 
-# Filter upcoming scheduled fixtures sorted chronologically
 upcoming_matches = sorted(
     [m for m in all_matches if m.get("status") in ["TIMED", "SCHEDULED"]],
     key=lambda x: x.get("utcDate", "")
@@ -671,7 +652,6 @@ if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
 
-# Find the most recently finished match for our sidebar banner
 finished_matches = sorted(
     [m for m in all_matches if m.get("status") == "FINISHED"],
     key=lambda x: x.get("utcDate", ""),
@@ -698,15 +678,13 @@ with header_cols[1]:
         except ValueError:
             match_index = 2
             
+        # FIXED: Calling function safely and pushing it as clean markdown directly onto layout
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        
-        # FIXED: CRITICAL FIXED LINE. Using markdown directly eliminates raw string leaks
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 # ── RENDERING THE MAIN HERO BANNERS DETERMINISTICALLY ─────────────────────
-# These banners will automatically expand back out to full layout size!
 if live_matches:
     for live_match in live_matches:
         st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
@@ -747,7 +725,6 @@ else:
                         st.markdown('<div class="group-row-spacer">', unsafe_allow_html=True)
                         st.markdown(f"<span class='group-header-text'>🔹 {group_name}</span>", unsafe_allow_html=True)
 
-                        # Standings table
                         table_html = """
                         <div class="table-responsive-wrapper">
                             <table class="custom-dashboard-table">
@@ -785,7 +762,6 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        # Fixtures & Results
                         st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
@@ -838,7 +814,6 @@ else:
                                     </div>
                                 """, unsafe_allow_html=True)
 
-                        # Key players component layout with layout fixes for card spacing
                         active_cards = []
                         for team_name in teams_in_group:
                             if team_name in GROUP_PLAYERS:
