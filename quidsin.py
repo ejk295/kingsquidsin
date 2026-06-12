@@ -129,7 +129,7 @@ st.markdown("""
 
         .home-panel {
             justify-content: flex-end;
-            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: 1px solid rgba(255,255,255,0.15);
         }
 
         .away-panel {
