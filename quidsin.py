@@ -51,24 +51,27 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* --- MATCH BANNER LAYOUT (FIXED OVERFLOW & STRETCH) --- */
+        /* --- MATCH BANNER LAYOUT (RESTORED TO FULL WIDE SIZE) --- */
         .match-banner-wrapper {
             width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 8px 0px;
+            margin: 12px 0px;
         }
 
         .match-banner-container {
             width: 100%;
-            max-width: 550px; /* Locks the size so elements do not drift on wide monitors */
             border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
             overflow: hidden;
             font-family: 'Figtree', sans-serif !important;
             text-align: center;
             border: 1px solid #DDDDDD;
             background-color: #FFFFFF;
+        }
+
+        /* Special variant container for the small sidebar result widget */
+        .compact-sidebar-card {
+            max-width: 460px !important;
+            margin-left: auto; /* Aligns to right side of header split */
         }
 
         .banner-top-pane {
@@ -103,7 +106,7 @@ st.markdown("""
             display: flex;
             position: relative;
             align-items: center;
-            height: 70px;
+            height: 75px;
             width: 100%;
         }
 
@@ -111,7 +114,7 @@ st.markdown("""
             width: 50%;
             display: flex;
             align-items: center;
-            padding: 10px 15px;
+            padding: 10px 25px;
             box-sizing: border-box;
             height: 100%;
             overflow: hidden;
@@ -123,8 +126,8 @@ st.markdown("""
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 45px; /* Spaces out text from the absolute center badge */
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding-right: 50px; /* Spaces out text from the absolute center badge */
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
         }
         
         .home-panel-compact {
@@ -133,7 +136,7 @@ st.markdown("""
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 45px; /* Spaces out text from the absolute center badge */
+            padding-left: 50px; /* Spaces out text from the absolute center badge */
         }
         
         .away-panel-compact {
@@ -142,9 +145,9 @@ st.markdown("""
 
         .team-panel-text {
             color: #FFFFFF !important;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800 !important;
-            text-shadow: 0px 1px 3px rgba(0,0,0,0.4);
+            text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             white-space: nowrap;
@@ -155,15 +158,16 @@ st.markdown("""
         }
 
         .team-panel-text span {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 400 !important;
-            opacity: 0.9;
+            opacity: 0.95;
             color: #FFFFFF !important;
-            margin: 0 4px;
+            margin: 0 6px;
         }
         
         .team-panel-text-compact span {
             font-size: 10px !important;
+            margin: 0 4px;
         }
 
         .vs-marker-bubble, .score-bubble {
@@ -173,25 +177,25 @@ st.markdown("""
             transform: translate(-50%, -50%);
             z-index: 10;
             border: 2px solid #FFFFFF;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             white-space: nowrap;
         }
 
         .vs-marker-bubble {
             background-color: #111111;
             color: #FFFFFF !important;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 900 !important;
-            padding: 4px 8px;
+            padding: 5px 9px;
             border-radius: 50%;
         }
 
         .score-bubble {
             background-color: #8B0000;
             color: #FFFFFF !important;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 900 !important;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
         }
         
@@ -218,11 +222,12 @@ st.markdown("""
         }
         
         .result-bottom-bar {
-            background-color: #333333;
-            padding: 8px 15px;
+            background-color: #FFFFFF;
+            padding: 10px 15px;
             display: flex;
             justify-content: center;
             align-items: center;
+            border-top: 1px solid #EEEEEE;
         }
         
         .highlights-btn {
@@ -232,11 +237,12 @@ st.markdown("""
             font-size: 11px !important;
             text-transform: uppercase;
             text-decoration: none !important;
-            padding: 5px 14px;
-            border-radius: 4px;
+            padding: 6px 16px;
+            border-radius: 5px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(255,0,0,0.2);
             transition: background 0.2s ease;
         }
 
@@ -245,13 +251,13 @@ st.markdown("""
         }
         
         .banner-flag {
-            width: 26px !important;
-            height: 17px !important;
+            width: 28px !important;
+            height: 19px !important;
             object-fit: cover !important;
             border-radius: 2px;
-            border: 1px solid rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.3);
             display: inline-block;
-            margin: 0 6px;
+            margin: 0 8px;
             vertical-align: middle;
         }
         
@@ -483,7 +489,7 @@ def get_cached_team_crests():
 CACHED_CRESTS = get_cached_team_crests()
 
 def get_flag_html(team_name, extra_class="flag-img"):
-    """Securely returns an HTML image element for team flags based on API data instead of emoji text fallbacks."""
+    """Securely returns an HTML image element for team flags based on API data."""
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
         return f'<img src="{crest_url}" class="{extra_class}" alt="{team_name}">'
@@ -543,6 +549,9 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
     span_class = "team-panel-text-compact" if is_result else ""
 
+    # Differentiate the styling target container class
+    container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
+
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
@@ -572,10 +581,9 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
-    # Wrapped in match-banner-wrapper flexbox to constrain alignment on wide viewports
     return f"""
     <div class="match-banner-wrapper">
-        <div class="match-banner-container">
+        <div class="{container_class}">
             {top_pane}
             <div class="matchup-split-screen">
                 <div class="{home_panel_class}" style="background-color: {left_color};">
@@ -663,7 +671,7 @@ if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
 
-# Find the most recently finished match for our new banner
+# Find the most recently finished match for our sidebar banner
 finished_matches = sorted(
     [m for m in all_matches if m.get("status") == "FINISHED"],
     key=lambda x: x.get("utcDate", ""),
@@ -671,11 +679,11 @@ finished_matches = sorted(
 )
 
 # ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
-header_cols = st.columns([0.52, 0.48], gap="medium")
+header_cols = st.columns([0.55, 0.45], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
-        <div class="title-area" style="padding-top: 18px;">
+        <div class="title-area" style="padding-top: 15px;">
             <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
@@ -691,11 +699,14 @@ with header_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
+        
+        # FIXED: CRITICAL FIXED LINE. Using markdown directly eliminates raw string leaks
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 # ── RENDERING THE MAIN HERO BANNERS DETERMINISTICALLY ─────────────────────
+# These banners will automatically expand back out to full layout size!
 if live_matches:
     for live_match in live_matches:
         st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
@@ -721,7 +732,7 @@ st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;
 
 # ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
-    st.warning("⚠️ Using placeholder API key. Please insert your true Football-Data.org token to pull live group lists and matches.")
+    st.warning("⚠️ Using placeholder API key. Please insert your true Football-Data.org token to pull live group lists.")
 else:
     if standings_list:
         for i in range(0, len(standings_list), 2):
