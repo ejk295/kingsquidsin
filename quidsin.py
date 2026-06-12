@@ -548,7 +548,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
         bottom_bar = f"""
         <div class="result-bottom-bar">
-            <a href="{highlights_url}" target="_blank" class="highlights-btn">
+            <a href="{highlights_url}">
                 📺 Watch Highlights
             </a>
         </div>
