@@ -35,7 +35,7 @@ GLOBAL_STYLE_TOKENS = """
         font-family: 'Figtree', sans-serif !important;
     }
 
-    /* --- MATCH BANNER LAYOUT --- */
+    /* --- MATCH BANNER CONTAINER --- */
     .match-banner-wrapper {
         width: 100%;
         margin: 0px;
@@ -80,61 +80,64 @@ GLOBAL_STYLE_TOKENS = """
         padding: 6px 10px;
     }
 
-    /* --- ABSOLUTE FIX: FORCE GENUINE SIDE-BY-SIDE INTERFACE CARDS --- */
+    /* --- BULLETPROOF FLEX SIDE-BY-SIDE GRID Layout --- */
     .matchup-split-screen {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        position: relative;
-        align-items: center;
-        height: 75px;
-        width: 100%;
+        justify-content: space-between !important;
+        align-items: center !important;
+        position: relative !important;
+        height: 75px !important;
+        width: 100% !important;
     }
 
     .team-panel {
         width: 50% !important;
         display: flex !important;
-        align-items: center;
-        box-sizing: border-box;
+        align-items: center !important;
+        box-sizing: border-box !important;
         height: 100% !important;
     }
     
     .home-panel {
         justify-content: flex-end !important;
-        padding-right: 50px !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        padding-right: 60px !important;
     }
     
     .away-panel {
         justify-content: flex-start !important;
-        padding-left: 50px !important;
+        padding-left: 60px !important;
     }
 
     .team-panel-text {
         color: #FFFFFF !important;
-        font-size: 16px;
+        font-size: 16px !important;
         font-weight: 800 !important;
         text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
+        display: flex !important;
+        align-items: center !important;
+        white-space: nowrap !important;
     }
 
     .team-panel-text span {
-        font-size: 12px;
+        font-size: 12px !important;
         font-weight: 400 !important;
         opacity: 0.95;
         color: #FFFFFF !important;
-        margin: 0 6px;
+        margin: 0 6px !important;
     }
 
-    .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10;
-        white-space: nowrap;
+    /* --- ABSOLUTE CENTERING ENGINE FOR MID-ROW BUBBLES --- */
+    .center-overlay-container {
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 100 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
 
     .vs-marker-bubble {
@@ -146,6 +149,7 @@ GLOBAL_STYLE_TOKENS = """
         border-radius: 50%;
         border: 2px solid #FFFFFF;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        white-space: nowrap;
     }
 
     .score-bubble {
@@ -157,9 +161,10 @@ GLOBAL_STYLE_TOKENS = """
         border-radius: 6px;
         border: 2px solid #FFFFFF;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        white-space: nowrap;
     }
 
-    /* --- PERFORMANCE PRESERVING REVEAL LAYER --- */
+    /* --- PERFORMANCE PRESERVING MOBILE DROP-DOWN REVEAL --- */
     details.score-disclosure summary {
         list-style: none;
         outline: none;
@@ -181,6 +186,7 @@ GLOBAL_STYLE_TOKENS = """
         letter-spacing: 0.5px;
         display: inline-block;
         user-select: none;
+        white-space: nowrap;
     }
     details.score-disclosure[open] summary {
         display: none !important;
@@ -241,7 +247,7 @@ GLOBAL_STYLE_TOKENS = """
         vertical-align: middle;
     }
 
-    /* --- MOBILE RE-DOCKING MECHANISM --- */
+    /* --- MOBILE RE-DOCKING BREAKPOINT --- */
     @media (max-width: 768px) {
         .matchup-split-screen {
             flex-direction: column !important;
@@ -251,8 +257,6 @@ GLOBAL_STYLE_TOKENS = """
             width: 100% !important;
             justify-content: center !important;
             padding: 12px 10px !important;
-            border-right: none !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         }
         .team-panel-text {
             font-size: 13px !important;
@@ -262,12 +266,11 @@ GLOBAL_STYLE_TOKENS = """
         .team-panel-text span {
             font-size: 10px !important;
         }
-        .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
+        .center-overlay-container {
             position: relative !important;
             left: 0 !important;
             top: 0 !important;
             transform: none !important;
-            display: inline-block !important;
             margin: 8px auto !important;
         }
     }
@@ -300,7 +303,7 @@ st.markdown("""
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
         .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
         
-        /* --- HIGHLY COMPRESSED ALLOCATION SELECTION AREA --- */
+        /* --- ALLOCATION HORIZONTAL RADS PANELS --- */
         .compact-sweep-container {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
@@ -404,7 +407,7 @@ GROUP_PLAYERS = {
     "Congo DR": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "DR Congo": {"player_name": "Aaron Wan-Bissaka", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/aaron-wan-bissaka-dr-congo-defender-profile-full.png"},
     "Ghana": {"player_name": "Antoine Semenyo", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/antoine-semenyo-ghana-forward-profile-full.png"},
-    "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-alria-forward-profile-full.png"},
+    "Algeria": {"player_name": "Riyad Mahrez", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/riyad-mahrez-algeria-forward-profile-full.png"},
     "Australia": {"player_name": "Jackson Irvine", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/jackson-irvine-australia-midfielder-profile-full.png"},
     "Canada": {"player_name": "Alphonso Davies", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/alphonso-davies-canada-defender-profile-full.png"},
     "Czechia": {"player_name": "Patrik Schick", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/patrik-schick-czech-republic-forward-profile-full.png"},
@@ -533,20 +536,18 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
-        centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
+        center_inner_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
         
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
-        centre_bubble = f"""
-        <div class="score-reveal-wrapper">
-            <details class="score-disclosure">
-                <summary><div class="score-reveal-label">Show</div></summary>
-                <div class="score-bubble" style="position:static; transform:none; margin:0;">{h_score} – {a_score}</div>
-            </details>
-        </div>
+        center_inner_bubble = f"""
+        <details class="score-disclosure">
+            <summary><div class="score-reveal-label">Show</div></summary>
+            <div class="score-bubble" style="position:static; transform:none; margin:0;">{h_score} – {a_score}</div>
+        </details>
         """
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER-FREE HIGHLIGHTS 📺</a></div>'
     else:
@@ -558,9 +559,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         else:
             date_str = "TBD"
         top_pane = '<div class="banner-top-pane"><div class="next-match-title">⏳ Next match</div></div>'
-        centre_bubble = '<div class="vs-marker-bubble">VS</div>'
+        center_inner_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
+    # Package ALL visual elements inside a single unified HTML block to lock horizontally
     return f"""
     {GLOBAL_STYLE_TOKENS}
     <div class="match-banner-wrapper">
@@ -572,7 +574,9 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
                         {h_flag} {h_name} <span>{h_owner}</span>
                     </div>
                 </div>
-                {centre_bubble}
+                <div class="center-overlay-container">
+                    {center_inner_bubble}
+                </div>
                 <div class="team-panel away-panel" style="background-color: {right_color};">
                     <div class="team-panel-text">
                         <span>{a_owner}</span> {a_name} {a_flag}
