@@ -572,7 +572,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
-    # Cleanly assign styles to variables to avoid single/double quote confusion inside the f-string
+    # --- FIX 1: Extract inline classes into safe variables ---
     panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
     home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
     away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
@@ -588,7 +588,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         highlights_url = generate_spoilerfree_url(match, match_idx)
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        # Fixed: Explicitly ensuring clean target elements 
         bottom_bar = f"""
         <div class="result-bottom-bar">
             <a href="{highlights_url}" target="_blank" class="highlights-btn">
@@ -608,6 +607,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
+    # --- FIX 2: Applied clean span_class references below ---
     return f"""
     <div class="match-banner-container">
         {top_pane}
@@ -627,7 +627,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         {bottom_bar}
     </div>
     """
-
+    
 # ── Data Fetching (Protected TTL Cache to safeguard 10 req/min limits) ─────
 @st.cache_data(ttl=120)  
 def fetch_football_data():
