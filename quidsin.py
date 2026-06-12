@@ -101,7 +101,7 @@ st.markdown("""
         
         .result-top-pane {
             background-color: #444444;
-            padding: 6px 12px;
+            padding: 8px 15px;
         }
 
         .matchup-split-screen {
@@ -116,33 +116,24 @@ st.markdown("""
             width: 50%;
             display: flex;
             align-items: center;
-            padding: 10px 25px;
+            /* Generous padding so the centre bubble never overlaps text */
+            padding: 10px 60px;
             box-sizing: border-box;
             height: 100%;
             overflow: hidden;
         }
         
         .team-panel-compact {
-            padding: 6px 12px !important;
+            padding: 6px 55px !important;
         }
 
         .home-panel {
             justify-content: flex-end;
-            padding-right: 50px;
             border-right: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        
-        .home-panel-compact {
-            padding-right: 35px !important;
         }
 
         .away-panel {
             justify-content: flex-start;
-            padding-left: 50px;
-        }
-        
-        .away-panel-compact {
-            padding-left: 35px !important;
         }
 
         .team-panel-text {
@@ -153,6 +144,9 @@ st.markdown("""
             display: flex;
             align-items: center;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
         
         .team-panel-text-compact {
@@ -165,6 +159,7 @@ st.markdown("""
             opacity: 0.95;
             color: #FFFFFF !important;
             margin: 0 6px;
+            flex-shrink: 0;
         }
         
         .team-panel-text-compact span {
@@ -181,6 +176,7 @@ st.markdown("""
             border: 2px solid #FFFFFF;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .vs-marker-bubble {
@@ -207,6 +203,37 @@ st.markdown("""
             padding: 4px 10px !important;
         }
 
+        /* Show-score button — looks like the score bubble but is a real button */
+        .show-score-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            border: 2px solid #FFFFFF !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            cursor: pointer;
+            font-family: 'Figtree', sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 10px !important;
+            text-transform: uppercase;
+            padding: 5px 10px !important;
+            border-radius: 6px;
+            background-color: #111111 !important;
+            color: #FFFFFF !important;
+            outline: none;
+            letter-spacing: 0.5px;
+        }
+        .show-score-btn:hover {
+            background-color: #333333 !important;
+        }
+        .show-score-btn-compact {
+            font-size: 9px !important;
+            padding: 4px 8px !important;
+        }
+
+        /* Result banner bottom bar — same height as next-match bottom bar */
         .banner-bottom-time {
             background-color: #006847;
             padding: 8px 15px;
@@ -223,13 +250,16 @@ st.markdown("""
             color: #FFFFFF !important;
         }
         
+        /* Match the height of the next-match bottom bar (padding: 8px 15px) */
         .result-bottom-bar {
             background-color: #FFFFFF !important;
-            padding: 10px 15px !important;
+            padding: 8px 15px !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             border-top: 1px solid #EEEEEE !important;
+            min-height: 37px;
+            box-sizing: border-box;
         }
         
         .highlights-btn {
@@ -261,31 +291,13 @@ st.markdown("""
             display: inline-block;
             margin: 0 8px;
             vertical-align: middle;
+            flex-shrink: 0;
         }
         
         .banner-flag-compact {
             width: 22px !important;
             height: 14px !important;
             margin: 0 5px !important;
-        }
-
-        /* Spoiler Button Styling Injection inside HTML string context */
-        .spoiler-inline-btn {
-            background-color: #111111 !important;
-            color: #FFFFFF !important;
-            border: 2px solid #FFFFFF !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-size: 10px !important;
-            font-weight: 800 !important;
-            text-transform: uppercase;
-            padding: 4px 8px !important;
-            border-radius: 4px !important;
-            cursor: pointer;
-            text-decoration: none !important;
-            display: inline-block;
-        }
-        .spoiler-inline-btn:hover {
-            background-color: #333333 !important;
         }
 
         .stat-banner-box {
@@ -587,29 +599,48 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2, match
     h_flag = get_flag_html(h_name, extra_class=flag_class)
     a_flag = get_flag_html(a_name, extra_class=flag_class)
 
-    h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
-    a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
+    h_owner = f"({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
+    a_owner = f"({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
     panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
-    home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
-    away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
+    home_panel_class = "team-panel home-panel team-panel-compact" if is_result else "team-panel home-panel"
+    away_panel_class = "team-panel away-panel team-panel-compact" if is_result else "team-panel away-panel"
     span_class = "team-panel-text-compact" if is_result else ""
 
     container_class = "match-banner-container compact-sidebar-card" if is_result else "match-banner-container"
 
-    # Evaluate unique match identifier string for tracking spoiler reveals
+    # Unique match identifier for spoiler tracking
     m_uid = match_id if match_id else f"{h_name}-{a_name}"
+    # Sanitise for use as an element id
+    m_elem_id = m_uid.replace(" ", "_").replace("-", "_")
     show_spoiler = m_uid in st.session_state.revealed_scores
+
+    # JS that replaces the button with the score in-place, no page nav
+    show_score_js = f"""
+    <script>
+    function revealScore_{m_elem_id}(homeScore, awayScore) {{
+        var btn = document.getElementById('btn_{m_elem_id}');
+        if (btn) {{
+            var bubble = document.createElement('div');
+            bubble.className = btn.className.replace('show-score-btn', 'score-bubble').replace('show-score-btn-compact', 'score-bubble-compact');
+            // Keep position styling from the button
+            bubble.style.cssText = btn.style.cssText;
+            bubble.innerText = homeScore + ' \u2013 ' + awayScore;
+            btn.parentNode.replaceChild(bubble, btn);
+        }}
+    }}
+    </script>
+    """
 
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
         
         if show_spoiler:
-            centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
+            centre_bubble = f'<div class="score-bubble">{h_score} \u2013 {a_score}</div>'
         else:
-            # Inline links utilizing a fallback query trick to force quick session reload on click
-            centre_bubble = f'<a href="?reveal={m_uid}" class="score-bubble spoiler-inline-btn" style="border-radius:30px; background-color:#8B0000 !important; transform: translate(-50%, -50%); padding: 6px 12px !important;">Show score</a>'
+            btn_class = "show-score-btn"
+            centre_bubble = f'''{show_score_js}<button id="btn_{m_elem_id}" class="{btn_class}" onclick="revealScore_{m_elem_id}({h_score}, {a_score})">Show score</button>'''
             
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
         
@@ -619,9 +650,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2, match
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
         
         if show_spoiler:
-            centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
+            centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} \u2013 {a_score}</div>'
         else:
-            centre_bubble = f'<a href="?reveal={m_uid}" class="score-bubble score-bubble-compact spoiler-inline-btn" style="transform: translate(-50%, -50%); padding: 4px 10px !important;">Show Score</a>'
+            btn_class = "show-score-btn show-score-btn-compact"
+            centre_bubble = f'''{show_score_js}<button id="btn_{m_elem_id}" class="{btn_class}" onclick="revealScore_{m_elem_id}({h_score}, {a_score})">Show score</button>'''
             
         bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER-FREE HIGHLIGHTS</a></div>'
     else:
@@ -643,13 +675,13 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2, match
             <div class="matchup-split-screen">
                 <div class="{home_panel_class}" style="background-color: {left_color};">
                     <div class="{panel_text_class}">
-                        {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
+                        {h_flag} <span style="overflow:hidden; text-overflow:ellipsis;">{h_name}</span> <span class="{span_class}">{h_owner}</span>
                     </div>
                 </div>
                 {centre_bubble}
                 <div class="{away_panel_class}" style="background-color: {right_color};">
                     <div class="{panel_text_class}">
-                        <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
+                        <span class="{span_class}">{a_owner}</span> <span style="overflow:hidden; text-overflow:ellipsis;">{a_name}</span> {a_flag}
                     </div>
                 </div>
             </div>
@@ -677,11 +709,6 @@ def fetch_football_data():
     return all_matches, standings_list
 
 all_matches, standings_list = fetch_football_data()
-
-# Process Query Params to reveal spoiler instantly upon center bubble action
-query_params = st.query_params
-if "reveal" in query_params:
-    st.session_state.revealed_scores.add(query_params["reveal"])
 
 # Process Leaderboard Data safely
 master_flat_leaderboard = []
