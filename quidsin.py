@@ -2,7 +2,6 @@ import os
 import requests
 from datetime import datetime
 import pytz
-import pandas as pd
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 import streamlit.components.v1 as components
@@ -71,7 +70,7 @@ st.markdown("""
 
         /* Special variant container for the small sidebar result widget */
         .compact-sidebar-card {
-            max-width: 460px !important;
+            max-width: 100% !important;
             margin-left: auto;
         }
 
@@ -223,7 +222,7 @@ st.markdown("""
         }
         
         .result-bottom-bar {
-            background-color: #444444 !important;
+            background-color: #FFFFFF !important;
             padding: 10px 15px !important;
             display: flex !important;
             justify-content: center !important;
@@ -232,7 +231,7 @@ st.markdown("""
         }
         
         .highlights-btn {
-            background-color: #444444 !important;
+            background-color: #FF0000 !important;
             color: #FFFFFF !important;
             font-weight: 800 !important;
             font-size: 11px !important;
@@ -354,6 +353,22 @@ st.markdown("""
             margin-bottom: 4px !important;
             margin-top: 0px !important;
             display: inline-block;
+        }
+        
+        /* Spoiler protection custom styling override */
+        div.stButton > button {
+            background-color: #444444 !important;
+            color: white !important;
+            font-size: 11px !important;
+            padding: 2px 10px !important;
+            height: auto !important;
+            min-height: 0px !important;
+            border-radius: 4px !important;
+            border: 1px solid #FFFFFF !important;
+        }
+        div.stButton > button:hover {
+            background-color: #222222 !important;
+            color: white !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -509,40 +524,66 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── FIXED: RE-ENGINEERED GOOGLE SHEET LIVE PARSER ──
-@st.cache_data(ttl=60)
+# ── HELPER: LOOKUP COLUMNS C & D -> COLUMN H FROM THE 'FIXTURES' SHEET ──
 def get_spreadsheet_url_fallback(h_name, a_name):
-    """
-    Fetches the live published Google Sheet over the web, cleanly parses 
-    the 'Fixtures' dataset via columns C & D, and falls back to FIFA video library.
-    """
-    try:
-        # Converts standard pubhtml link to a live web-accessible raw CSV file download
-        csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeLButP4o4374i0KJP_YdOnTW1wN-Wzgqabuulvd1cMVmIuCfFTEM3CjJ4FmFIbBW6FLNDfaB9Hg4w/pub?gid=0&single=true&output=csv"
-        
-        # Load live data into dataframes safely via network request
-        df = pd.read_csv(csv_url, header=None)
-        
-        if not df.empty and len(df.columns) >= 8:
-            # Clean up team strings to assure spaces don't disrupt match
-            target_home = str(h_name).strip().lower()
-            target_away = str(a_name).strip().lower()
+    import pandas as pd
+    import os
 
-            for _, row in df.iterrows():
-                row_home = str(row[2]).strip().lower()  # Column C (0-indexed position 2)
-                row_away = str(row[3]).strip().lower()  # Column D (0-indexed position 3)
+    possible_files = ["fixtures.xlsx", "data.xlsx", "sweepstake.xlsx", "world_cup.xlsx", "fixtures.csv"]
+    sheet_path = st.secrets.get("SPREADSHEET_PATH", None)
+    if sheet_path and os.path.exists(sheet_path):
+        possible_files.insert(0, sheet_path)
 
-                if row_home == target_home and row_away == target_away:
-                    found_url = str(row[7]).strip()     # Column H (0-indexed position 7)
-                    if found_url and found_url.lower().startswith("http"):
-                        return found_url
-    except Exception:
-        pass # Gracefully handle failures or connectivity timeouts down below
+    for file_name in possible_files:
+        if os.path.exists(file_name):
+            try:
+                if file_name.endswith(('.xlsx', '.xls')):
+                    df = pd.read_excel(file_name, sheet_name='Fixtures')
+                else:
+                    df = pd.read_csv(file_name)
+                
+                if df.empty or len(df.columns) < 8:
+                    continue
+
+                home_col = df.columns[2]
+                away_col = df.columns[3]
+                url_col = df.columns[7]
+
+                target_home = h_name.strip()
+                target_away = a_name.strip()
+
+                for _, row in df.iterrows():
+                    row_home = str(row[home_col]).strip()
+                    row_away = str(row[away_col]).strip()
+
+                    if row_home == target_home and row_away == target_away:
+                        found_url = str(row[url_col]).strip()
+                        if found_url and found_url.startswith("http"):
+                            return found_url
+            except Exception:
+                pass
+
+    possible_df_names = ["df", "fixtures_df", "sheet_df", "data_df", "sheet"]
+    for name in possible_df_names:
+        if name in globals():
+            possible_df = globals()[name]
+            if isinstance(possible_df, pd.DataFrame) and not possible_df.empty:
+                try:
+                    home_col = possible_df.columns[2]
+                    away_col = possible_df.columns[3]
+                    url_col = possible_df.columns[7]
+                    for _, row in possible_df.iterrows():
+                        if str(row[home_col]).strip() == h_name.strip() and str(row[away_col]).strip() == a_name.strip():
+                            found_url = str(row[url_col]).strip()
+                            if found_url and found_url.startswith("http"):
+                                return found_url
+                except Exception:
+                    pass
 
     return "https://www.youtube.com/@fifa/videos"
 
 # ── UPDATED MATCH BANNER BUILDER ──
-def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
+def build_match_banner(match, is_live=False, is_result=False, match_idx=2, show_spoiler=False):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
@@ -571,17 +612,22 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
-        centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
+        if show_spoiler:
+            centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
+        else:
+            centre_bubble = '<div class="vs-marker-bubble">LIVE</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
-        
-        # Pull the exact highlights URL out of Google Sheets live tracking
         highlights_url = get_spreadsheet_url_fallback(h_name, a_name)
+        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
         
-        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
-        centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 Watch Highlights</a></div>'
+        if show_spoiler:
+            centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
+        else:
+            centre_bubble = '<div class="vs-marker-bubble" style="font-size:10px; border-radius:4px; padding:4px 6px;">FT</div>'
+            
+        bottom_bar = f'<div class="result-bottom-bar"><a href="{highlights_url}" target="_blank" class="highlights-btn">📺 SPOILER-FREE HIGHLIGHTS</a></div>'
     else:
         dt_uk = format_to_uk_time(match.get("utcDate"))
         if dt_uk:
@@ -683,7 +729,7 @@ finished_matches = sorted(
     reverse=True
 )
 
-# ── HEADER & LATEST RESULT TOP SPLIT-ROW ──────────────────────────────────
+# ── HEADER & LIVE SPLIT-ROW ──────────────────────────────────
 header_cols = st.columns([0.55, 0.45], gap="medium")
 
 with header_cols[0]:
@@ -695,6 +741,19 @@ with header_cols[0]:
     """, unsafe_allow_html=True)
 
 with header_cols[1]:
+    # In-play match banner is now assigned here, where the latest result banner used to be.
+    if live_matches:
+        live_match = live_matches[0]
+        reveal_live_score = st.button("Show score", key="live_score_toggle")
+        live_banner_html = build_match_banner(live_match, is_live=True, show_spoiler=reveal_live_score)
+        st.markdown(live_banner_html, unsafe_allow_html=True)
+    else:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
+# ── HERO AREA: LATEST RESULT & NEXT MATCH SIDE-BY-SIDE ─────────────────────
+banner_cols = st.columns(2, gap="small")
+
+with banner_cols[0]:
     if finished_matches:
         latest_match = finished_matches[0]
         chronological_matches = sorted(all_matches, key=lambda x: x.get("utcDate", ""))
@@ -703,22 +762,19 @@ with header_cols[1]:
         except ValueError:
             match_index = 2
             
-        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
+        reveal_latest_score = st.button("Show Score", key="latest_score_toggle")
+        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index, show_spoiler=reveal_latest_score)
         st.markdown(result_banner_html, unsafe_allow_html=True)
     else:
-        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        st.info("No completed results yet.")
 
-# ── RENDERING THE MAIN HERO BANNERS DETERMINISTICALLY ─────────────────────
-if live_matches:
-    for live_match in live_matches:
-        st.markdown(build_match_banner(live_match, is_live=True), unsafe_allow_html=True)
-
-if next_kickoff_matches:
-    for next_match in next_kickoff_matches:
-        st.markdown(build_match_banner(next_match, is_live=False), unsafe_allow_html=True)
-
-if not live_matches and not next_kickoff_matches:
-    st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
+with banner_cols[1]:
+    if next_kickoff_matches:
+        next_match = next_kickoff_matches[0]
+        next_banner_html = build_match_banner(next_match, is_live=False)
+        st.markdown(next_banner_html, unsafe_allow_html=True)
+    else:
+        st.info("⏳ No upcoming matches scheduled.")
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
