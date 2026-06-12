@@ -572,6 +572,12 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
+    # Cleanly assign styles to variables to avoid single/double quote confusion inside the f-string
+    panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
+    home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
+    away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
+    span_class = "team-panel-text-compact span" if is_result else ""
+
     if is_live:
         h_score, a_score = get_live_score(match)
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
@@ -579,14 +585,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
         h_score, a_score = get_live_score(match)
-        
-        # Pulls the URL from column I parameter parsed into the match, falls back to standard url if missing
-        highlights_url = match.get("result_url", generate_spoilerfree_url(match, match_idx))
-        
+        highlights_url = generate_spoilerfree_url(match, match_idx)
         top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest Result</div></div>'
         centre_bubble = f'<div class="score-bubble score-bubble-compact">{h_score} – {a_score}</div>'
-        
-        # Clean safe layout container ensuring HTML tags do not split/leak text onto UI
+        # Fixed: Explicitly ensuring clean target elements 
         bottom_bar = f"""
         <div class="result-bottom-bar">
             <a href="{highlights_url}" target="_blank" class="highlights-btn">
@@ -606,23 +608,19 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
 
-    panel_text_class = "team-panel-text team-panel-text-compact" if is_result else "team-panel-text"
-    home_panel_class = "team-panel home-panel team-panel-compact home-panel-compact" if is_result else "team-panel home-panel"
-    away_panel_class = "team-panel away-panel team-panel-compact away-panel-compact" if is_result else "team-panel away-panel"
-
     return f"""
     <div class="match-banner-container">
         {top_pane}
         <div class="matchup-split-screen">
             <div class="{home_panel_class}" style="background-color: {left_color};">
                 <div class="{panel_text_class}">
-                    {h_flag} {h_name} <span class="{'team-panel-text-compact span' if is_result else ''}">{h_owner}</span>
+                    {h_flag} {h_name} <span class="{span_class}">{h_owner}</span>
                 </div>
             </div>
             {centre_bubble}
             <div class="{away_panel_class}" style="background-color: {right_color};">
                 <div class="{panel_text_class}">
-                    <span class="{'team-panel-text-compact span' if is_result else ''}">{a_owner}</span> {a_name} {a_flag}
+                    <span class="{span_class}">{a_owner}</span> {a_name} {a_flag}
                 </div>
             </div>
         </div>
