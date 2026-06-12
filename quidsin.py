@@ -233,6 +233,8 @@ GLOBAL_STYLE_TOKENS = """
     .banner-flag {
         width: 28px !important;
         height: 19px !important;
+        min-width: 28px !important;
+        max-width: 28px !important;
         object-fit: cover !important;
         border-radius: 2px;
         border: 1px solid rgba(255,255,255,0.3);
@@ -262,6 +264,8 @@ GLOBAL_STYLE_TOKENS = """
         .banner-flag {
             width: 20px !important;
             height: 14px !important;
+            min-width: 20px !important;
+            max-width: 20px !important;
             margin: 0 4px !important;
         }
         .score-bubble, .vs-marker-bubble {
@@ -294,9 +298,28 @@ st.markdown("""
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
         .group-row-spacer { margin-bottom: 15px !important; }
         .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
+        
+        /* --- STSTRICT STANDARD INLINE FLAG OVERRIDES --- */
+        .flag-img { 
+            vertical-align: middle !important; 
+            margin: 0px 4px !important; 
+            width: 20px !important; 
+            height: 14px !important; 
+            min-width: 20px !important;
+            max-width: 20px !important;
+            object-fit: cover !important; 
+            display: inline-block !important; 
+        }
+        
         .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
         .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
+        .custom-dashboard-table td img, .fixture-row img { width: 20px !important; height: 14px !important; min-width: 20px !important; max-width: 20px !important; object-fit: cover !important; }
+        
+        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
+        
+        /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
         .compact-sweep-container {
             background: #FFFFFF;
             border: 1px solid #DDDDDD;
@@ -324,6 +347,7 @@ st.markdown("""
             align-items: center;
             gap: 4px;
         }
+        .compact-team-item img { width: 16px !important; height: 11px !important; min-width: 16px !important; max-width: 16px !important; object-fit: cover !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -458,7 +482,7 @@ def get_cached_team_crests():
 
 CACHED_CRESTS = get_cached_team_crests()
 
-# Fixed sizing targets for flag components to stay proportional
+# Distinct width limit locks to avoid visual bleeding into table grids
 def get_banner_flag_html(team_name):
     crest_url = CACHED_CRESTS.get(team_name)
     if crest_url:
@@ -488,7 +512,7 @@ def get_live_score(match):
             return int(s.get("home")), int(s.get("away"))
     return 0, 0
 
-# ── FULL SPREADSHEET PARSER AND HYBRID SCORE INTERSECTION OVERRIDES ──
+# ── MASTER SHEET INGESTION OVERRIDES (A=Date, B=Time, C=Home, D=Away, E=Status, F=HomeScore, G=AwayScore, H=Highlights) ──
 @st.cache_data(ttl=15)
 def fetch_spreadsheet_overrides_master():
     override_dict = {}
@@ -523,7 +547,7 @@ def fetch_spreadsheet_overrides_master():
 
 SPREADSHEET_OVERRIDES = fetch_spreadsheet_overrides_master()
 
-# ── ORIGINAL DESIGN HERO BANNER ENGINE GENERATOR ──
+# ── ORIGINAL DESIGN MATCH HERO CARD GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -542,7 +566,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
     a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
-    # Intersection score parsing logic injected straight from spreadsheet references
     h_score, a_score = get_live_score(match)
     highlights_url = "https://www.youtube.com/@fifa/videos"
     
@@ -603,7 +626,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     </div>
     """
     
-# ── Data Fetching Pipeline ──
+# ── Data Fetching pipeline ──
 @st.cache_data(ttl=120)  
 def fetch_football_data():
     all_matches = []
@@ -651,7 +674,7 @@ if master_flat_leaderboard:
     op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
     top_performer_text = f"{best['name']} ({op_owner})"
 
-# ── MULTI-SOURCE PIPELINE ROUTING ENGINE ──
+# ── SHEET SOURCE ARCHITECTURE FILTER ENGINE ──
 live_matches = []
 upcoming_matches = []
 finished_matches = []
@@ -762,7 +785,7 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
-# Additional matches are appended cleanly lower down if multi-events ever occur simultaneously
+# Additional matches are appended cleanly lower down if multi-events occur simultaneously
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
         components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
