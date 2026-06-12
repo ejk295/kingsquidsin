@@ -9,12 +9,12 @@ import streamlit.components.v1 as components
 
 # 1. Page Configurations & Branding Styles
 st.set_page_config(
-    page_title="King Family World Cup Sweepstake", 
+    page_title="Byway World Cup Sweepstake", 
     page_icon="⚽", 
     layout="wide"
 )
 
-# Run page auto-refresh every 3 minutes to keep live scores syncing
+# Run page auto-refresh every 3 minutes safely
 st_autorefresh(interval=180 * 1000, key="datarefresh")
 
 # Global baseline dashboard system architecture style tokens
@@ -54,7 +54,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #006847;
+        background-color: #ff7d23;
         padding: 8px 15px;
     }
 
@@ -187,7 +187,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-bottom-time {
-        background-color: #006847;
+        background-color: #ff7d23;
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
@@ -240,6 +240,55 @@ GLOBAL_STYLE_TOKENS = """
         margin: 0 8px;
         vertical-align: middle;
     }
+
+    /* 📱 MOBILE OPTIMIZATIONS MEDIA QUERY */
+    @media (max-width: 680px) {
+        .matchup-split-screen {
+            height: auto !important;
+            min-height: 85px;
+            flex-direction: row !important;
+        }
+        .team-panel {
+            padding: 10px 8px !important;
+        }
+        .home-panel {
+            padding-right: 32px !important;
+        }
+        .away-panel {
+            padding-left: 32px !important;
+        }
+        .team-panel-text {
+            font-size: 13px !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            text-align: center !important;
+            width: 100%;
+        }
+        .home-panel .team-panel-text {
+            align-items: flex-end !important;
+            text-align: right !important;
+        }
+        .away-panel .team-panel-text {
+            align-items: flex-start !important;
+            text-align: left !important;
+        }
+        .team-panel-text span {
+            font-size: 10px !important;
+            margin: 2px 0 0 0 !important;
+            display: block !important;
+        }
+        .banner-flag {
+            width: 22px !important;
+            height: 15px !important;
+            margin: 2px 4px !important;
+        }
+        .vs-marker-bubble, .score-bubble, .score-reveal-label {
+            font-size: 10px !important;
+            padding: 4px 7px !important;
+        }
+    }
 </style>
 """
 
@@ -250,24 +299,24 @@ st.markdown("""
             background-color: #FAFAFA !important;
         }
         h1, h2, h3 {
-            color: #006847 !important;
+            color: #ff7d23 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
         .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
         .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
         .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
+        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #ff7d23 !important; }
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
         .group-row-spacer { margin-bottom: 15px !important; }
         .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
         .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
-        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
+        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #ff7d23; }
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
         .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
         .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
         .flag-img { vertical-align: middle; margin: 0px 4px; width: 20px !important; height: 14px !important; object-fit: cover !important; display: inline-block; }
-        .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+        .group-header-text { color: #ff7d23 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -278,18 +327,18 @@ BASE_URL = "https://api.football-data.org/v4"
 HEADERS = {"X-Auth-Token": API_TOKEN}
 
 SWEEPSTAKE_MAPPING = {
-    "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
-    "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
-    "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
-    "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
-    "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
-    "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
-    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
-    "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
-    "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
-    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
-    "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
-    "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
+    "Mexico": "Evon", "South Africa": "Iwan", "Canada": "Holly", "Switzerland": "Yannis",
+    "Argentina": "Alba", "France": "Marc", "Brazil": "Andy", "Spain": "Ciaran",
+    "Bosnia-Herzegovina": "Izzy", "Czechia": "Pablo", "Qatar": "Jess", "Morocco": "Bartek",
+    "Haiti": "Hatty", "Turkey": "Adrienne", "Paraguay": "Becca", "Germany": "Oliwia",
+    "Curaçao": "Justin", "Ecuador": "Cat", "Japan": "Adem", "Belgium": "Mart",
+    "Egypt": "Chris", "Tunisia": "Jess 2", "Netherlands": "Louis", "Ivory Coast": "Suzie",
+    "Australia": "Amy", "Cape Verde Islands": "Justin 2", "Uruguay": "Paul 2", "Sweden": "Kat",
+    "Saudi Arabia": "Aurelie", "Scotland": "Elaine 2", "United States": "Neil", "Senegal": "Sara",
+    "New Zealand": "James", "Iran": "Elaine", "Iraq": "Paul", "Norway": "Claire",
+    "Algeria": "Adrienne 2", "Austria": "Rich", "Jordan": "Maria", "Congo DR": "Ellis",
+    "Portugal": "Lucy 2", "Uzbekistan": "Kat 2", "Colombia": "Neil 2", "England": "Marijke",
+    "Panama": "Lucy", "Ghana": "Sam", "Croatia": "Kurt", "South Korea": "Beau",
 }
 
 EXPECTED_RANKINGS = {
@@ -371,8 +420,8 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-DEFAULT_LEFT_COLOR = "#006847"
-DEFAULT_RIGHT_COLOR = "#006847"
+DEFAULT_LEFT_COLOR = "#ff7d23"
+DEFAULT_RIGHT_COLOR = "#ff7d23"
 
 # 3. Cache Country Flags
 @st.cache_data(ttl=86400)
@@ -461,8 +510,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_flag = get_flag_html(h_name, extra_class="banner-flag")
     a_flag = get_flag_html(a_name, extra_class="banner-flag")
 
-    h_owner = f" ({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
-    a_owner = f" ({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
+    h_owner = f"({SWEEPSTAKE_MAPPING.get(h_name, 'Unassigned')})"
+    a_owner = f"({SWEEPSTAKE_MAPPING.get(a_name, 'Unassigned')})"
 
     if is_live:
         h_score, a_score = get_live_score(match)
@@ -503,13 +552,13 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             <div class="matchup-split-screen">
                 <div class="team-panel home-panel" style="background-color: {left_color};">
                     <div class="team-panel-text">
-                        {h_flag} {h_name} <span>{h_owner}</span>
+                        {h_flag} <span><b>{h_name}</b> <span>{h_owner}</span></span>
                     </div>
                 </div>
                 {centre_bubble}
                 <div class="team-panel away-panel" style="background-color: {right_color};">
                     <div class="team-panel-text">
-                        <span>{a_owner}</span> {a_name} {a_flag}
+                        <span><span>{a_owner}</span> <b>{a_name}</b></span> {a_flag}
                     </div>
                 </div>
             </div>
@@ -588,7 +637,7 @@ finished_matches = sorted(
 # ── HEADER ROW ────────────────────────────────────────────────────────────
 st.markdown("""
     <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-        <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+        <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
         <p>Live standings</p>
     </div>
 """, unsafe_allow_html=True)
@@ -599,10 +648,10 @@ hero_cols = st.columns([1, 1], gap="small")
 with hero_cols[0]:
     if next_kickoff_matches:
         payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
-        components.html(payload, height=160, scrolling=False)
+        components.html(payload, height=185, scrolling=False)
     elif live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
-        components.html(payload, height=160, scrolling=False)
+        components.html(payload, height=185, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
@@ -616,31 +665,30 @@ with hero_cols[1]:
             match_index = 2
             
         result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        # Using iframe container to separate the interactive element cleanly from markdown selectors
-        components.html(result_banner_html, height=160, scrolling=False)
+        components.html(result_banner_html, height=185, scrolling=False)
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
 # Render additional fixtures seamlessly if multiple instances occur simultaneously
 if len(live_matches) > 1:
     for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
+        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=185, scrolling=False)
 
 if len(next_kickoff_matches) > 1:
     for idx, next_match in enumerate(next_kickoff_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
+        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=185, scrolling=False)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
-    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£30</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£96</span></div>', unsafe_allow_html=True)
 with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
     st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #ff7d23;'>", unsafe_allow_html=True)
 
 # ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
@@ -696,7 +744,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
                             if m.get("homeTeam", {}).get("name") in teams_in_group
@@ -756,13 +804,13 @@ else:
                                 <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 140px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin: 4px;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
-                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #ff7d23; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>🔑 Key players</span></div>", unsafe_allow_html=True)
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
                                 {"".join(active_cards)}
@@ -773,7 +821,7 @@ else:
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #ff7d23;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
 
