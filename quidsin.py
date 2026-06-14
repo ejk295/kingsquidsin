@@ -7,9 +7,9 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 import streamlit.components.v1 as components
 
-# 1. Page Configurations & Branding Styles
+# 1. Page Configurations & MASTER Layout Credentials
 st.set_page_config(
-    page_title="King Family World Cup Sweepstake", 
+    page_title="Byway World Cup Sweepstake", 
     page_icon="⚽", 
     layout="wide"
 )
@@ -17,376 +17,30 @@ st.set_page_config(
 # Run page auto-refresh every 3 minutes to keep live scores syncing
 st_autorefresh(interval=180 * 1000, key="datarefresh")
 
-# Global baseline dashboard system architecture style tokens
-GLOBAL_STYLE_TOKENS = """
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
-    
-    body, html {
-        background-color: #FAFAFA !important;
-        color: #333333 !important;
-        font-family: 'Figtree', sans-serif !important;
-        margin: 0;
-        padding: 0;
-    }
-    
-    p, span, div, label, small, td, th, b {
-        color: #333333;
-        font-family: 'Figtree', sans-serif !important;
-    }
-
-    /* --- MATCH BANNER LAYOUT --- */
-    .match-banner-wrapper {
-        width: 100%;
-        margin: 0px;
-        box-sizing: border-box;
-    }
-
-    .match-banner-container {
-        width: 100%;
-        border-radius: 12px;
-        box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
-        overflow: hidden;
-        font-family: 'Figtree', sans-serif !important;
-        text-align: center;
-        border: 1px solid #DDDDDD;
-        background-color: #FFFFFF;
-    }
-
-    .banner-top-pane {
-        background-color: #006847;
-        padding: 8px 15px;
-    }
-
-    .next-match-title {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 800 !important;
-        color: #FFFFFF !important;
-        background: rgba(255, 255, 255, 0.15);
-        padding: 8px 15px;
-        border-radius: 6px;
-        display: inline-block;
-    }
-
-    .inplay-top-pane {
-        background-color: #8B0000;
-        padding: 8px 15px;
-    }
-    
-    .result-top-pane {
-        background-color: #444444;
-        padding: 6px 10px;
-    }
-
-    .matchup-split-screen {
-        display: flex;
-        position: relative;
-        align-items: center;
-        height: 75px;
-        width: 100%;
-    }
-
-    .team-panel {
-        width: 50%;
-        display: flex;
-        align-items: center;
-        padding: 10px 25px;
-        box-sizing: border-box;
-        height: 100%;
-        overflow: hidden;
-    }
-    
-    .home-panel {
-        justify-content: flex-end;
-        padding-right: 50px;
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    
-    .away-panel {
-        justify-content: flex-start;
-        padding-left: 50px;
-    }
-
-    .team-panel-text {
-        color: #FFFFFF !important;
-        font-size: 17px; /* Made bigger on Desktop */
-        font-weight: 800 !important;
-        text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
-    }
-
-    .team-panel-text span {
-        font-size: 13px !important; /* Made bigger on Desktop */
-        font-weight: 400 !important;
-        opacity: 0.95;
-        color: #FFFFFF !important;
-        margin: 0 6px;
-    }
-    
-    /* Targets for toggling standard vs mobile abbreviation blocks */
-    .mobile-abbrev-text {
-        display: none;
-    }
-
-    .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10;
-        white-space: nowrap;
-    }
-
-    .vs-marker-bubble {
-        background-color: #111111;
-        color: #FFFFFF !important;
-        font-size: 12px;
-        font-weight: 900 !important;
-        padding: 5px 9px;
-        border-radius: 50%;
-        border: 2px solid #FFFFFF;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .score-bubble {
-        background-color: #444444;
-        color: #FFFFFF !important;
-        font-size: 16px;
-        font-weight: 900 !important;
-        padding: 6px 14px;
-        border-radius: 6px;
-        border: 2px solid #FFFFFF;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .reveal-toggle-input {
-        display: none !important;
-    }
-
-    .score-reveal-label {
-        background-color: #111111;
-        color: #FFFFFF !important;
-        font-size: 11px !important;
-        font-weight: 900 !important;
-        padding: 6px 12px !important;
-        border-radius: 6px;
-        cursor: pointer;
-        border: 2px solid #FFFFFF;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: inline-block;
-        user-select: none;
-    }
-
-    .reveal-toggle-input:checked ~ .score-reveal-label {
-        display: none !important;
-    }
-
-    .reveal-toggle-input:checked ~ .score-bubble {
-        display: block !important;
-    }
-
-    .banner-bottom-time {
-        background-color: #006847;
-        padding: 8px 15px;
-        font-size: 12px;
-        font-weight: 700 !important;
-        color: #FFFFFF !important;
-    }
-
-    .inplay-bottom-bar {
-        background-color: #8B0000;
-        padding: 8px 15px;
-        font-size: 12px;
-        font-weight: 700 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .result-bottom-bar {
-        background-color: #444444;
-        padding: 8px 15px;
-        font-size: 12px;
-        font-weight: 700 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .highlights-btn {
-        background-color: #444444 !important;
-        color: #FFFFFF !important;
-        font-weight: 800 !important;
-        font-size: 11px !important;
-        text-transform: uppercase;
-        text-decoration: none !important;
-        padding: 6px 10px;
-        border-radius: 2px;
-        display: inline-flex !important;
-        align-items: center;
-        gap: 2px;
-        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
-    }
-
-    .highlights-btn:hover {
-        background-color: #CC0000 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .banner-flag {
-        width: 28px !important;
-        height: 19px !important;
-        min-width: 28px !important;
-        max-width: 28px !important;
-        object-fit: cover !important;
-        border-radius: 2px;
-        border: 1px solid rgba(255,255,255,0.3);
-        display: inline-block;
-        margin: 0 8px;
-        vertical-align: middle;
-    }
-
-    /* --- MOBILE OPTIMIZATION OVERRIDES --- */
-    @media (max-width: 768px) {
-        .team-panel {
-            padding: 10px 8px !important;
-        }
-        .home-panel {
-            padding-right: 32px !important;
-        }
-        .away-panel {
-            padding-left: 32px !important;
-        }
-        .team-panel-text {
-            font-size: 14px !important; /* Made bigger on Mobile */
-        }
-        .team-panel-text span {
-            font-size: 11px !important; /* Made bigger on Mobile */
-            margin: 0 2px !important;
-        }
-        
-        /* Swapping names out with 3-letter abbreviations on mobile viewports */
-        .desktop-full-text {
-            display: none !important;
-        }
-        .mobile-abbrev-text {
-            display: inline-block !important;
-        }
-        
-        .banner-flag {
-            width: 20px !important;
-            height: 14px !important;
-            min-width: 20px !important;
-            max-width: 20px !important;
-            margin: 0 4px !important;
-        }
-        .score-bubble, .vs-marker-bubble {
-            font-size: 12px !important;
-            padding: 4px 10px !important;
-        }
-        .score-reveal-label {
-            font-size: 9px !important;
-            padding: 4px 8px !important;
-        }
-    }
-</style>
-"""
-
-st.markdown(GLOBAL_STYLE_TOKENS, unsafe_allow_html=True)
-st.markdown("""
-    <style>
-        .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-            background-color: #FAFAFA !important;
-        }
-        h1, h2, h3 {
-            color: #006847 !important;
-            font-family: 'Figtree', sans-serif !important;
-            font-weight: 800 !important;
-        }
-        .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
-        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
-        .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
-        .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
-        .group-row-spacer { margin-bottom: 15px !important; }
-        .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
-        
-        /* --- STRICT INLINE FLAG AND TABLE FIX OVERRIDES --- */
-        .flag-img { 
-            vertical-align: middle !important; 
-            margin: 0px 4px !important; 
-            width: 20px !important; 
-            height: 14px !important; 
-            min-width: 20px !important;
-            max-width: 20px !important;
-            object-fit: cover !important; 
-            display: inline-block !important; 
-        }
-        
-        .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
-        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
-        .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
-        .custom-dashboard-table td img, .fixture-row img { width: 20px !important; height: 14px !important; min-width: 20px !important; max-width: 20px !important; object-fit: cover !important; }
-        
-        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
-        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
-        
-        /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
-        .compact-sweep-container {
-            background: #FFFFFF;
-            border: 1px solid #DDDDDD;
-            border-radius: 10px;
-            padding: 8px 12px;
-            box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
-            max-height: 100px;
-            overflow: hidden;
-        }
-        .compact-teams-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 4px;
-        }
-        .compact-team-item {
-            background: #FAFAFA;
-            border: 1px solid #EAEAEA;
-            font-size: 11px;
-            font-weight: 700;
-            color: #333333;
-            padding: 2px 6px;
-            border-radius: 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .compact-team-item img { width: 16px !important; height: 11px !important; min-width: 16px !important; max-width: 16px !important; object-fit: cover !important; }
-    </style>
-""", unsafe_allow_html=True)
-
-# 2. Configuration & API Settings - Securely Fetch Token from Secrets
 API_TOKEN = st.secrets.get("FOOTBALL_API_TOKEN", os.environ.get("FOOTBALL_API_TOKEN", "placeholder"))
 COMPETITION_CODE = "WC"
 BASE_URL = "https://api.football-data.org/v4"
 HEADERS = {"X-Auth-Token": API_TOKEN}
 
+DEFAULT_LEFT_COLOR = "#ff7d23"
+DEFAULT_RIGHT_COLOR = "#ff7d23"
+
+# 2. Master Structural Dictionaries & Environment Mappings
 SWEEPSTAKE_MAPPING = {
-    "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
-    "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
-    "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
-    "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
-    "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
-    "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
-    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
-    "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
-    "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
-    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
-    "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
-    "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
+    "Mexico": "Evon", "South Africa": "Iwan", "Canada": "Holly", "Switzerland": "Yannis",
+    "Argentina": "Alba", "France": "Marc", "Brazil": "Andy", "Spain": "Ciaran",
+    "Bosnia and Herzegovina": "Izzy", "Bosnia-Herzegovina": "Izzy", "Czechia": "Pablo", "Qatar": "Jess", "Morocco": "Bartek",
+    "Haiti": "Hatty", "Turkey": "Adrienne", "Paraguay": "Becca", "Germany": "Oliwia",
+    "Curaçao": "Justin", "Ecuador": "Cat", "Japan": "Adem", "Belgium": "Mart",
+    "Egypt": "Chris", "Tunisia": "Jess 2", "Netherlands": "Louis", "Ivory Coast": "Suzie",
+    "Australia": "Amy", "Cape Verde Islands": "Justin 2", "Cape Verde": "Justin 2", "Uruguay": "Paul 2", "Sweden": "Kat",
+    "Saudi Arabia": "Aurelie", "Scotland": "Elaine 2", "United States": "Neil", "Senegal": "Sara",
+    "New Zealand": "James", "Iran": "Elaine", "Iraq": "Paul", "Norway": "Claire",
+    "Algeria": "Adrienne 2", "Austria": "Rich", "Jordan": "Maria", "Congo DR": "Ellis", "DR Congo": "Ellis",
+    "Portugal": "Lucy 2", "Uzbekistan": "Kat 2", "Colombia": "Neil 2", "England": "Marijke",
+    "Panama": "Lucy", "Ghana": "Sam", "Croatia": "Kurt", "South Korea": "Beau",
 }
 
-# ISO 3-Letter Country Abbreviation Mapping Engine
 COUNTRY_ABBREVIATIONS = {
     "Mexico": "MEX", "South Africa": "RSA", "Canada": "CAN", "Switzerland": "SUI",
     "Argentina": "ARG", "France": "FRA", "Brazil": "BRA", "Spain": "ESP",
@@ -410,7 +64,7 @@ EXPECTED_RANKINGS = {
     "Algeria": 25, "Egypt": 26, "Canada": 27, "Norway": 28, "Panama": 29, "Ivory Coast": 30,
     "Sweden": 31, "Paraguay": 32, "Czechia": 33, "Scotland": 34, "Tunisia": 35, "Congo DR": 36, 
     "DR Congo": 36, "Uzbekistan": 37, "Qatar": 38, "Iraq": 39, "South Africa": 40, "Saudi Arabia": 41,
-    "Jordan": 42, "Bosnia-Herzegovina": 43, "Bosnia and Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
+    "Jordan": 42, "Bosnia-Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
@@ -483,10 +137,27 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-DEFAULT_LEFT_COLOR = "#006847"
-DEFAULT_RIGHT_COLOR = "#006847"
+# Broadcast Channel Network Mapping Resources
+BROADCAST_BRANDS = {
+    "bbc one": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/1920px-BBC_One_logo_2021.svg.png",
+        "live_url": "https://www.bbc.co.uk/iplayer/live/bbcone"
+    },
+    "bbc two": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/BBC_Two_logo_2021.svg/1920px-BBC_Two_logo_2021.svg.png",
+        "live_url": "https://www.bbc.co.uk/iplayer/live/bbctwo"
+    },
+    "itv1": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/ITV1_Logo_2022.svg/250px-ITV1_Logo_2022.svg.png",
+        "live_url": "https://www.itv.com/watch?channel=itv"
+    },
+    "itv4": {
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/ITV4_logo_%282022%29.svg/1280px-ITV4_logo_%282022%29.svg.png",
+        "live_url": "https://www.itv.com/watch?channel=itv4"
+    }
+}
 
-# 3. Cache Country Flags
+# 3. Top-Down Master Function Cache Definitions (Prevents NameError regressions)
 @st.cache_data(ttl=86400)
 def get_cached_team_crests():
     crests = {}
@@ -524,22 +195,321 @@ def get_group_flag_html(team_name):
         return f'<img src="{crest_url}" class="flag-img" alt="{team_name}">'
     return ''
 
-def format_to_uk_time(utc_str):
-    try:
-        dt = datetime.strptime(utc_str, "%Y-%m-%dT%H:%M:%SZ")
-        dt_utc = pytz.utc.localize(dt)
-        uk_tz = pytz.timezone("Europe/London")
-        return dt_utc.astimezone(uk_tz)
-    except Exception:
-        return None
+def get_flag_html(team_name, extra_class="flag-img"):
+    return get_group_flag_html(team_name)
 
-def get_live_score(match):
-    score_obj = match.get("score", {})
-    for target_key in ["fullTime", "regularTime", "halfTime"]:
-        s = score_obj.get(target_key, {})
-        if s and s.get("home") is not None and s.get("away") is not None:
-            return int(s.get("home")), int(s.get("away"))
-    return 0, 0
+GLOBAL_STYLE_TOKENS = """
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
+    
+    body, html {
+        background-color: #FAFAFA !important;
+        color: #333333 !important;
+        font-family: 'Figtree', sans-serif !important;
+        margin: 0;
+        padding: 0;
+    }
+    
+    p, span, div, label, small, td, th, b {
+        color: #333333;
+        font-family: 'Figtree', sans-serif !important;
+    }
+
+    /* --- MATCH BANNER LAYOUT --- */
+    .match-banner-wrapper {
+        width: 100%;
+        margin: 0px;
+        box-sizing: border-box;
+    }
+
+    .match-banner-container {
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        font-family: 'Figtree', sans-serif !important;
+        text-align: center;
+        border: 1px solid #DDDDDD;
+        background-color: #FFFFFF;
+    }
+
+    .banner-top-pane {
+        background-color: #ff7d23;
+        padding: 8px 15px;
+    }
+
+    .next-match-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 800 !important;
+        color: #FFFFFF !important;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 8px 15px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+
+    .inplay-top-pane {
+        background-color: #8B0000;
+        padding: 8px 15px;
+    }
+    
+    .result-top-pane {
+        background-color: #444444;
+        padding: 6px 10px;
+    }
+
+    .matchup-split-screen {
+        display: flex;
+        position: relative;
+        align-items: center;
+        height: 75px;
+        width: 100%;
+    }
+
+    .team-panel {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        padding: 10px 25px;
+        box-sizing: border-box;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .home-panel {
+        justify-content: flex-end;
+        padding-right: 50px;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .away-panel {
+        justify-content: flex-start;
+        padding-left: 50px;
+    }
+
+    .team-panel-text {
+        color: #FFFFFF !important;
+        font-size: 18px;
+        font-weight: 800 !important;
+        text-shadow: 0px 1px 3px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .team-panel-text span {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        opacity: 0.95;
+        color: #FFFFFF !important;
+        margin: 0 6px;
+    }
+
+    .mobile-abbrev-text {
+        display: none;
+    }
+
+    .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        white-space: nowrap;
+    }
+
+    .vs-marker-bubble {
+        background-color: #111111;
+        color: #FFFFFF !important;
+        font-size: 12px;
+        font-weight: 900 !important;
+        padding: 5px 9px;
+        border-radius: 50%;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .score-bubble {
+        background-color: #444444;
+        color: #FFFFFF !important;
+        font-size: 16px;
+        font-weight: 900 !important;
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .reveal-toggle-input {
+        display: none !important;
+    }
+
+    .score-reveal-label {
+        background-color: #111111;
+        color: #FFFFFF !important;
+        font-size: 11px !important;
+        font-weight: 900 !important;
+        padding: 6px 12px !important;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        user-select: none;
+    }
+
+    .reveal-toggle-input:checked ~ .score-reveal-label {
+        display: none !important;
+    }
+
+    .reveal-toggle-input:checked ~ .score-bubble {
+        display: block !important;
+    }
+
+    .banner-bottom-time {
+        background-color: #ff7d23;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+    }
+
+    .inplay-bottom-bar {
+        background-color: #8B0000;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .result-bottom-bar {
+        background-color: #444444;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .highlights-btn {
+        background-color: #444444 !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        font-size: 11px !important;
+        text-transform: uppercase;
+        text-decoration: none !important;
+        padding: 6px 10px;
+        border-radius: 2px;
+        display: inline-flex !important;
+        align-items: center;
+        gap: 2px;
+        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
+    }
+
+    .highlights-btn:hover {
+        background-color: #CC0000 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .banner-flag {
+        width: 28px !important;
+        height: 19px !important;
+        min-width: 28px !important;
+        max-width: 28px !important;
+        object-fit: cover !important;
+        border-radius: 2px;
+        border: 1px solid rgba(255,255,255,0.3);
+        display: inline-block;
+        margin: 0 8px;
+        vertical-align: middle;
+    }
+
+    /* --- MOBILE OPTIMIZATION OVERRIDES --- */
+    @media (max-width: 768px) {
+        .team-panel {
+            padding: 10px 8px !important;
+        }
+        .home-panel {
+            padding-right: 32px !important;
+        }
+        .away-panel {
+            padding-left: 32px !important;
+        }
+        .team-panel-text {
+            font-size: 15px !important;
+        }
+        .team-panel-text span {
+            font-size: 11px !important;
+            margin: 0 2px !important;
+        }
+        .desktop-full-text {
+            display: none !important;
+        }
+        .mobile-abbrev-text {
+            display: inline-block !important;
+        }
+        .banner-flag {
+            width: 20px !important;
+            height: 14px !important;
+            min-width: 20px !important;
+            max-width: 20px !important;
+            margin: 0 4px !important;
+        }
+        .score-bubble, .vs-marker-bubble {
+            font-size: 12px !important;
+            padding: 4px 10px !important;
+        }
+        .score-reveal-label {
+            font-size: 9px !important;
+            padding: 4px 8px !important;
+        }
+    }
+</style>
+"""
+
+st.markdown(GLOBAL_STYLE_TOKENS, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+            background-color: #FAFAFA !important;
+        }
+        h1, h2, h3 {
+            color: #ff7d23 !important;
+            font-family: 'Figtree', sans-serif !important;
+            font-weight: 800 !important;
+        }
+        .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
+        .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
+        .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #ff7d23 !important; }
+        .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
+        .group-row-spacer { margin-bottom: 15px !important; }
+        .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
+        
+        .flag-img { 
+            vertical-align: middle !important; 
+            margin: 0px 4px !important; 
+            width: 20px !important; 
+            height: 14px !important; 
+            min-width: 20px !important;
+            max-width: 20px !important;
+            object-fit: cover !important; 
+            display: inline-block !important; 
+        }
+        
+        .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
+        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #ff7d23; }
+        .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
+        .custom-dashboard-table td img, .fixture-row img { width: 20px !important; height: 14px !important; min-width: 20px !important; max-width: 20px !important; object-fit: cover !important; }
+        
+        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
+        .group-header-text { color: #ff7d23 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+    </style>
+""", unsafe_allow_html=True)
 
 # ── MASTER SPREADSHEET SCHEDULE OVERRIDES ENGINE ──
 @st.cache_data(ttl=15)
@@ -559,6 +529,9 @@ def fetch_spreadsheet_overrides_master():
                     h_score = str(row[5]).strip() if pd.notna(row[5]) else "0"
                     a_score = str(row[6]).strip() if pd.notna(row[6]) else "0"
                     h_link = str(row[7]).strip() if (len(row) >= 8 and pd.notna(row[7])) else ""
+                    
+                    # Parse Column I (Index 8) safely for TV Network parameters
+                    tv_network = str(row[8]).strip() if (len(row) >= 9 and pd.notna(row[8])) else ""
 
                     if home_t and away_t:
                         lookup_key = f"{home_t.lower()}_v_{away_t.lower()}"
@@ -566,7 +539,8 @@ def fetch_spreadsheet_overrides_master():
                             "status": status_str,
                             "homeScore": h_score,
                             "awayScore": a_score,
-                            "highlightsUrl": h_link if h_link.lower().startswith("http") else "https://www.youtube.com/@fifa/videos"
+                            "highlightsUrl": h_link if h_link.lower().startswith("http") else "https://www.youtube.com/@fifa/videos",
+                            "tvNetwork": tv_network
                         }
                 except Exception:
                     pass
@@ -584,7 +558,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     h_name = home_team_obj.get("name", "TBD")
     a_name = away_team_obj.get("name", "TBD")
 
-    # Map country codes cleanly, falling back to first 3 letters if unmapped
     h_abbrev = COUNTRY_ABBREVIATIONS.get(h_name, h_name[:3].upper())
     a_abbrev = COUNTRY_ABBREVIATIONS.get(a_name, a_name[:3].upper())
 
@@ -601,6 +574,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
 
     h_score, a_score = get_live_score(match)
     highlights_url = "https://www.youtube.com/@fifa/videos"
+    tv_channel_text = ""
     
     if h_name and a_name:
         lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
@@ -609,6 +583,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             h_score = sheet_row.get("homeScore", h_score)
             a_score = sheet_row.get("awayScore", a_score)
             highlights_url = sheet_row.get("highlightsUrl", highlights_url)
+            tv_channel_text = sheet_row.get("tvNetwork", "")
 
     if is_live:
         top_pane = '<div class="inplay-top-pane"><div class="next-match-title">🔴 Live now</div></div>'
@@ -632,9 +607,28 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             date_str = dt_uk.strftime(f"{day}{suffix} %B @ %H:%M")
         else:
             date_str = "TBD"
+            
         top_pane = '<div class="banner-top-pane"><div class="next-match-title">⏳ Next match</div></div>'
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
-        bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}</div>'
+        
+        # Build live stream badging structures if matching text string assets exist
+        normalized_channel = tv_channel_text.lower().strip()
+        if normalized_channel in BROADCAST_BRANDS:
+            brand_node = BROADCAST_BRANDS[normalized_channel]
+            bottom_bar = f"""
+            <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <span>🗓️ {date_str}</span>
+                <span style="opacity: 0.4;">|</span>
+                <div style="display: inline-flex; align-items: center; gap: 6px;">
+                    <img src="{brand_node['logo']}" style="height: 22px; width: auto; object-fit: contain; vertical-align: middle;" alt="{tv_channel_text}">
+                    <a href="{brand_node['live_url']}" target="_blank" style="color: #FFFFFF !important; text-decoration: underline !important; font-weight: 800;">WATCH LIVE</a>
+                </div>
+            </div>
+            """
+        else:
+            # Fallback block configuration if channel field contains string names or is completely empty
+            channel_suffix = f" | 📺 {tv_channel_text}" if tv_channel_text else ""
+            bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}{channel_suffix}</div>'
 
     return f"""
     {GLOBAL_STYLE_TOKENS}
@@ -713,26 +707,28 @@ if master_flat_leaderboard:
     op_owner = SWEEPSTAKE_MAPPING.get(best["name"], "Unassigned")
     top_performer_text = f"{best['name']} ({op_owner})"
 
-# ── ROUTING CLASSIFICATIONS OVER spreadsheet MASTER PARSER ENTRIES ──
 live_matches = []
 upcoming_matches = []
 finished_matches = []
 
 for m in all_matches:
-    h_name = m.get("homeTeam", {}).get("name")
-    a_name = m.get("awayTeam", {}).get("name")
-    
-    if h_name and a_name:
-        lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
-        if lookup_key in SPREADSHEET_OVERRIDES:
-            sheet_status = SPREADSHEET_OVERRIDES[lookup_key]["status"]
-            if "live" in sheet_status:
-                live_matches.append(m)
-            elif "finished" in sheet_status or "completed" in sheet_status:
-                finished_matches.append(m)
-            else:
-                upcoming_matches.append(m)
-            continue
+    home_team_node = m.get("homeTeam")
+    away_team_node = m.get("awayTeam")
+    if home_team_node and away_team_node:
+        h_name = home_team_node.get("name")
+        a_name = away_team_node.get("name")
+        
+        if h_name and a_name:
+            lookup_key = f"{h_name.lower()}_v_{a_name.lower()}"
+            if lookup_key in SPREADSHEET_OVERRIDES:
+                sheet_status = SPREADSHEET_OVERRIDES[lookup_key]["status"]
+                if "live" in sheet_status:
+                    live_matches.append(m)
+                elif "finished" in sheet_status or "completed" in sheet_status:
+                    finished_matches.append(m)
+                else:
+                    upcoming_matches.append(m)
+                continue
 
     api_status = m.get("status")
     if api_status in ["IN_PLAY", "PAUSED"]:
@@ -750,13 +746,13 @@ if upcoming_matches:
 
 finished_matches = sorted(finished_matches, key=lambda x: x.get("utcDate", ""), reverse=True)
 
-# ── HEADER ROW (TITLE LEFT, DYNAMIC CONTEXT CONTAINER RIGHT) ──────────────────
+# ── HEADER ROW (TITLE LEFT, LIVE BANNER RIGHT ONLY IF IN PLAY) ──────────────────
 header_cols = st.columns([1, 1], gap="medium")
 
 with header_cols[0]:
     st.markdown("""
         <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+            <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
     """, unsafe_allow_html=True)
@@ -765,42 +761,10 @@ with header_cols[1]:
     if live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
         components.html(payload, height=160, scrolling=False)
-    else:
-        requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
-        teams_by_person = {p: [] for p in requested_people}
-        for team, person in SWEEPSTAKE_MAPPING.items():
-            normalized_person = person.capitalize()
-            if normalized_person in teams_by_person:
-                teams_by_person[normalized_person].append(team)
-
-        st.markdown('<div style="padding-top:4px;">', unsafe_allow_html=True)
-        chosen_person = st.radio(
-            "Select person to show teams:", 
-            options=requested_people, 
-            horizontal=True, 
-            index=0,
-            key="header_sweep_selector"
-        )
-        
-        selected_teams = teams_by_person[chosen_person]
-        p_teams_html = ""
-        for t in selected_teams:
-            p_teams_html += f'<div class="compact-team-item">{get_group_flag_html(t)} {t}</div>'
-        if not p_teams_html:
-            p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
-            
-        st.markdown(f"""
-            <div class="compact-sweep-container">
-                <div class="compact-teams-grid">
-                    {p_teams_html}
-                </div>
-            </div>
-            </div>
-        """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── SECONDARY CONTENT ROW (NEXT FIXTURE LEFT, LATEST RESULT RIGHT SIDE-BY-SIDE) ──
+# ── SECONDARY CONTENT ROW (NEXT MATCH AND LATEST RESULT SIDE-BY-SIDE) ──
 hero_cols = st.columns([1, 1], gap="medium")
 
 with hero_cols[0]:
@@ -824,17 +788,25 @@ with hero_cols[1]:
     else:
         st.info("⚽ No results logged yet for this tournament state.")
 
+if len(live_matches) > 1:
+    for idx, live_match in enumerate(live_matches[1:]):
+        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
+
+if len(next_kickoff_matches) > 1:
+    for idx, next_match in enumerate(next_kickoff_matches[1:]):
+        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
+
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
-    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£30</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£96</span></div>', unsafe_allow_html=True)
 with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
-    st.markdown(f'<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>{top_performer_text}</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>' + top_performer_text + '</span></div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #ff7d23;'>", unsafe_allow_html=True)
 
 # ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
@@ -890,7 +862,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
                             if m.get("homeTeam", {}).get("name") in teams_in_group
@@ -964,13 +936,13 @@ else:
                                 <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 140px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin: 4px;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
-                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #ff7d23; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>🔑 Key players</span></div>", unsafe_allow_html=True)
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
                                 {"".join(active_cards)}
@@ -981,7 +953,7 @@ else:
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #ff7d23;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
 
