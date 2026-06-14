@@ -694,7 +694,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         .banner-bottom-time {{ background-color: #006847; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .inplay-bottom-bar {{ background-color: #8B0000; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .result-bottom-bar {{ background-color: #444444; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
-        .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; background-color: #006847; transition: background-color 0.15s ease; }}
+        .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; background-color: #444444; transition: background-color 0.15s ease; }}
         .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }}
         .banner-flag {{ width: 28px; height: 19px; min-width: 28px; max-width: 28px; object-fit: cover; border-radius: 2px; border: 1px solid rgba(255,255,255,0.3); display: inline-block; margin: 0 8px; vertical-align: middle; }}
         .mobile-abbrev-text {{ display: none; }}
