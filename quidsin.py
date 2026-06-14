@@ -29,14 +29,14 @@ DEFAULT_RIGHT_COLOR = "#006847"
 SWEEPSTAKE_MAPPING = {
     "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
     "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
-    "Bosnia and Herzegovina": "Izzy", "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
+    "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
     "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
     "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
     "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
-    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Cape Verde": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
+    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
     "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
     "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
-    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff", "DR Congo": "Jeff",
+    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
     "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
     "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
 }
@@ -658,7 +658,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             bottom_bar = f"""
             <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px; padding: 5px 15px;">
                 <span style="color: #FFFFFF !important;">🗓️ {date_str}</span>
-                <span style="opacity: 0.4; color: #FFFFFF !important;">|</span>
+                <span style="opacity: 0.4; color: #006847 !important;">|</span>
                 <a href="{brand_node['live_url']}" target="_blank" class="watch-live-btn">
                     WATCH LIVE
                     <img src="{brand_node['logo']}" style="height: 14.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
