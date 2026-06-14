@@ -137,6 +137,25 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
+BROADCAST_BRANDS = {
+    "bbc one": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/1920px-BBC_One_logo_2021.svg.png",
+        "live_url": "https://www.bbc.co.uk/iplayer/live/bbcone"
+    },
+    "bbc two": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/BBC_Two_logo_2021.svg/1920px-BBC_Two_logo_2021.svg.png",
+        "live_url": "https://www.bbc.co.uk/iplayer/live/bbctwo"
+    },
+    "itv1": {
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/ITV1_Logo_2022.svg/250px-ITV1_Logo_2022.svg.png",
+        "live_url": "https://www.itv.com/watch?channel=itv"
+    },
+    "itv4": {
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/ITV4_logo_%282022%29.svg/1280px-ITV4_logo_%282022%29.svg.png",
+        "live_url": "https://www.itv.com/watch?channel=itv4"
+    }
+}
+
 # Global baseline dashboard system architecture style tokens
 GLOBAL_STYLE_TOKENS = """
 <style>
@@ -174,7 +193,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #ff7d23;
+        background-color: #006847;
         padding: 8px 15px;
     }
 
@@ -315,7 +334,7 @@ GLOBAL_STYLE_TOKENS = """
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
-        color: #FFFFFF !important; /* Date text explicitly white */
+        color: #FFFFFF !important;
     }
 
     .inplay-bottom-bar {
@@ -335,8 +354,6 @@ GLOBAL_STYLE_TOKENS = """
     }
     
     .highlights-btn, .watch-live-btn {
-        background-color: #444444 !important;
-        color: #FFFFFF !important;
         font-weight: 800 !important;
         font-size: 11px !important;
         text-transform: uppercase;
@@ -346,21 +363,19 @@ GLOBAL_STYLE_TOKENS = """
         display: inline-flex !important;
         align-items: center;
         gap: 4px;
+        color: #FFFFFF !important;
     }
 
-    /* Standardized background behavior matching button parameters */
     .highlights-btn {
         background-color: #444444 !important;
     }
-    .highlights-btn:hover {
-        background-color: #CC0000 !important;
-    }
 
     .watch-live-btn {
-        background-color: #ff7d23 !important; /* Permanent background tone */
+        background-color: #ff7d23 !important;
         box-shadow: 0 1px 2px rgba(255,0,0,0.2);
     }
-    .watch-live-btn:hover {
+
+    .highlights-btn:hover, .watch-live-btn:hover {
         background-color: #CC0000 !important;
     }
     
@@ -655,7 +670,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
                 <span style="opacity: 0.4; color: #FFFFFF !important;">|</span>
                 <a href="{brand_node['live_url']}" target="_blank" class="watch-live-btn">
                     WATCH LIVE
-                    <img src="{brand_node['logo']}" style="height: 16.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
+                    <img src="{brand_node['logo']}" style="height: 14.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
                 </a>
             </div>
             """
@@ -815,7 +830,7 @@ with header_cols[1]:
         p_teams_html = ""
         for t in selected_teams:
             p_teams_html += f'<div class="compact-team-item">{get_group_flag_html(t)} {t}</div>'
-        if p_teams_html:
+        if not p_teams_html:
             p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
             
         st.markdown(f"""
@@ -1043,7 +1058,7 @@ else:
         """
         for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
-            flag_html = get_group_flag_html(team_row["name"])
+            flag_flag = get_group_flag_html(team_row["name"])
             
             if display_idx == 1:
                 pos_str = "1 🚀"
@@ -1058,7 +1073,7 @@ else:
 
             master_table_html += f"""<tr>
                 <td><b>{pos_str}</b></td>
-                <td>{flag_html} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
+                <td>{flag_flag} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
                 <td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>
                 <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
                 <td style='text-align:center;'>{team_row['played']}</td>
