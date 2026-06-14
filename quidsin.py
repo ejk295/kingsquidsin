@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 # 1. Page Configurations & MASTER Layout Credentials
 st.set_page_config(
-    page_title="Byway World Cup Sweepstake", 
+    page_title="King Family World Cup Sweepstake", 
     page_icon="⚽", 
     layout="wide"
 )
@@ -22,23 +22,23 @@ COMPETITION_CODE = "WC"
 BASE_URL = "https://api.football-data.org/v4"
 HEADERS = {"X-Auth-Token": API_TOKEN}
 
-DEFAULT_LEFT_COLOR = "#ff7d23"
-DEFAULT_RIGHT_COLOR = "#ff7d23"
+DEFAULT_LEFT_COLOR = "#006847"
+DEFAULT_RIGHT_COLOR = "#006847"
 
 # 2. Master Structural Dictionaries & Environment Mappings
 SWEEPSTAKE_MAPPING = {
-    "Mexico": "Evon", "South Africa": "Iwan", "Canada": "Holly", "Switzerland": "Yannis",
-    "Argentina": "Alba", "France": "Marc", "Brazil": "Andy", "Spain": "Ciaran",
-    "Bosnia and Herzegovina": "Izzy", "Bosnia-Herzegovina": "Izzy", "Czechia": "Pablo", "Qatar": "Jess", "Morocco": "Bartek",
-    "Haiti": "Hatty", "Turkey": "Adrienne", "Paraguay": "Becca", "Germany": "Oliwia",
-    "Curaçao": "Justin", "Ecuador": "Cat", "Japan": "Adem", "Belgium": "Mart",
-    "Egypt": "Chris", "Tunisia": "Jess 2", "Netherlands": "Louis", "Ivory Coast": "Suzie",
-    "Australia": "Amy", "Cape Verde Islands": "Justin 2", "Cape Verde": "Justin 2", "Uruguay": "Paul 2", "Sweden": "Kat",
-    "Saudi Arabia": "Aurelie", "Scotland": "Elaine 2", "United States": "Neil", "Senegal": "Sara",
-    "New Zealand": "James", "Iran": "Elaine", "Iraq": "Paul", "Norway": "Claire",
-    "Algeria": "Adrienne 2", "Austria": "Rich", "Jordan": "Maria", "Congo DR": "Ellis", "DR Congo": "Ellis",
-    "Portugal": "Lucy 2", "Uzbekistan": "Kat 2", "Colombia": "Neil 2", "England": "Marijke",
-    "Panama": "Lucy", "Ghana": "Sam", "Croatia": "Kurt", "South Korea": "Beau",
+    "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
+    "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
+    "Bosnia and Herzegovina": "Izzy", "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
+    "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
+    "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
+    "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
+    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Cape Verde": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
+    "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
+    "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
+    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff", "DR Congo": "Jeff",
+    "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
+    "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
 }
 
 COUNTRY_ABBREVIATIONS = {
@@ -64,7 +64,7 @@ EXPECTED_RANKINGS = {
     "Algeria": 25, "Egypt": 26, "Canada": 27, "Norway": 28, "Panama": 29, "Ivory Coast": 30,
     "Sweden": 31, "Paraguay": 32, "Czechia": 33, "Scotland": 34, "Tunisia": 35, "Congo DR": 36, 
     "DR Congo": 36, "Uzbekistan": 37, "Qatar": 38, "Iraq": 39, "South Africa": 40, "Saudi Arabia": 41,
-    "Jordan": 42, "Bosnia-Herzegovina": 43, "Bosnia and Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
+    "Jordan": 42, "Bosnia-Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
@@ -156,6 +156,7 @@ BROADCAST_BRANDS = {
     }
 }
 
+# Global baseline dashboard system architecture style tokens
 GLOBAL_STYLE_TOKENS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
@@ -192,7 +193,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #ff7d23;
+        background-color: #006847;
         padding: 8px 15px;
     }
 
@@ -329,7 +330,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-bottom-time {
-        background-color: #ff7d23;
+        background-color: #006847;
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
@@ -435,14 +436,14 @@ st.markdown("""
             background-color: #FAFAFA !important;
         }
         h1, h2, h3 {
-            color: #ff7d23 !important;
+            color: #006847 !important;
             font-family: 'Figtree', sans-serif !important;
             font-weight: 800 !important;
         }
         .title-area h1 { margin: 0px !important; font-size: 28px; font-weight: 900 !important; }
         .title-area p { margin: 4px 0px 0px 0px !important; color: #555555 !important; font-weight: 700 !important; font-size: 16px; }
         .stat-banner-box { background: #FFFFFF !important; padding: 12px 20px; border-radius: 8px; border: 2px solid #EAEAEA; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #ff7d23 !important; }
+        .stat-banner-box medium { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800 !important; color: #006847 !important; }
         .stat-banner-box span { font-size: 14px; font-weight: 800 !important; text-align: right; color: #333333 !important; }
         .group-row-spacer { margin-bottom: 15px !important; }
         .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-bottom: 8px !important; }
@@ -459,13 +460,43 @@ st.markdown("""
         }
         
         .custom-dashboard-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; white-space: nowrap; }
-        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #ff7d23; }
+        .custom-dashboard-table th { background-color: #FAFAFA !important; color: #333333 !important; font-weight: 700 !important; padding: 6px 6px !important; border-bottom: 2px solid #006847; }
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
         .custom-dashboard-table td img, .fixture-row img { width: 20px !important; height: 14px !important; min-width: 20px !important; max-width: 20px !important; object-fit: cover !important; }
         
         .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
         .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
-        .group-header-text { color: #ff7d23 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+        .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
+        
+        /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
+        .compact-sweep-container {
+            background: #FFFFFF;
+            border: 1px solid #DDDDDD;
+            border-radius: 10px;
+            padding: 8px 12px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
+            max-height: 100px;
+            overflow: hidden;
+        }
+        .compact-teams-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 4px;
+        }
+        .compact-team-item {
+            background: #FAFAFA;
+            border: 1px solid #EAEAEA;
+            font-size: 11px;
+            font-weight: 700;
+            color: #333333;
+            padding: 2px 6px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .compact-team-item img { width: 16px !important; height: 11px !important; min-width: 16px !important; max-width: 16px !important; object-fit: cover !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -632,8 +663,8 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
                 <span>🗓️ {date_str}</span>
                 <span style="opacity: 0.4;">|</span>
                 <div style="display: inline-flex; align-items: center; gap: 6px;">
-                    <img src="{brand_node['logo']}" style="height: 22px; width: auto; object-fit: contain; vertical-align: middle;" alt="{tv_channel_text}">
                     <a href="{brand_node['live_url']}" target="_blank" style="color: #FFFFFF !important; text-decoration: underline !important; font-weight: 800;">WATCH LIVE</a>
+                    <img src="{brand_node['logo']}" style="height: 16.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
                 </div>
             </div>
             """
@@ -763,7 +794,7 @@ header_cols = st.columns([1, 1], gap="medium")
 with header_cols[0]:
     st.markdown("""
         <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-            <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
+            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
     """, unsafe_allow_html=True)
@@ -772,6 +803,38 @@ with header_cols[1]:
     if live_matches:
         payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
         components.html(payload, height=160, scrolling=False)
+    else:
+        requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
+        teams_by_person = {p: [] for p in requested_people}
+        for team, person in SWEEPSTAKE_MAPPING.items():
+            normalized_person = person.capitalize()
+            if normalized_person in teams_by_person:
+                teams_by_person[normalized_person].append(team)
+
+        st.markdown('<div style="padding-top:4px;">', unsafe_allow_html=True)
+        chosen_person = st.radio(
+            "Select person to show teams:", 
+            options=requested_people, 
+            horizontal=True, 
+            index=0,
+            key="header_sweep_selector"
+        )
+        
+        selected_teams = teams_by_person[chosen_person]
+        p_teams_html = ""
+        for t in selected_teams:
+            p_teams_html += f'<div class="compact-team-item">{get_group_flag_html(t)} {t}</div>'
+        if not p_teams_html:
+            p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
+            
+        st.markdown(f"""
+            <div class="compact-sweep-container">
+                <div class="compact-teams-grid">
+                    {p_teams_html}
+                </div>
+            </div>
+            </div>
+        """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -810,14 +873,14 @@ if len(next_kickoff_matches) > 1:
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
 with stat_cols[0]:
-    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£96</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="stat-banner-box"><medium>💰 Prize pot</medium><span>£30</span></div>', unsafe_allow_html=True)
 with stat_cols[1]:
     fave_owner = SWEEPSTAKE_MAPPING.get("France", "Unassigned")
     st.markdown(f'<div class="stat-banner-box"><medium>⭐ Favourites</medium><span>France ({fave_owner})</span></div>', unsafe_allow_html=True)
 with stat_cols[2]:
     st.markdown('<div class="stat-banner-box"><medium>🚀 Overperformer</medium><span>' + top_performer_text + '</span></div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #ff7d23;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin:10px 0px 25px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
 
 # ── GROUPS CANVAS ─────────────────────────────────────────────────────────
 if API_TOKEN == "placeholder":
@@ -873,7 +936,7 @@ else:
                         table_html += "</tbody></table></div>"
                         st.markdown(table_html, unsafe_allow_html=True)
 
-                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='margin-bottom:6px;'><span style='font-size:12px; font-weight:700; color:#006847;'>📅 Group fixtures & results</span></div>", unsafe_allow_html=True)
                         group_fixtures = [
                             m for m in all_matches
                             if m.get("homeTeam", {}).get("name") in teams_in_group
@@ -947,13 +1010,13 @@ else:
                                 <div style="background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 8px; width: 130px; height: 140px; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center; margin: 4px;">
                                     <img src="{p['img_url']}" style="width: 100%; height: 90px; object-fit: contain; object-position: top; border-radius: 4px;" loading="eager" referrerpolicy="no-referrer">
                                     <div style="font-size: 10px; font-weight: 800; color: #333; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;">{p['player_name']}</div>
-                                    <div style="font-size: 8px; font-weight: 600; color: #ff7d23; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
+                                    <div style="font-size: 8px; font-weight: 600; color: #006847; text-transform: uppercase; margin-top: 2px;">{team_name}</div>
                                 </div>
                                 """
                                 active_cards.append(card)
 
                         if active_cards:
-                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#ff7d23;'>🔑 Key players</span></div>", unsafe_allow_html=True)
+                            st.markdown("<div style='text-align: center; margin-top: 10px;'><span style='font-size:12px; font-weight:700; color:#006847;'>🔑 Key players</span></div>", unsafe_allow_html=True)
                             full_html = f"""
                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; font-family: sans-serif; padding: 5px 0;">
                                 {"".join(active_cards)}
@@ -964,7 +1027,7 @@ else:
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #ff7d23;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
 
