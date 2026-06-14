@@ -371,7 +371,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .watch-live-btn {
-        background-color: #ff7d23 !important;
+        background-color: #006847 !important;
         box-shadow: 0 1px 2px rgba(255,0,0,0.2);
     }
 
