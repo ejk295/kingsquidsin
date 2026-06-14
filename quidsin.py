@@ -64,7 +64,7 @@ EXPECTED_RANKINGS = {
     "Algeria": 25, "Egypt": 26, "Canada": 27, "Norway": 28, "Panama": 29, "Ivory Coast": 30,
     "Sweden": 31, "Paraguay": 32, "Czechia": 33, "Scotland": 34, "Tunisia": 35, "Congo DR": 36, 
     "DR Congo": 36, "Uzbekistan": 37, "Qatar": 38, "Iraq": 39, "South Africa": 40, "Saudi Arabia": 41,
-    "Jordan": 42, "Bosnia-Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
+    "Jordan": 42, "Bosnia-Herzegovina": 43, "Bosnia and Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
@@ -137,7 +137,6 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-# Broadcast Channel Network Mapping Resources
 BROADCAST_BRANDS = {
     "bbc one": {
         "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/1920px-BBC_One_logo_2021.svg.png",
@@ -156,47 +155,6 @@ BROADCAST_BRANDS = {
         "live_url": "https://www.itv.com/watch?channel=itv4"
     }
 }
-
-# 3. Top-Down Master Function Cache Definitions (Prevents NameError regressions)
-@st.cache_data(ttl=86400)
-def get_cached_team_crests():
-    crests = {}
-    if API_TOKEN == "placeholder":
-        return crests
-    try:
-        url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/teams"
-        res = requests.get(url, headers=HEADERS, timeout=10)
-        if res.status_code == 200:
-            teams_data = res.json().get("teams", [])
-            for t in teams_data:
-                name = t.get("name")
-                crest_url = t.get("crest")
-                if name and crest_url:
-                    crests[name] = crest_url
-                    if name == "DR Congo": crests["Congo DR"] = crest_url
-                    if name == "Congo DR": crests["DR Congo"] = crest_url
-                    if name == "Cape Verde": crests["Cape Verde Islands"] = crest_url
-                    if name == "Bosnia and Herzegovina": crests["Bosnia-Herzegovina"] = crest_url
-    except Exception:
-        pass
-    return crests
-
-CACHED_CRESTS = get_cached_team_crests()
-
-def get_banner_flag_html(team_name):
-    crest_url = CACHED_CRESTS.get(team_name)
-    if crest_url:
-        return f'<img src="{crest_url}" class="banner-flag" alt="{team_name}">'
-    return ''
-
-def get_group_flag_html(team_name):
-    crest_url = CACHED_CRESTS.get(team_name)
-    if crest_url:
-        return f'<img src="{crest_url}" class="flag-img" alt="{team_name}">'
-    return ''
-
-def get_flag_html(team_name, extra_class="flag-img"):
-    return get_group_flag_html(team_name)
 
 GLOBAL_STYLE_TOKENS = """
 <style>
@@ -511,6 +469,61 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# 3. Core Helper Utility Functions
+@st.cache_data(ttl=86400)
+def get_cached_team_crests():
+    crests = {}
+    if API_TOKEN == "placeholder":
+        return crests
+    try:
+        url = f"{BASE_URL}/competitions/{COMPETITION_CODE}/teams"
+        res = requests.get(url, headers=HEADERS, timeout=10)
+        if res.status_code == 200:
+            teams_data = res.json().get("teams", [])
+            for t in teams_data:
+                name = t.get("name")
+                crest_url = t.get("crest")
+                if name and crest_url:
+                    crests[name] = crest_url
+                    if name == "DR Congo": crests["Congo DR"] = crest_url
+                    if name == "Congo DR": crests["DR Congo"] = crest_url
+                    if name == "Cape Verde": crests["Cape Verde Islands"] = crest_url
+                    if name == "Bosnia and Herzegovina": crests["Bosnia-Herzegovina"] = crest_url
+    except Exception:
+        pass
+    return crests
+
+CACHED_CRESTS = get_cached_team_crests()
+
+def get_banner_flag_html(team_name):
+    crest_url = CACHED_CRESTS.get(team_name)
+    if crest_url:
+        return f'<img src="{crest_url}" class="banner-flag" alt="{team_name}">'
+    return ''
+
+def get_group_flag_html(team_name):
+    crest_url = CACHED_CRESTS.get(team_name)
+    if crest_url:
+        return f'<img src="{crest_url}" class="flag-img" alt="{team_name}">'
+    return ''
+
+def format_to_uk_time(utc_str):
+    try:
+        dt = datetime.strptime(utc_str, "%Y-%m-%dT%H:%M:%SZ")
+        dt_utc = pytz.utc.localize(dt)
+        uk_tz = pytz.timezone("Europe/London")
+        return dt_utc.astimezone(uk_tz)
+    except Exception:
+        return None
+
+def get_live_score(match):
+    score_obj = match.get("score", {})
+    for target_key in ["fullTime", "regularTime", "halfTime"]:
+        s = score_obj.get(target_key, {})
+        if s and s.get("home") is not None and s.get("away") is not None:
+            return int(s.get("home")), int(s.get("away"))
+    return 0, 0
+
 # ── MASTER SPREADSHEET SCHEDULE OVERRIDES ENGINE ──
 @st.cache_data(ttl=15)
 def fetch_spreadsheet_overrides_master():
@@ -611,7 +624,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         top_pane = '<div class="banner-top-pane"><div class="next-match-title">⏳ Next match</div></div>'
         centre_bubble = '<div class="vs-marker-bubble">VS</div>'
         
-        # Build live stream badging structures if matching text string assets exist
         normalized_channel = tv_channel_text.lower().strip()
         if normalized_channel in BROADCAST_BRANDS:
             brand_node = BROADCAST_BRANDS[normalized_channel]
@@ -626,7 +638,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             </div>
             """
         else:
-            # Fallback block configuration if channel field contains string names or is completely empty
             channel_suffix = f" | 📺 {tv_channel_text}" if tv_channel_text else ""
             bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}{channel_suffix}</div>'
 
