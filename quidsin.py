@@ -800,7 +800,7 @@ header_cols = st.columns([1, 1], gap="medium")
 with header_cols[0]:
     st.markdown("""
         <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-            <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
+            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
     """, unsafe_allow_html=True)
