@@ -156,7 +156,7 @@ BROADCAST_BRANDS = {
     }
 }
 
-# Global baseline dashboard system architecture style tokens
+# Global baseline desktop/table stylesheet engine
 GLOBAL_STYLE_TOKENS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
@@ -364,15 +364,8 @@ GLOBAL_STYLE_TOKENS = """
         align-items: center;
         gap: 4px;
         color: #FFFFFF !important;
-    }
-
-    .highlights-btn {
         background-color: #444444 !important;
-    }
-
-    .watch-live-btn {
-        background-color: #006847 !important;
-        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
+        transition: background-color 0.15s ease;
     }
 
     .highlights-btn:hover, .watch-live-btn:hover {
@@ -579,8 +572,6 @@ def fetch_spreadsheet_overrides_master():
                     h_score = str(row[5]).strip() if pd.notna(row[5]) else "0"
                     a_score = str(row[6]).strip() if pd.notna(row[6]) else "0"
                     h_link = str(row[7]).strip() if (len(row) >= 8 and pd.notna(row[7])) else ""
-                    
-                    # Parse Column I (Index 8) safely for TV Network parameters
                     tv_network = str(row[8]).strip() if (len(row) >= 9 and pd.notna(row[8])) else ""
 
                     if home_t and away_t:
@@ -600,7 +591,7 @@ def fetch_spreadsheet_overrides_master():
 
 SPREADSHEET_OVERRIDES = fetch_spreadsheet_overrides_master()
 
-# ── DESIGN HERO BANNER GENERATOR WITH MOBILE 3-LETTER ABBREVIATION RULES ──
+# ── HIGH-PERFORMANCE MEMORY LEAK-FREE IFRAME HERO BANNER GENERATOR ──
 def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
@@ -678,8 +669,48 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             channel_suffix = f" | 📺 {tv_channel_text}" if tv_channel_text else ""
             bottom_bar = f'<div class="banner-bottom-time" style="color: #FFFFFF !important;">🗓️ {date_str}{channel_suffix}</div>'
 
+    # Isolated optimized style node minimizing browser composition memory requirements on mobile viewports
     return f"""
-    {GLOBAL_STYLE_TOKENS}
+    <style>
+        body, html {{ margin: 0; padding: 0; background: #FAFAFA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; text-align: center; overflow: hidden; }}
+        .match-banner-container {{ width: 100%; border-radius: 12px; box-shadow: 0px 4px 15px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #DDDDDD; background-color: #FFFFFF; }}
+        .banner-top-pane {{ background-color: #006847; padding: 8px 15px; }}
+        .inplay-top-pane {{ background-color: #8B0000; padding: 8px 15px; }}
+        .result-top-pane {{ background-color: #444444; padding: 6px 10px; }}
+        .next-match-title {{ font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: #FFFFFF; background: rgba(255, 255, 255, 0.15); padding: 8px 15px; border-radius: 6px; display: inline-block; }}
+        .matchup-split-screen {{ display: flex; position: relative; align-items: center; height: 75px; width: 100%; }}
+        .team-panel {{ width: 50%; display: flex; align-items: center; padding: 10px 25px; box-sizing: border-box; height: 100%; overflow: hidden; }}
+        .home-panel {{ justify-content: flex-end; padding-right: 50px; border-right: 1px solid rgba(255, 255, 255, 0.15); }}
+        .away-panel {{ justify-content: flex-start; padding-left: 50px; }}
+        .team-panel-text {{ color: #FFFFFF; font-size: 18px; font-weight: 800; text-shadow: 0px 1px 3px rgba(0,0,0,0.3); display: flex; align-items: center; white-space: nowrap; }}
+        .team-panel-text span {{ font-size: 13px; font-weight: 400; opacity: 0.95; color: #FFFFFF; margin: 0 6px; }}
+        .vs-marker-bubble, .score-bubble, .score-reveal-wrapper {{ position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 10; white-space: nowrap; }}
+        .vs-marker-bubble {{ background-color: #111111; color: #FFFFFF; font-size: 12px; font-weight: 900; padding: 5px 9px; border-radius: 50%; border: 2px solid #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
+        .score-bubble {{ background-color: #444444; color: #FFFFFF; font-size: 16px; font-weight: 900; padding: 6px 14px; border-radius: 6px; border: 2px solid #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
+        .reveal-toggle-input {{ display: none !important; }}
+        .score-reveal-label {{ background-color: #111111; color: #FFFFFF; font-size: 11px; font-weight: 900; padding: 6px 12px; border-radius: 6px; cursor: pointer; border: 2px solid #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; user-select: none; }}
+        .reveal-toggle-input:checked ~ .score-reveal-label {{ display: none !important; }}
+        .reveal-toggle-input:checked ~ .score-bubble {{ display: block !important; }}
+        .banner-bottom-time {{ background-color: #006847; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
+        .inplay-bottom-bar {{ background-color: #8B0000; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
+        .result-bottom-bar {{ background-color: #444444; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
+        .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; background-color: #444444; transition: background-color 0.15s ease; }}
+        .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }}
+        .banner-flag {{ width: 28px; height: 19px; min-width: 28px; max-width: 28px; object-fit: cover; border-radius: 2px; border: 1px solid rgba(255,255,255,0.3); display: inline-block; margin: 0 8px; vertical-align: middle; }}
+        .mobile-abbrev-text {{ display: none; }}
+        @media (max-width: 768px) {{
+            .team-panel {{ padding: 10px 8px !important; }}
+            .home-panel {{ padding-right: 32px !important; }}
+            .away-panel {{ padding-left: 32px !important; }}
+            .team-panel-text {{ font-size: 15px !important; }}
+            .team-panel-text span {{ font-size: 11px !important; margin: 0 2px !important; }}
+            .desktop-full-text {{ display: none !important; }}
+            .mobile-abbrev-text {{ display: inline-block !important; }}
+            .banner-flag {{ width: 20px; height: 14px; min-width: 20px; max-width: 20px; margin: 0 4px !important; }}
+            .score-bubble, .vs-marker-bubble {{ font-size: 12px !important; padding: 4px 10px !important; }}
+            .score-reveal-label {{ font-size: 9px !important; padding: 4px 8px !important; }}
+        }}
+    </style>
     <div class="match-banner-wrapper">
         <div class="match-banner-container">
             {top_pane}
@@ -706,7 +737,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         </div>
     </div>
     """
-    
+
 # ── Data Fetching pipeline ──
 @st.cache_data(ttl=120)  
 def fetch_football_data():
@@ -1058,7 +1089,7 @@ else:
         """
         for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
-            flag_flag = get_group_flag_html(team_row["name"])
+            flag_html = get_group_flag_html(team_row["name"])
             
             if display_idx == 1:
                 pos_str = "1 🚀"
@@ -1073,7 +1104,7 @@ else:
 
             master_table_html += f"""<tr>
                 <td><b>{pos_str}</b></td>
-                <td>{flag_flag} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
+                <td>{flag_html} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
                 <td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>
                 <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
                 <td style='text-align:center;'>{team_row['played']}</td>
