@@ -663,7 +663,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
                 <span>🗓️ {date_str}</span>
                 <span style="opacity: 0.4;">|</span>
                 <div style="display: inline-flex; align-items: center; gap: 6px;">
-                    <a href="{brand_node['live_url']}" target="_blank" style="color: #FFFFFF !important; text-decoration: underline !important; font-weight: 800;">WATCH LIVE</a>
+                    <a href="{brand_node['live_url']}" target="_blank" style="color: #FFFFFF !important; text-decoration: none !important; font-weight: 800;">WATCH LIVE</a>
                     <img src="{brand_node['logo']}" style="height: 16.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
                 </div>
             </div>
