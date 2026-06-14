@@ -29,14 +29,14 @@ DEFAULT_RIGHT_COLOR = "#006847"
 SWEEPSTAKE_MAPPING = {
     "Mexico": "Izzy", "South Africa": "Ellis", "Canada": "Ella", "Switzerland": "Barbara",
     "Argentina": "Izzy", "France": "Ella", "Brazil": "Ellis", "Spain": "Jeff",
-    "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
+    "Bosnia and Herzegovina": "Izzy", "Bosnia-Herzegovina": "Izzy", "Czechia": "Jeff", "Qatar": "Ella", "Morocco": "Ellis",
     "Haiti": "Jeff", "Turkey": "Sam", "Paraguay": "Sam", "Germany": "Jeff",
     "Curaçao": "Barbara", "Ecuador": "Ellis", "Japan": "Jeff", "Belgium": "Izzy",
     "Egypt": "Izzy", "Tunisia": "Sam", "Netherlands": "Barbara", "Ivory Coast": "Sam",
-    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
+    "Australia": "Ellis", "Cape Verde Islands": "Ella", "Cape Verde": "Ella", "Uruguay": "Barbara", "Sweden": "Ellis",
     "Saudi Arabia": "Izzy", "Scotland": "Ella", "United States": "Izzy", "Senegal": "Jeff",
     "New Zealand": "Sam", "Iran": "Ella", "Iraq": "Barbara", "Norway": "Barbara",
-    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff",
+    "Algeria": "Barbara", "Austria": "Ella", "Jordan": "Sam", "Congo DR": "Jeff", "DR Congo": "Jeff",
     "Portugal": "Sam", "Uzbekistan": "Jeff", "Colombia": "Ella", "England": "Barbara",
     "Panama": "Izzy", "Ghana": "Ellis", "Croatia": "Sam", "South Korea": "Ellis",
 }
@@ -156,7 +156,7 @@ BROADCAST_BRANDS = {
     }
 }
 
-# Global baseline desktop/table stylesheet engine
+# Global baseline dashboard system architecture style tokens
 GLOBAL_STYLE_TOKENS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght=0,300..900;1,300..900&display=swap');
@@ -351,25 +351,6 @@ GLOBAL_STYLE_TOKENS = """
         font-size: 12px;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-    }
-    
-    .highlights-btn, .watch-live-btn {
-        font-weight: 800 !important;
-        font-size: 11px !important;
-        text-transform: uppercase;
-        text-decoration: none !important;
-        padding: 6px 10px;
-        border-radius: 2px;
-        display: inline-flex !important;
-        align-items: center;
-        gap: 4px;
-        color: #FFFFFF !important;
-        background-color: #444444 !important;
-        transition: background-color 0.15s ease;
-    }
-
-    .highlights-btn:hover, .watch-live-btn:hover {
-        background-color: #CC0000 !important;
     }
     
     .banner-flag {
@@ -631,7 +612,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         centre_bubble = f'<div class="score-bubble">{h_score} – {a_score}</div>'
         bottom_bar = '<div class="inplay-bottom-bar">⚽ Match in progress</div>'
     elif is_result:
-        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">✅ Latest result</div></div>'
+        top_pane = '<div class="result-top-pane"><div class="next-match-title" style="background: rgba(0,0,0,0.2);">Latest result</div></div>'
         centre_bubble = f"""
         <div class="score-reveal-wrapper">
             <input type="checkbox" id="reveal-toggle-{match_idx}" class="reveal-toggle-input">
@@ -669,7 +650,6 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             channel_suffix = f" | 📺 {tv_channel_text}" if tv_channel_text else ""
             bottom_bar = f'<div class="banner-bottom-time" style="color: #FFFFFF !important;">🗓️ {date_str}{channel_suffix}</div>'
 
-    # Isolated optimized style node minimizing browser composition memory requirements on mobile viewports
     return f"""
     <style>
         body, html {{ margin: 0; padding: 0; background: #FAFAFA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; text-align: center; overflow: hidden; }}
@@ -694,8 +674,15 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         .banner-bottom-time {{ background-color: #006847; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .inplay-bottom-bar {{ background-color: #8B0000; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .result-bottom-bar {{ background-color: #444444; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
-        .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; background-color: #444444; transition: background-color 0.15s ease; }}
-        .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }}
+        
+        /* --- SEPARATE BUTTON STYLES WITH EXPLICIT DEFAULT BACKGROUNDS --- */
+        .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; transition: background-color 0.15s ease; }}
+        
+        .highlights-btn {{ background-color: #444444 !important; }}
+        .watch-live-btn {{ background-color: #006847 !important; }} /* Locked to Mexico Green */
+        
+        .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }} /* Red on hover */
+        
         .banner-flag {{ width: 28px; height: 19px; min-width: 28px; max-width: 28px; object-fit: cover; border-radius: 2px; border: 1px solid rgba(255,255,255,0.3); display: inline-block; margin: 0 8px; vertical-align: middle; }}
         .mobile-abbrev-text {{ display: none; }}
         @media (max-width: 768px) {{
@@ -1089,7 +1076,7 @@ else:
         """
         for display_idx, team_row in enumerate(master_flat_leaderboard, start=1):
             owner = SWEEPSTAKE_MAPPING.get(team_row["name"], "Unassigned")
-            flag_html = get_group_flag_html(team_row["name"])
+            flag_flag = get_group_flag_html(team_row["name"])
             
             if display_idx == 1:
                 pos_str = "1 🚀"
@@ -1104,7 +1091,7 @@ else:
 
             master_table_html += f"""<tr>
                 <td><b>{pos_str}</b></td>
-                <td>{flag_html} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
+                <td>{flag_flag} <b>{team_row['name']}</b> <span style='font-size:11px; color:#666;'>({owner})</span></td>
                 <td style='text-align:center; color:#555;'>#{team_row['expected_rank']}</td>
                 <td style='text-align:center; color:#555;'>#{team_row['actual_rank']}</td>
                 <td style='text-align:center;'>{team_row['played']}</td>
