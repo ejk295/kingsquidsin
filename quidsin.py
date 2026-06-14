@@ -657,7 +657,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             brand_node = BROADCAST_BRANDS[normalized_channel]
             bottom_bar = f"""
             <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px; padding: 5px 15px;">
-                <span style="color: #FFFFFF !important;">🗓️ {date_str}</span>
+                <span style="color: #006847 !important;">🗓️ {date_str}</span>
                 <span style="opacity: 0.4; color: #006847 !important;">|</span>
                 <a href="{brand_node['live_url']}" target="_blank" class="watch-live-btn">
                     WATCH LIVE
