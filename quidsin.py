@@ -137,25 +137,6 @@ GROUP_PLAYERS = {
     "Turkey": {"player_name": "Kenan Yildiz", "img_url": "https://graphics-cdn.theathletic.com/world-cup-stars-2026/images/kenan-yildiz-turkey-forward-profile-full.png"}
 }
 
-BROADCAST_BRANDS = {
-    "bbc one": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/1920px-BBC_One_logo_2021.svg.png",
-        "live_url": "https://www.bbc.co.uk/iplayer/live/bbcone"
-    },
-    "bbc two": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/BBC_Two_logo_2021.svg/1920px-BBC_Two_logo_2021.svg.png",
-        "live_url": "https://www.bbc.co.uk/iplayer/live/bbctwo"
-    },
-    "itv1": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/ITV1_Logo_2022.svg/250px-ITV1_Logo_2022.svg.png",
-        "live_url": "https://www.itv.com/watch?channel=itv"
-    },
-    "itv4": {
-        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/ITV4_logo_%282022%29.svg/1280px-ITV4_logo_%282022%29.svg.png",
-        "live_url": "https://www.itv.com/watch?channel=itv4"
-    }
-}
-
 # Global baseline dashboard system architecture style tokens
 GLOBAL_STYLE_TOKENS = """
 <style>
@@ -193,7 +174,7 @@ GLOBAL_STYLE_TOKENS = """
     }
 
     .banner-top-pane {
-        background-color: #006847;
+        background-color: #ff7d23;
         padding: 8px 15px;
     }
 
@@ -334,7 +315,7 @@ GLOBAL_STYLE_TOKENS = """
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
-        color: #FFFFFF !important;
+        color: #FFFFFF !important; /* Date text explicitly white */
     }
 
     .inplay-bottom-bar {
@@ -367,14 +348,20 @@ GLOBAL_STYLE_TOKENS = """
         gap: 4px;
     }
 
-    .watch-live-btn {
-        background-color: #8B0000 !important;
-        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
+    /* Standardized background behavior matching button parameters */
+    .highlights-btn {
+        background-color: #444444 !important;
+    }
+    .highlights-btn:hover {
+        background-color: #CC0000 !important;
     }
 
-    .highlights-btn:hover, .watch-live-btn:hover {
+    .watch-live-btn {
+        background-color: #ff7d23 !important; /* Permanent background tone */
+        box-shadow: 0 1px 2px rgba(255,0,0,0.2);
+    }
+    .watch-live-btn:hover {
         background-color: #CC0000 !important;
-        color: #FFFFFF !important;
     }
     
     .banner-flag {
@@ -664,17 +651,17 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             brand_node = BROADCAST_BRANDS[normalized_channel]
             bottom_bar = f"""
             <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px; padding: 5px 15px;">
-                <span>🗓️ {date_str}</span>
-                <span style="opacity: 0.4;">|</span>
+                <span style="color: #FFFFFF !important;">🗓️ {date_str}</span>
+                <span style="opacity: 0.4; color: #FFFFFF !important;">|</span>
                 <a href="{brand_node['live_url']}" target="_blank" class="watch-live-btn">
                     WATCH LIVE
-                    <img src="{brand_node['logo']}" style="height: 14.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
+                    <img src="{brand_node['logo']}" style="height: 16.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
                 </a>
             </div>
             """
         else:
             channel_suffix = f" | 📺 {tv_channel_text}" if tv_channel_text else ""
-            bottom_bar = f'<div class="banner-bottom-time">🗓️ {date_str}{channel_suffix}</div>'
+            bottom_bar = f'<div class="banner-bottom-time" style="color: #FFFFFF !important;">🗓️ {date_str}{channel_suffix}</div>'
 
     return f"""
     {GLOBAL_STYLE_TOKENS}
@@ -798,7 +785,7 @@ header_cols = st.columns([1, 1], gap="medium")
 with header_cols[0]:
     st.markdown("""
         <div class="title-area" style="padding-top: 15px; margin-bottom: 20px;">
-            <h1>🏆 KING FAMILY WORLD CUP SWEEPSTAKE</h1>
+            <h1>🏆 BYWAY WORLD CUP SWEEPSTAKE</h1>
             <p>Live standings</p>
         </div>
     """, unsafe_allow_html=True)
@@ -828,7 +815,7 @@ with header_cols[1]:
         p_teams_html = ""
         for t in selected_teams:
             p_teams_html += f'<div class="compact-team-item">{get_group_flag_html(t)} {t}</div>'
-        if not p_teams_html:
+        if p_teams_html:
             p_teams_html = '<span style="font-size:11px; color:#777;">No teams currently assigned.</span>'
             
         st.markdown(f"""
