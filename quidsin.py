@@ -364,7 +364,7 @@ GLOBAL_STYLE_TOKENS = """
         align-items: center;
         gap: 4px;
         color: #FFFFFF !important;
-        background-color: #006847 !important;
+        background-color: #444444 !important;
         transition: background-color 0.15s ease;
     }
 
