@@ -64,7 +64,7 @@ EXPECTED_RANKINGS = {
     "Algeria": 25, "Egypt": 26, "Canada": 27, "Norway": 28, "Panama": 29, "Ivory Coast": 30,
     "Sweden": 31, "Paraguay": 32, "Czechia": 33, "Scotland": 34, "Tunisia": 35, "Congo DR": 36, 
     "DR Congo": 36, "Uzbekistan": 37, "Qatar": 38, "Iraq": 39, "South Africa": 40, "Saudi Arabia": 41,
-    "Jordan": 42, "Bosnia-Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
+    "Jordan": 42, "Bosnia-Herzegovina": 43, "Bosnia and Herzegovina": 43, "Cape Verde Islands": 44, "Cape Verde": 44, "Ghana": 45, 
     "Curaçao": 46, "Haiti": 47, "New Zealand": 48
 }
 
@@ -353,7 +353,7 @@ GLOBAL_STYLE_TOKENS = """
         color: #FFFFFF !important;
     }
     
-    .highlights-btn {
+    .highlights-btn, .watch-live-btn {
         background-color: #444444 !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
@@ -364,11 +364,15 @@ GLOBAL_STYLE_TOKENS = """
         border-radius: 2px;
         display: inline-flex !important;
         align-items: center;
-        gap: 2px;
+        gap: 4px;
+    }
+
+    .watch-live-btn {
+        background-color: #8B0000 !important;
         box-shadow: 0 1px 2px rgba(255,0,0,0.2);
     }
 
-    .highlights-btn:hover {
+    .highlights-btn:hover, .watch-live-btn:hover {
         background-color: #CC0000 !important;
         color: #FFFFFF !important;
     }
@@ -659,13 +663,13 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         if normalized_channel in BROADCAST_BRANDS:
             brand_node = BROADCAST_BRANDS[normalized_channel]
             bottom_bar = f"""
-            <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <div class="banner-bottom-time" style="display: flex; align-items: center; justify-content: center; gap: 15px; padding: 5px 15px;">
                 <span>🗓️ {date_str}</span>
                 <span style="opacity: 0.4;">|</span>
-                <div style="display: inline-flex; align-items: center; gap: 6px;">
-                    <a href="{brand_node['live_url']}" target="_blank" style="color: #FFFFFF !important; text-decoration: none !important; font-weight: 800;">WATCH LIVE</a>
-                    <img src="{brand_node['logo']}" style="height: 16.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
-                </div>
+                <a href="{brand_node['live_url']}" target="_blank" class="watch-live-btn">
+                    WATCH LIVE
+                    <img src="{brand_node['logo']}" style="height: 14.5px; width: auto; object-fit: contain; vertical-align: middle; margin-left: 2px;" alt="{tv_channel_text}">
+                </a>
             </div>
             """
         else:
@@ -780,7 +784,7 @@ for m in all_matches:
     else:
         upcoming_matches.append(m)
 
-upcoming_matches = sorted(upcoming_matches, key=lambda x: x.get("utcDate", ""))
+upcoming_matches = sorted(upcoming_matches, key=lambda x: x.get("utcDate", ""), reverse=False)
 next_kickoff_matches = []
 if upcoming_matches:
     first_kickoff = upcoming_matches[0].get("utcDate", "")
