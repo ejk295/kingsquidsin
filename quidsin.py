@@ -334,7 +334,7 @@ GLOBAL_STYLE_TOKENS = """
         padding: 8px 15px;
         font-size: 12px;
         font-weight: 700 !important;
-        color: #FFFFFF !important;
+        color: #006847 !important;
     }
 
     .inplay-bottom-bar {
