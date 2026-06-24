@@ -729,7 +729,7 @@ def build_combined_match_banner(matches, is_live=False, is_result=False, base_id
     """
     return combined_html
 
-# ── Data Ingestion Pipeline Routing Engine ──
+# ── Data Fetching pipeline ──
 @st.cache_data(ttl=120)  
 def fetch_football_data():
     all_matches = []
@@ -897,6 +897,7 @@ with alignment_row_cols[1]:
 
     if right_column_snippets:
         combined_right_html = f"""
+        {GLOBAL_STYLE_TOKENS}
         <div style="display: flex; flex-direction: column; width: 100%; height: auto !important;">
             {"".join(right_column_snippets)}
         </div>
@@ -1009,8 +1010,7 @@ else:
                                         elif "finished" in s_row["status"] or "completed" in s_row["status"]:
                                             display_score = f"<b>{s_row['homeScore']} - {s_row['awayScore']}</b>"
                                             row_class = "fixture-row"
-                                        else:
-                                            display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
+                                        else = display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
                                             row_class = "fixture-row"
                                     else:
                                         m_status = match.get("status")
