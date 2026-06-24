@@ -834,7 +834,7 @@ with header_cols[0]:
 with header_cols[1]:
     if live_matches:
         first_live_payload = build_combined_match_banner([live_matches[0]], is_live=True, base_idx=200)
-        components.html(first_live_payload, height=160, scrolling=False)
+        components.html(first_live_payload, height=175, scrolling=False)
     else:
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
         teams_by_person = {p: [] for p in requested_people}
@@ -874,7 +874,7 @@ alignment_row_cols = st.columns([1, 1], gap="medium")
 with alignment_row_cols[0]:
     if next_kickoff_matches:
         payload = build_combined_match_banner(next_kickoff_matches, is_live=False, base_idx=100)
-        calculated_height = len(next_kickoff_matches) * 160 + (len(next_kickoff_matches) - 1) * 15
+        calculated_height = len(next_kickoff_matches) * 175
         components.html(payload, height=calculated_height, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
@@ -902,7 +902,7 @@ with alignment_row_cols[1]:
             {"".join(right_column_snippets)}
         </div>
         """
-        calculated_height = len(right_column_snippets) * 160 + (len(right_column_snippets) - 1) * 15
+        calculated_height = len(right_column_snippets) * 175
         components.html(combined_right_html, height=calculated_height, scrolling=False)
     else:
         st.info("⚽ No additional active matches or results logged.")
@@ -1010,7 +1010,8 @@ else:
                                         elif "finished" in s_row["status"] or "completed" in s_row["status"]:
                                             display_score = f"<b>{s_row['homeScore']} - {s_row['awayScore']}</b>"
                                             row_class = "fixture-row"
-                                        else = display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
+                                        else:
+                                            display_score = f"<span style='color:#777; font-weight:500;'>{local_time_str}</span>"
                                             row_class = "fixture-row"
                                     else:
                                         m_status = match.get("status")
