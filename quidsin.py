@@ -466,10 +466,6 @@ st.markdown("""
         .custom-dashboard-table td { padding: 6px 6px !important; border-bottom: 1px solid #EAEAEA; vertical-align: middle; background-color: #FFFFFF !important; color: #333333 !important; }
         .custom-dashboard-table td img, .fixture-row img { width: 20px !important; height: 14px !important; min-width: 20px !important; max-width: 20px !important; object-fit: cover !important; }
         
-        .fixture-row { background-color: #FFFFFF !important; padding: 6px 8px !important; border-radius: 4px; margin-bottom: 3px !important; border: 1px solid #EAEAEA; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
-        .fixture-row-live { background-color: #FFF5F5 !important; border: 1px solid #FFCCCC !important; }
-        .group-header-text { color: #006847 !important; font-size: 18px; font-weight: 800 !important; margin-bottom: 4px !important; margin-top: 0px !important; display: inline-block; }
-        
         /* --- COMPACT SWEEP ALLOCATION CONTAINER --- */
         .compact-sweep-container {
             background: #FFFFFF;
@@ -690,6 +686,7 @@ def build_match_banner_html_snippet(match, is_live=False, is_result=False, match
             bottom_bar = f'<div class="banner-bottom-time" style="color: #FFFFFF !important;">🗓️ {date_str}{channel_suffix}</div>'
 
     return f"""
+    {GLOBAL_STYLE_TOKENS}
     <div class="match-banner-wrapper" style="margin-bottom: 15px; height: auto !important;">
         <div class="match-banner-container">
             {top_pane}
@@ -723,6 +720,7 @@ def build_combined_match_banner(matches, is_live=False, is_result=False, base_id
         snippets.append(build_match_banner_html_snippet(m, is_live=is_live, is_result=is_result, match_idx=base_idx+idx))
     
     combined_html = f"""
+    {GLOBAL_STYLE_TOKENS}
     <div style="display: flex; flex-direction: column; width: 100%; height: auto !important;">
         {"".join(snippets)}
     </div>
