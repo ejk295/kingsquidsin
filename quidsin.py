@@ -177,7 +177,7 @@ GLOBAL_STYLE_TOKENS = """
     /* --- MATCH BANNER LAYOUT --- */
     .match-banner-wrapper {
         width: 100%;
-        margin: 0px;
+        margin: 0px 0px 15px 0px;
         box-sizing: border-box;
     }
 
@@ -573,7 +573,7 @@ def fetch_spreadsheet_overrides_master():
 SPREADSHEET_OVERRIDES = fetch_spreadsheet_overrides_master()
 
 # ── HIGH-PERFORMANCE MEMORY LEAK-FREE IFRAME HERO BANNER GENERATOR ──
-def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
+def build_match_banner_html_snippet(match, is_live=False, is_result=False, match_idx=2):
     home_team_obj = match.get("homeTeam", {})
     away_team_obj = match.get("awayTeam", {})
 
@@ -653,6 +653,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     return f"""
     <style>
         body, html {{ margin: 0; padding: 0; background: #FAFAFA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; text-align: center; overflow: hidden; }}
+        .match-banner-wrapper {{ width: 100%; margin: 0px 0px 15px 0px; box-sizing: border-box; }}
         .match-banner-container {{ width: 100%; border-radius: 12px; box-shadow: 0px 4px 15px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #DDDDDD; background-color: #FFFFFF; }}
         .banner-top-pane {{ background-color: #006847; padding: 8px 15px; }}
         .inplay-top-pane {{ background-color: #8B0000; padding: 8px 15px; }}
@@ -674,15 +675,10 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
         .banner-bottom-time {{ background-color: #006847; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .inplay-bottom-bar {{ background-color: #8B0000; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
         .result-bottom-bar {{ background-color: #444444; padding: 8px 15px; font-size: 12px; font-weight: 700; color: #FFFFFF; }}
-        
-        /* --- SEPARATE BUTTON STYLES WITH EXPLICIT DEFAULT BACKGROUNDS --- */
         .highlights-btn, .watch-live-btn {{ font-weight: 800; font-size: 11px; text-transform: uppercase; text-decoration: none; padding: 6px 10px; border-radius: 2px; display: inline-flex; align-items: center; gap: 4px; color: #FFFFFF; transition: background-color 0.15s ease; }}
-        
         .highlights-btn {{ background-color: #444444 !important; }}
-        .watch-live-btn {{ background-color: #006847 !important; }} /* Locked to Mexico Green */
-        
-        .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }} /* Red on hover */
-        
+        .watch-live-btn {{ background-color: #006847 !important; }}
+        .highlights-btn:hover, .watch-live-btn:hover {{ background-color: #CC0000 !important; }}
         .banner-flag {{ width: 28px; height: 19px; min-width: 28px; max-width: 28px; object-fit: cover; border-radius: 2px; border: 1px solid rgba(255,255,255,0.3); display: inline-block; margin: 0 8px; vertical-align: middle; }}
         .mobile-abbrev-text {{ display: none; }}
         @media (max-width: 768px) {{
@@ -698,7 +694,7 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
             .score-reveal-label {{ font-size: 9px !important; padding: 4px 8px !important; }}
         }}
     </style>
-    <div class="match-banner-wrapper">
+    <div class="match-banner-wrapper" style="margin-bottom: 15px; height: auto !important;">
         <div class="match-banner-container">
             {top_pane}
             <div class="matchup-split-screen">
@@ -725,7 +721,19 @@ def build_match_banner(match, is_live=False, is_result=False, match_idx=2):
     </div>
     """
 
-# ── Data Fetching pipeline ──
+def build_combined_match_banner(matches, is_live=False, is_result=False, base_idx=100):
+    snippets = []
+    for idx, m in enumerate(matches):
+        snippets.append(build_match_banner_html_snippet(m, is_live=is_live, is_result=is_result, match_idx=base_idx+idx))
+    
+    combined_html = f"""
+    <div style="display: flex; flex-direction: column; width: 100%; height: auto !important;">
+        {"".join(snippets)}
+    </div>
+    """
+    return combined_html
+
+# ── Data Ingestion Pipeline Routing Engine ──
 @st.cache_data(ttl=120)  
 def fetch_football_data():
     all_matches = []
@@ -811,8 +819,12 @@ if upcoming_matches:
     next_kickoff_matches = [m for m in upcoming_matches if m.get("utcDate", "") == first_kickoff]
 
 finished_matches = sorted(finished_matches, key=lambda x: x.get("utcDate", ""), reverse=True)
+latest_finished_matches = []
+if finished_matches:
+    last_finished_time = finished_matches[0].get("utcDate", "")
+    latest_finished_matches = [m for m in finished_matches if m.get("utcDate", "") == last_finished_time]
 
-# ── HEADER ROW (TITLE LEFT, LIVE BANNER RIGHT ONLY IF IN PLAY) ──────────────────
+# ── TOP SPLIT HEADER (TITLE CANVAS LEFT, FIRST IN-PROGRESS MATCH RIGHT) ──
 header_cols = st.columns([1, 1], gap="medium")
 
 with header_cols[0]:
@@ -825,8 +837,8 @@ with header_cols[0]:
 
 with header_cols[1]:
     if live_matches:
-        payload = build_match_banner(live_matches[0], is_live=True, match_idx=200)
-        components.html(payload, height=160, scrolling=False)
+        first_live_payload = build_combined_match_banner([live_matches[0]], is_live=True, base_idx=200)
+        components.html(first_live_payload, height=160, scrolling=False)
     else:
         requested_people = ["Barbara", "Ella", "Ellis", "Izzy", "Jeff", "Sam"]
         teams_by_person = {p: [] for p in requested_people}
@@ -860,39 +872,45 @@ with header_cols[1]:
             </div>
         """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+# ── LOWER ROW SETUP (UPCOMING GRID COOP ALIGNED WITH SECOND LIVE / LATEST RESULT) ──
+alignment_row_cols = st.columns([1, 1], gap="medium")
 
-# ── SECONDARY CONTENT ROW (NEXT MATCH AND LATEST RESULT SIDE-BY-SIDE) ──
-hero_cols = st.columns([1, 1], gap="medium")
-
-with hero_cols[0]:
+with alignment_row_cols[0]:
     if next_kickoff_matches:
-        payload = build_match_banner(next_kickoff_matches[0], is_live=False, match_idx=100)
-        components.html(payload, height=160, scrolling=False)
+        payload = build_combined_match_banner(next_kickoff_matches, is_live=False, base_idx=100)
+        calculated_height = len(next_kickoff_matches) * 160 + (len(next_kickoff_matches) - 1) * 15
+        components.html(payload, height=calculated_height, scrolling=False)
     else:
         st.info("⏳ No matches currently scheduled. Check back soon for the next fixtures.")
 
-with hero_cols[1]:
-    if finished_matches:
-        latest_match = finished_matches[0]
-        chronological_matches = sorted(all_matches, key=lambda x: x.get("utcDate", ""))
-        try:
-            match_index = chronological_matches.index(latest_match) + 2
-        except ValueError:
-            match_index = 2
+with alignment_row_cols[1]:
+    right_column_snippets = []
+    
+    if len(live_matches) > 1:
+        for idx, extra_live_m in enumerate(live_matches[1:]):
+            right_column_snippets.append(build_match_banner_html_snippet(extra_live_m, is_live=True, match_idx=250+idx))
             
-        result_banner_html = build_match_banner(latest_match, is_live=False, is_result=True, match_idx=match_index)
-        components.html(result_banner_html, height=160, scrolling=False)
+    if latest_finished_matches:
+        chronological_matches = sorted(all_matches, key=lambda x: x.get("utcDate", ""))
+        for idx, finished_m in enumerate(latest_finished_matches):
+            try:
+                match_index = chronological_matches.index(finished_m) + 2
+            except ValueError:
+                match_index = 2000 + idx
+            right_column_snippets.append(build_match_banner_html_snippet(finished_m, is_live=False, is_result=True, match_idx=match_index))
+
+    if right_column_snippets:
+        combined_right_html = f"""
+        <div style="display: flex; flex-direction: column; width: 100%; height: auto !important;">
+            {"".join(right_column_snippets)}
+        </div>
+        """
+        calculated_height = len(right_column_snippets) * 160 + (len(right_column_snippets) - 1) * 15
+        components.html(combined_right_html, height=calculated_height, scrolling=False)
     else:
-        st.info("⚽ No results logged yet for this tournament state.")
+        st.info("⚽ No additional active matches or results logged.")
 
-if len(live_matches) > 1:
-    for idx, live_match in enumerate(live_matches[1:]):
-        components.html(build_match_banner(live_match, is_live=True, match_idx=300+idx), height=160, scrolling=False)
-
-if len(next_kickoff_matches) > 1:
-    for idx, next_match in enumerate(next_kickoff_matches[1:]):
-        components.html(build_match_banner(next_match, is_live=False, match_idx=400+idx), height=160, scrolling=False)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ── STATS ROW ──────────────────────────────────────────────────────────
 stat_cols = st.columns(3)
@@ -1051,7 +1069,7 @@ else:
                         st.markdown('</div>', unsafe_allow_html=True)
 
         # ── OVERPERFORMANCE LEADERBOARD ──────────────────────────────────────
-        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 3px solid #006847;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:30px 0px 20px 0px; border-top: 2px solid #006847;'>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; margin-bottom: 5px;'>📈 Overperformance table</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 13px; margin-bottom: 20px;'>Ranked by overperformance: (Rank - Performance)</p>", unsafe_allow_html=True)
 
